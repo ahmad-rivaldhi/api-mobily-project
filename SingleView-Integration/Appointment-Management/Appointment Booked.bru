@@ -1,0 +1,60 @@
+meta {
+  name: Appointment Booked
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "4103-b23b-d57302dead62",
+    "eventTime": "{{eventDate}}",
+    "eventType": "ActionNotificationEvent",
+    "event": {
+      "action": {
+        "actionId": "20260128201324",
+        "resolutionCode": "0",
+        "resolutionText": "Appointment Booked",
+        "characteristic": [
+          {
+            "name": "slotId",
+            "value": "Slot-AM-New"
+          },
+          {
+            "name": "appointmentId",
+            "value": "APPT-100-New"
+          },
+          {
+            "name": "appointmentStartDate",
+            "value": "{{eventDate}}"
+          },
+          {
+            "name": "appointmentEndDate",
+            "value": "{{eventDate}}"
+          },
+        {
+            "name": "comments",
+            "value": "Comment: from IT/Network Team-Not Resolved // comment 2:Cancel Order Verif:Booked Appointment // comment 3: Appointment capture:booked"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

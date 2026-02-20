@@ -1,0 +1,49 @@
+meta {
+  name: (No Tr) Code 2102- Customer Refused to sign PN
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-ORD000000030676",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "2-me-00000003067620260204103443",
+        "externalId": "ORD000000030676",
+        "state": "Completed",
+        "partition": "VIRTUALVENDOR_Failure",
+        "region": "VIC_Failure",
+        "vendorName": "ventorMob_Failure",
+        "engineerId": "mob-engg-1_Failure",
+        "engineerName": "enggAndy_Failure",
+        "engineerPhone": "+100-56-0019910",
+        "odbPort": "343",
+        "reasonCode": "2102",
+        "reasonText": "Customer refused to sign PN",
+        "comments": "Comment 1 - code2192 Tr.4",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

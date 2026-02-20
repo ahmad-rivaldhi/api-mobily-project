@@ -1,0 +1,44 @@
+meta {
+  name: Problem Not Resolved
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "4103-b23b-d57302dead62",
+    "eventTime": "{{eventDate}}",
+    "eventType": "ActionNotificationEvent",
+    "event": {
+      "action": {
+        "actionId": "20251011212241",
+        "resolutionCode": "1",
+        "resolutionText": "Problem Not Resolved",
+        "characteristic": [
+          {
+            "name": "comments",
+            "value": "Comment: from IT/Network Team-Not Resolved"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

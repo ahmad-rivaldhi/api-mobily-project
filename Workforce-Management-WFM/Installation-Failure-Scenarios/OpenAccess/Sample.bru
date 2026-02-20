@@ -1,0 +1,48 @@
+meta {
+  name: Sample
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-1-260113014743",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "1-260120025202",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "dec New installation with 40m cable old cable ATB cut",
+        "orderStatus": "Success",
+        "comments": "ITCReqSucecess",
+        "providerStatus": "Success",
+        "providerMilestone": "",
+        "providerComments": "Success -New installation with 40m cable old cable ATB cut",
+        "serviceAccNum": "1001269526537281",
+        "reasonCode": "2041",
+        "reasonText": "Wrong ODB"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

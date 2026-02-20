@@ -1,0 +1,50 @@
+meta {
+  name: Dawiyat-SerialNumberNotification
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{dawiyatInstallationId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "",
+        "externalId": "{{dawiyatInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "Installation Completed",
+        "comments": "",
+        "providerStatus": "Installation Completed",
+        "providerMilestone": "Installation Completed",
+        "providerComments": "",
+        "orderTransactionNo" : "", 
+        "serviceAccNum" : "",
+        "devices": [
+          {
+            "integrationId": "cpeIntegration1ABC",
+            "newSerialNumber": "QAELIFE19923451"
+          } 
+        ]
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

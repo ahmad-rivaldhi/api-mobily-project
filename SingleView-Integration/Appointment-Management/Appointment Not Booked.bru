@@ -1,0 +1,44 @@
+meta {
+  name: Appointment Not Booked
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "4103-b23b-d57302dead62",
+    "eventTime": "{{eventDate}}",
+    "eventType": "ActionNotificationEvent",
+    "event": {
+      "action": {
+        "actionId": "20250723015737",
+        "resolutionCode": "1",
+        "resolutionText": "Appointment Not Booked",
+        "characteristic": [
+          {
+            "name": "comments",
+            "value": "omment: from IT/Network Team // comment 2: Appointment not booked"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,37 @@
+meta {
+  name: 622 Custom - Provisioning Completed
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "salesOrderStateChangeNotification",
+    "event": {
+      "salesOrder": {
+        "externalId": "44088-240707", 
+        "id": "{{orderId}}",
+        "orderState": "In Progress| Provisioning Completed",
+        "status": "completed"
+      }
+    }
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

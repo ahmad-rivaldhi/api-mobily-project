@@ -1,0 +1,38 @@
+meta {
+  name: ErrorCode1000OK - notification
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{psdev-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-TFO000000002902",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification", //work order state change
+    "event": {
+      "workOrder": {
+        "id": "TFO0000000032542025-09-25-8-14-48",
+        "errorCode": "1000",
+        "errorText": "OK"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,48 @@
+meta {
+  name: Create Service Order OA - Suspends - ITC
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "20260219074304",
+        "lineItemIdentifier": "", //not present so blank
+        "lineItemStatus": "", //not present so blank
+        "description": "Success",
+        "orderStatus": "Success",
+        "comments": "",
+        "providerStatus": "Success",
+        "providerMilestone": "", //not present
+        "providerComments": "Success",
+        "orderTransactionNo" : "20250823093424",
+        "serviceAccNum" : "1001267389365550"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

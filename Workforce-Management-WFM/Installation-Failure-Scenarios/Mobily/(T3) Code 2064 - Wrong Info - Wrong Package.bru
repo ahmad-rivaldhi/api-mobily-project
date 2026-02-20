@@ -1,0 +1,49 @@
+meta {
+  name: (T3) Code 2064 - Wrong Info - Wrong Package
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-ORD000000027814",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "2-me-000000027814202601293730",
+        "externalId": "ORD000000027814",
+        "state": "Completed",
+        "partition": "VIRTUALVENDOR_Failure",
+        "region": "VIC_Failure",
+        "vendorName": "ventorMob_Failure",
+        "engineerId": "mob-engg-1_Failure",
+        "engineerName": "enggAndy_Failure",
+        "engineerPhone": "+100-56-0019910",
+        "odbPort": "343",
+        "reasonCode": "2064",
+        "reasonText": "Wrong Info - Wrong Package",
+        "comments": "Comment 1 - code2064 Tr.3",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

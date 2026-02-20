@@ -1,0 +1,49 @@
+meta {
+  name: STC-Completed
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceQualificationNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "",
+        "externalId": "F-{{stcSqId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Completed SQ",
+        "orderStatus": "COMPLETED",
+        "comments": "Completed SQ",
+        "providerStatus": "COMPLETED",
+        "providerMilestone": "0",
+        "providerComments": "Completed",
+      "orderTransactionNo" : "F-{{stcSqId}}",
+      "feasibilityStatus" : "FEASIBLE",
+      "reservationNumber" : "F-F100-MY14387751"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

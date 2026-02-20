@@ -1,0 +1,264 @@
+meta {
+  name: MOB - Regular - Postpaid - FTTH v1 0
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "@type": "ProductOrder",
+    "creator": "80077310",
+    "category": "B2C FTTH",
+    "externalId": "MOB-FTTH-01",
+    "orderDate": "{{eventTime}}",
+    "priority": "1",
+    "productOrderItem": [
+      {
+        "id": "parent-ftth",
+        "@type": "productOrderItem",
+        "action": "add",
+        "ftthSubAction": "Activate",
+        "orderCharacteristic": [
+          {
+            "name": "appointmentDetails",
+            "value": [
+              {
+                "name": "appointmentId",
+                "value": "APPT-1003",
+                "valueType": "String"
+              },
+              {
+                "name": "slotId",
+                "value": "SLOT-AM-001",
+                "valueType": "String"
+              },
+              {
+                "name": "appointmentStartDate",
+                "value": "{{eventTime}}",
+                "valueType": "String"
+              },
+              {
+                "name": "appointmentEndDate",
+                "value": "{{eventTime}}",
+                "valueType": "String"
+              }
+            ],
+            "valueType": "array"
+          },
+          {
+            "name": "customerDetails",
+            "value": [
+              {
+                "name": "san",
+                "value": "23532557",
+                "valueType": "String"
+              },
+              {
+                "name": "customerName",
+                "value": "Mohammed",
+                "valueType": "String"
+              },
+              {
+                "name": "surname",
+                "value": "Al-Farsi",
+                "valueType": "String"
+              },
+              {
+                "name": "can",
+                "value": "{{customerCAN}}",
+                "valueType": "String"
+              },
+              {
+                "name": "customerId",
+                "value": "{{customerId}}",
+                "valueType": "String"
+              },
+              {
+                "name": "segment",
+                "value": "Consumer",
+                "valueType": "String"
+              },
+              {
+                "name": "customerType",
+                "value": "Consumer",
+                "valueType": "String"
+              },
+              {
+                "name": "vip",
+                "value": "false",
+                "valueType": "boolean"
+              },
+              {
+                "name": "contacts",
+                "value": {
+                  "primaryMobile": "+966501234567",
+                  "secondaryMobile": "+966111234567",
+                  "email": "mohammed.alfarsi@example.com"
+                },
+                "valueType": "object"
+              },
+              {
+                "name": "address",
+                "value": {
+                  "buildingName": "Al Faisaliah Tower",
+                  "streetName": "King Fahd Road",
+                  "zipCode": "11564"
+                },
+                "valueType": "object"
+              }
+            ],
+            "valueType": "array"
+          }
+        ],
+        "product": {
+          "@type": "Product",
+          "productSpecification": {
+            "id": "MOB-FTTH-SPECIFICATION-01-00",
+            "name": "FTTH",
+            "version": "1.0"
+          },
+          "characteristic": [
+            {
+              "name": "feasibilityId",
+              "value": "{{feasibilityId}}",
+              "valueType": "string"
+            },
+            {
+              "name": "ftthsai",
+              "value": "{{ftthSAI}}",
+              "valueType": "string"
+            },
+            {
+              "name": "ftthPaymentType",
+              "value": "Postpaid",
+              "valueType": "string"
+            },
+            {
+              "name": "infraProvider",
+              "value": "MOBILY",
+              "valueType": "string"
+            },
+            {
+              "name": "customerCategory",
+              "value": "Regular"
+            },
+            {
+              "name": "serviceType",
+              "value": "Fiber 300 Postpaid",
+              "valueType": "string"
+            },
+            {
+              "name": "odbDetails",
+              "value": [
+              {
+                "name": "odbId",
+                "value": "{{odbId}}",
+                "valueType": "String"
+              },
+                {
+                  "name": "region",
+                  "value": "Central",
+                  "valueType": "String"
+                },
+                {
+                  "name": "geoCoordinates",
+                  "value": {
+                    "latitude": "24.710932",
+                    "longitude": "46.685435"
+                  },
+                  "valueType": "object"
+                }
+              ],
+              "valueType": "array"
+            },
+            {
+              "name": "cpeDetails",
+              "value": [
+                {
+                  "name": "cpeName",
+                  "value": "FTTH CPE Postpaid",
+                  "valueType": "String"
+                },
+                {
+                  "name": "bandwidth",
+                  "value": "100",
+                  "valueType": "String"
+                },
+                {
+                  "name": "qosProfile",
+                  "value": "FiberAdvanced",
+                  "valueType": "String"
+                },
+              {
+                "name": "integrationId",
+                "value": "{{cpeIntegrationId}}",
+                "valueType": "String"
+              },
+              {
+                "name": "cpeInstallDate",
+                "value": "{{eventTime}}",
+                "valueType": "String"
+              },
+                {
+                  "name": "cpeType",
+                  "value": "Router",
+                  "valueType": "String"
+                },
+                {
+                  "name": "sellPartnerId",
+                  "value": "5001",
+                  "valueType": "String"
+                },
+                {
+                  "name": "deliveryPartnerId",
+                  "value": "4567",
+                  "valueType": "String"
+                },
+                {
+                  "name": "skipCpeDiscovery",
+                  "value": "false",
+                  "valueType": "String"
+                }
+              ],
+              "valueType": "array"
+            }
+          ]
+        },
+        "productOffering": {
+          "@referredType": "productOffering",
+          "id": "MOB-FTTH-OFFERING-01-00",
+          "name": "Fiber"
+        }
+      }
+    ],
+    "relatedParty": [
+      {
+        "@type": "relatedParty",
+        "@referredType": "Corporate",
+        "id": "MOB20260209",
+        "name": "Mohammed Al-Farsi",
+        "role": "CommerciallyResponsible"
+      }
+    ]
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

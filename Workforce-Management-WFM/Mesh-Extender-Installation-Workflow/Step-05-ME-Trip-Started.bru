@@ -1,0 +1,47 @@
+meta {
+  name: Trip Started - notification
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}000000029323",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "2-me-0000000293232026020123568",
+        "externalId": "ORD000000029323",
+        "state": "Trip Started",
+        "partition": "VIRTUALVENDOR_TripStarted",
+        "region": "CENTER-CENTER_1_TripStarted",
+        "vendorName": "VIRTUALVENDOR_TripStarted",
+        "engineerId": "EngTripStarted",
+        "engineerName": "MOTTEST03",
+        "engineerPhone": "+966-56-0019905",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

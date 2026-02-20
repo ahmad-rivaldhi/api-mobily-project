@@ -1,0 +1,57 @@
+meta {
+  name: Schedule appointment
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "ActionNotificationEvent",
+    "event": {
+      "action": {
+        "actionId": "20250618225446",
+        "resolutionCode": "0",
+        "resolutionText": "Appointment Scheduled",
+        "characteristic": [
+          {
+            "name": "slotId",
+            "value": "SLOT-ME-001"
+          },
+          {
+            "name": "appointmentId",
+            "value": "APT-FTTH-ME-001"
+          },
+          {
+            "name": "appointmentStartDate",
+            "value": "{{eventDate}}"
+          },
+          {
+            "name": "appointmentEndDate",
+            "value": "{{eventDate}}"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

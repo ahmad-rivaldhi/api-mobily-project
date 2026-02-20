@@ -1,0 +1,28 @@
+meta {
+  name: Auth Admin
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/auth/realms/telflow/protocol/openid-connect/token
+  body: formUrlEncoded
+  auth: inherit
+}
+
+body:form-urlencoded {
+  client_id: telflow-proxy
+  client_secret: lnddgwuwRwDnTliKJOxFOZNFqSGYVdnoG
+  username: rivaldhi-pa
+  password: Rahasia1!
+  grant_type: password
+}
+
+vars:post-response {
+  authToken: res.body.access_token
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

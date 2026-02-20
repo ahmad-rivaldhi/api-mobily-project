@@ -1,0 +1,139 @@
+meta {
+  name: 641 Inprogress
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/serviceOrderingManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventide": "Event-ORD000000030788",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification", //serviceChangeOrder
+    "event": {
+      "serviceOrder": {
+        "id": "nfo-04feb2026-1",
+        "externalId": "ORD000000030788",
+        "state": "inProgress",
+              "phaseNote": {
+                "id": "NOTIF_01",
+                "message": "Phase DesignAssign has completed successfully."
+              },
+   
+        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
+        "orderDate": "{{eventDate}}",
+        "completionDate": "{{eventDate}}",
+        "startDate": "{{eventDate}}",
+        "@type": "Provide",
+        "priority": "50",
+        "category": "Product",
+        "externalReference": [
+          {
+            "id": "1",
+            "name": "Khalid",
+            "externalReferenceType": "USED_PRIM_SUB_ID"
+          },
+          {
+            "id": "2",
+            "name": "sai-123456",
+            "externalReferenceType": "USED_SECO_SUB_ID"
+          }
+        ],
+        "relatedParty": [
+          {
+            "id": "Deepali",
+            "role": "SUBSCRIBER",
+            "@type": "Corporate"
+          }
+        ],
+        "serviceOrderItem": [
+          {
+            "id": "1",
+            "action": "Activate",
+            "serviceOrderItemRelationship": [],
+            "service": {
+              "id": "S1",
+              "serviceRelationship": [],
+          "serviceCharacteristic": [
+            {
+              "name": "odbId",
+              "value": "ODB-SA-RIY-003"
+            },
+            {
+              "name": "cpeType",
+              "value": "HAG"
+            },
+            {
+              "name": "serviceAccountId",
+              "value": "sai1234"
+            },
+            {
+              "name": "cpeModel",
+              "value": "H155-381"
+            },
+            {
+              "name": "paymentType",
+              "value": "Postpaid"
+            },
+            {
+              "name": "cpeMacAddress1",
+              "value": "a45e.609f.3b2c"
+            },
+            {
+              "name": "provider",
+              "value": "MOBILY"
+            },
+            {
+              "name": "cpeVendor",
+              "value": "Huawei"
+            },
+            {
+              "name": "isRcy",
+              "value": "false"
+            },
+            {
+              "name": "qosProfile",
+              "value": "FiberAdvanced"
+            },
+            {
+              "name": "skipCpeDiscovery",
+              "value": "false"
+            },
+            {
+              "name": "cpeSerialNum",
+              "value": "48 57 49 34 32 36 37 34 39 32 32 37 36"
+            },
+            {
+              "name": "networkTrigger",
+              "value": "false"
+            }
+          ],
+          "serviceSpecification": {
+            "name": "CFS_FTTH_DATA"
+          }
+        }
+      }
+    ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

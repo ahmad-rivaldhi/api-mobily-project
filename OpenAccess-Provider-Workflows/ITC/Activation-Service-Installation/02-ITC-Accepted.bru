@@ -1,0 +1,47 @@
+meta {
+  name: 02-ITC-Accepted
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Engineer Er.Jaffar.Salim accepts the Task at 2025-09-17 18:46:50",
+        "orderStatus": "Accepted",
+        "comments": "",
+        "providerStatus": "Accepted",
+        "providerMilestone": "",
+        "providerComments": "Accepted Engineer Er.Jaffar.Salim accepts the Task at 2025-09-17 18:46:50",
+        "serviceAccNum": "1001269526537281"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,47 @@
+meta {
+  name: Dawiyat-Completed
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-TFO000000003055",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "DAW20250917001334",
+        "lineItemIdentifier": "", //not present so blank
+        "lineItemStatus": "", //not present so blank
+        "description": "Broadband Service Change Package",
+        "orderStatus": "Completed",
+        "comments": "",
+        "providerStatus": "Completed",
+        "providerMilestone": "Completed",
+        "providerComments": "Broadband Service Change Package",
+        "orderTransactionNo" : "OLOCRMNO20250926152129",
+        "serviceAccNum" : "DAWFTTH00433122"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+}

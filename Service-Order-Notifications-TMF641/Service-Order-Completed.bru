@@ -1,0 +1,130 @@
+meta {
+  name: 641 completed
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/serviceOrderingManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification", //serviceChangeOrder
+    "event": {
+      "serviceOrder": {
+        "id": "poc2-13feb2026-1",
+        "externalId": "{{orderId}}",
+        "state": "completed",
+        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
+        "orderDate": "{{eventDate}}",
+        "completionDate": "{{eventDate}}",
+        "startDate": "{{eventDate}}",
+        "@type": "Provide",
+        "priority": "50",
+        "category": "Product",
+        "externalReference": [
+          {
+            "id": "1",
+            "name": "Deepali",
+            "externalReferenceType": "USED_PRIM_SUB_ID"
+          },
+          {
+            "id": "2",
+            "name": "sai-123456",
+            "externalReferenceType": "USED_SECO_SUB_ID"
+          }
+        ],
+        "relatedParty": [
+          {
+            "id": "Deepali",
+            "role": "SUBSCRIBER",
+            "@type": "Corporate"
+          }
+        ],
+        "serviceOrderItem": [
+          {
+            "id": "1",
+            "action": "Activate",
+            "serviceOrderItemRelationship": [],
+            "service": {
+              "id": "S1",
+              "serviceRelationship": [],
+              "serviceCharacteristics": [
+                {
+                  "name": "OdbId",
+                  "value": "odb-12345"
+                },
+                {
+                  "cpeType": "cpeType",
+                  "value": "ONT"
+                },
+                {
+                  "name": "serviceAccountId",
+                  "value": "sai-123456"
+                },
+                {
+                  "name": "cpeModel",
+                  "value": "cpe-model-12345"
+                },
+                {
+                  "name": "paymentType",
+                  "value": "Prepaid"
+                },
+                {
+                  "name": "cpeSerialNum",
+                  "value": "cpe11111"
+                },
+                {
+                  "name": "cpeMacAddress",
+                  "value": "cpeMac123"
+                },
+                {
+                  "name": "provider",
+                  "value": "ITC"
+                },
+                {
+                  "name": "cpeVendor",
+                  "value": "HWTC"
+                },
+                {
+                  "name": "cpeInstallDate",
+                  "value": "{{eventTime}}"
+                },
+                {
+                  "name": "isRcy",
+                  "value": "false"
+                },
+                {
+                  "name": "qosProfile",
+                  "value": "FiberBasic"
+                }
+              ],
+              "serviceSpecification": {
+                "name": "CFS_FTTH_DATA"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

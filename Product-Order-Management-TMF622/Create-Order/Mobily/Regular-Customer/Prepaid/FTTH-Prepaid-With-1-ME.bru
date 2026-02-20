@@ -1,0 +1,321 @@
+meta {
+  name: MOB - Regular - Prepaid - FTTH v1 0 + ME
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "@type": "ProductOrder",
+    "creator": "80099310",
+    "category": "B2C FTTH",
+    "externalId": "44088-240707",
+    "orderDate": "{{eventDate}}",
+    "productOrderItem": [
+      {
+        "id": "1",
+        "@type": "productOrderItem",
+        "action": "add",
+        "ftthSubAction": "Activate",
+        "orderCharacteristic": [
+          {
+            "name": "appointmentDetails",
+            "value": [
+              {
+                "name": "appointmentId",
+                "value": "APPT-1003",
+                "valueType": "String"
+              },
+              {
+                "name": "slotId",
+                "value": "5",
+                "valueType": "String"
+              },
+              {
+                "name": "appointmentStartDate",
+                "value": "{{eventDate}}",
+                "valueType": "String"
+              },
+              {
+                "name": "appointmentEndDate",
+                "value": "{{eventDate}}",
+                "valueType": "String"
+              }
+            ],
+            "valueType": "array"
+          },
+          {
+            "name": "customerDetails",
+            "value": [
+              {
+                "name": "san",
+                "value": "23432453",
+                "valueType": "String"
+              },
+              {
+                "name": "customerName",
+                "value": "Omar",
+                "valueType": "String"
+              },
+              {
+                "name": "surname",
+                "value": "A.P",
+                "valueType": "String"
+              },
+              {
+                "name": "can",
+                "value": "23432453",
+                "valueType": "String"
+              },
+              {
+                "name": "customerId",
+                "value": "23432453",
+                "valueType": "String"
+              },
+              {
+                "name": "segment",
+                "value": "Consumer",
+                "valueType": "String"
+              },
+              {
+                "name": "customerType",
+                "value": "Consumer",
+                "valueType": "String"
+              },
+              {
+                "name": "vip",
+                "value": "false",
+                "valueType": "String"
+              },
+              {
+                "name": "contacts",
+                "value": {
+                  "primaryMobile": "+966564543213",
+                  "secondaryMobile": "+966564543213",
+                  "email": "omar.qasim@example.com"
+                },
+                "valueType": "object"
+              },
+              {
+                "name": "address",
+                "value": {
+                  "buildingName": "Alturus",
+                  "streetName": "Whitefield Road",
+                  "zipCode": "6789"
+                },
+                "valueType": "object"
+              }
+            ],
+            "valueType": "array"
+          }
+        ],
+        "product": {
+          "@type": "Product",
+          "productSpecification": {
+            "id": "MOB-FTTH-SPECIFICATION-01-00",
+            "name": "FTTH",
+            "version": "1.0"
+          },
+          "characteristic": [
+            {
+              "name": "feasibilityId",
+              "value": "F000123",
+              "valueType": "string"
+            },
+            {
+              "name": "ftthsai",
+              "value": "sai1234",
+              "valueType": "string"
+            },
+            {
+              "name": "ftthPaymentType",
+              "value": "Prepaid",
+              "valueType": "string"
+            },
+            {
+              "name": "infraProvider",
+              "value": "MOBILY",
+              "valueType": "string"
+            },
+            {
+              "name": "customerCategory",
+              "value": "Regular",
+              "valueType": "string"
+            },
+            {
+              "name": "serviceType",
+              "value": "Fiber 300 Postpaid",
+              "valueType": "string"
+            },
+            {
+              "name": "odbDetails",
+              "value": [
+                {
+                  "name": "odbId",
+                  "value": "246287462104",
+                  "valueType": "String"
+                },
+                {
+                  "name": "region",
+                  "value": "Central",
+                  "valueType": "String"
+                },
+                {
+                  "name": "geoCoordinates",
+                  "value": {
+                    "latitude": "24.710932",
+                    "longitude": "46.685435"
+                  },
+                  "valueType": "object"
+                }
+              ],
+              "valueType": "array"
+            },
+            {
+              "name": "cpeDetails",
+              "value": [
+                {
+                  "name": "cpeName",
+                  "value": "FTTH CPE Postpaid",
+                  "valueType": "String"
+                },
+                {
+                  "name": "bandwidth",
+                  "value": "100",
+                  "valueType": "String"
+                },
+                {
+                  "name": "qosProfile",
+                  "value": "FiberAdvanced",
+                  "valueType": "String"
+                },
+                {
+                  "name": "integrationId",
+                  "value": "124214",
+                  "valueType": "String"
+                },
+                {
+                  "name": "cpeInstallDate",
+                  "value": "{{eventDate}}",
+                  "valueType": "String"
+                },
+                {
+                  "name": "cpeType",
+                  "value": "Router",
+                  "valueType": "String"
+                },
+                {
+                  "name": "sellPartnerId",
+                  "value": "1234",
+                  "valueType": "String"
+                },
+                {
+                  "name": "deliveryPartnerId",
+                  "value": "4567",
+                  "valueType": "String"
+                },
+                {
+                  "name": "skipCpeDiscovery",
+                  "value": "false",
+                  "valueType": "String"
+                }
+              ],
+              "valueType": "array"
+            }
+          ]
+        },
+        "productOffering": {
+          "@referredType": "productOffering",
+          "id": "MOB-FTTH-OFFERING-01-00",
+          "name": "Fiber"
+        }
+      },
+      {
+        "id": "2",
+        "@type": "productOrderItem",
+        "action": "add",
+        "product": {
+          "@type": "product",
+          "quantity": "1",
+          "productSpecification": {
+            "id": "MOB-FTTH-MESH-EXTENDER-SPECIFICATION-01-00",
+            "name": "Mesh Extender",
+            "version": "1.0"
+          },
+          "characteristic": [
+            {
+              "name": "meshDetails",
+              "value": [
+                {
+                  "name": "noOfDevices",
+                  "value": "3",
+                  "valueType": "String"
+                },
+                {
+                  "name": "meshExtender1",
+                  "value": {
+                    "integrationId1": "3523523"
+                  },
+                  "valueType": "object"
+                },
+                {
+                  "name": "meshExtender2",
+                  "value": {
+                    "integrationId2": "789679"
+                  },
+                  "valueType": "object"
+                },
+                {
+                  "name": "meshExtender3",
+                  "value": {
+                    "integrationId3": "2547679"
+                  },
+                  "valueType": "object"
+                }
+              ],
+              "valueType": "array"
+            }
+          ]
+        },
+        "productOrderItemRelationship": [
+          {
+            "id": "1",
+            "relationshipType": "reliesOn",
+            "relationshipName": "Mesh Extender",
+            "relationshipAction": "add",
+            "relationshipReference": "ASP000000000144"
+          }
+        ]
+      }
+    ],
+    "relatedParty": [
+      {
+        "@type": "relatedParty",
+        "@referredType": "Consumer",
+        "id": "23432453",
+        "name": "Omar Al-Qasim",
+        "role": "CommerciallyResponsible"
+      }
+    ]
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
