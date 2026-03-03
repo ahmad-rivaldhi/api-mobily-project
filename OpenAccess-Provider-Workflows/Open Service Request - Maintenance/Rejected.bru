@@ -1,0 +1,48 @@
+meta {
+  name: Rejected
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "",
+        "externalId": "1-271459437915",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Rejected",
+        "providerMilestone": "",
+        "providerComments": "ODB Port Clean not successful",
+        "orderTransactionNo" : "",
+        "serviceAccNum" : ""
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

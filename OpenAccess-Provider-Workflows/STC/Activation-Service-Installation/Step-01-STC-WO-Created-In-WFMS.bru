@@ -22,7 +22,7 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "UPDATE_ORDER",
-        "externalId": "I-{{stcInstallationId}}",
+        "externalId": "{{stcInstallationId}}",
         "lineItemIdentifier": "F001-MY12345678-1846",
         "lineItemStatus": "IN-PROCESS",
         "description": "Success",
@@ -31,7 +31,7 @@ body:json {
         "providerStatus": "ORDERED",
         "providerMilestone": "WO Created in WFMS",
         "providerComments": "",
-        "orderTransactionNo" : "I-{{stcInstallationId}}",
+        "orderTransactionNo" : "{{stcInstallationId}}",
         "serviceAccNum" : " " //need to ask
       }
     }

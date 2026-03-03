@@ -1,0 +1,40 @@
+meta {
+  name: 622 Custom - Need Device Swap
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "salesOrderStateChangeNotification",
+    "event": {
+      "salesOrder": {
+        "externalId": "{{svActionId}}", //SingleView Order ID
+        "id": "{{orderId}}",
+        "orderState": "In Progress|Need Device Swap Required",
+        "status": "completed"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

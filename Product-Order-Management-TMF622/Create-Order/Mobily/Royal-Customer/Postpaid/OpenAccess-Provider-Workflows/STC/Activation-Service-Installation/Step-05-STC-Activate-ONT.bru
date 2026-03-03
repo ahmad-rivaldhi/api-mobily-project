@@ -1,5 +1,5 @@
 meta {
-  name: Create Service Order OA - Suspends - STC
+  name: STC-Activate ONT
   type: http
   seq: 4
 }
@@ -22,17 +22,17 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "UPDATE_ORDER",
-        "externalId": "D-MY67328844",
-        "lineItemIdentifier": "", //not present so blank
-        "lineItemStatus": "", //not present so blank
+        "externalId": "{{stcInstallationId}}",
+        "lineItemIdentifier": "F001-MY12345678-1846",
+        "lineItemStatus": "READY",
         "description": "Success",
-        "orderStatus": "Closed",
+        "orderStatus": "ORDERED",
         "comments": "",
-        "providerStatus": "Closed",
-        "providerMilestone": "", //not present
+        "providerStatus": "ORDERED",
+        "providerMilestone": "Activate ONT",
         "providerComments": "",
-        "orderTransactionNo" : "D-MY67328844",
-        "serviceAccNum" : ""
+        "orderTransactionNo" : "{{stcInstallationId}}",
+        "serviceAccNum" : "" //need to ask
       }
     }
   }

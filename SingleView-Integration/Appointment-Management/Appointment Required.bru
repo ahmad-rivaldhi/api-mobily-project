@@ -1,0 +1,45 @@
+meta {
+  name: Appointment Required
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "4103-b23b-d57302dead62",
+    "eventTime": "{{eventDate}}",
+    "eventType": "ActionNotificationEvent",
+    "event": {
+      "action": {
+        "actionId": "20250325160959",
+        "resolutionCode": "0",
+        "resolutionText": "Order to progress Appointment Required",
+        "characteristic": [
+          {
+            "name": "comments",
+            "value": "Engineer Comment"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

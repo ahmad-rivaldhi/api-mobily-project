@@ -16,13 +16,13 @@ auth:bearer {
 
 body:json {
   {
-    "eventId": "Event-ORD000000030757",
+    "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
-        "id": "1-cpe-000000030757202602041484",
-        "externalId": "ORD000000030757",
+        "id": "{{workOrderIdCpe}}",
+        "externalId": "{{orderId}}",
         "state": "Completed",
         "partition": "VIRTUALVENDOR_Failure",
         "region": "VIC_Failure",
@@ -46,4 +46,5 @@ script:pre-request {
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

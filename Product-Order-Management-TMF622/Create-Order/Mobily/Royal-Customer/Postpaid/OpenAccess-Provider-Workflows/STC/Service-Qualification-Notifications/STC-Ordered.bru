@@ -1,0 +1,51 @@
+meta {
+  name: STC-Ordered
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceQualificationNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{stcSqId}}",
+        "lineItemIdentifier": "F001-MY81995397-1846",
+        "lineItemStatus": "READY",
+        "description": "Success",
+        "orderStatus": "ORDERED",
+        "comments": "",
+        "providerStatus": "ORDERED",
+        "providerMilestone": "",
+        "providerComments": "",
+        "orderTransactionNo" : "{{stcSqId}}"
+      }
+    }
+  }
+}
+
+vars:pre-request {
+  stcSqId: F-MY85358203
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

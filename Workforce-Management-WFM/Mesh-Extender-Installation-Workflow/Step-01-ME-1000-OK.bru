@@ -16,13 +16,13 @@ auth:bearer {
 
 body:json {
   {
-    "eventId": "Event-{{orderId}}000000029323",
+    "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
-        "id": "2-me-0000000293232026020123568",
-        "externalId": "ORD000000029323",
+        "id": "2-me-0000000106312026030272153",
+        "externalId": "{{orderId}}",
         "state": "Ok",
         "code": "1000"
       }

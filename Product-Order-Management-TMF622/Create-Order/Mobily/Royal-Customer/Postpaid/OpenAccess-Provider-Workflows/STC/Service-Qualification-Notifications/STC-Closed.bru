@@ -1,0 +1,53 @@
+meta {
+  name: STC-Closed
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceQualificationNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "",
+        "externalId": "{{stcSqId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "CLOSED",
+        "comments": "",
+        "providerStatus": "",
+        "providerMilestone": "",
+        "providerComments": "",
+        "orderTransactionNo" : "{{stcSqId}}",
+        "feasibilityStatus" : "FEASIBLE",
+        "reservationNumber" : ""
+      }
+    }
+  }
+}
+
+vars:pre-request {
+  stcSqId: F-MY85358203
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

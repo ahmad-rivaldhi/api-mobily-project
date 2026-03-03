@@ -1,0 +1,50 @@
+meta {
+  name: Device Swap Failure
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "{{workOrderIdCpe}}",
+        "externalId": "{{orderId}}",
+        "state": "Completed",
+        "partition": "VIRTUALVENDOR_Failure",
+        "region": "VIC_Failure",
+        "vendorName": "ventorMob_Failure",
+        "engineerId": "mob-engg-1_Failure",
+        "engineerName": "enggAndy_Failure",
+        "engineerPhone": "+100-56-0019910",
+        "odbPort": "343",
+        "reasonCode": "Wrong Info - Wrong Package",
+        "reasonText": "Need Device swap",
+        "comments": "Comment 1 - code2017 Tr.1",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

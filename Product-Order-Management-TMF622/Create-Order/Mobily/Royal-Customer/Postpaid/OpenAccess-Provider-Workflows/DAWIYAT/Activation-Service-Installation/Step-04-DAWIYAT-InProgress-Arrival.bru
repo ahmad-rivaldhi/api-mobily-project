@@ -1,0 +1,44 @@
+meta {
+  name: Dawiyat-InProgress-Arrival
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{dawiyatInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Broadband Service Install",
+        "orderStatus": "InProgress-Arrival",
+        "comments": "",
+        "providerStatus": "InProgress-Arrival",
+        "providerMilestone": "InProgress-Arrival",
+        "providerComments": "Broadband Service Install",
+        "orderTransactionNo" : "1-269535257084", //need to ask
+        "serviceAccNum" : "" //need to ask
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

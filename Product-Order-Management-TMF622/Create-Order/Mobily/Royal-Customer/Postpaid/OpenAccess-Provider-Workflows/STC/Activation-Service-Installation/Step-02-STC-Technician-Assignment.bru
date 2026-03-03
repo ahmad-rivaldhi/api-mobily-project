@@ -1,0 +1,48 @@
+meta {
+  name: STC-Technician Assignment
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{stcInstallationId}}",
+        "lineItemIdentifier": "F001-MY12345678-1846",
+        "lineItemStatus": "READY",
+        "description": "Success",
+        "orderStatus": "ORDERED",
+        "comments": "",
+        "providerStatus": "ORDERED",
+        "providerMilestone": "Technician Assignment",
+        "providerComments": "",
+        "orderTransactionNo" : "{{stcInstallationId}}",
+        "serviceAccNum" : "" //need to ask
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

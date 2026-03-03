@@ -1,7 +1,7 @@
 meta {
-  name: Create Service Order OA - Suspends - Dowiyat
+  name: STC-WOCreatedInWFMS
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
@@ -22,11 +22,17 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "UPDATE_ORDER",
-        "externalId": "20260211063515",  
-        "orderStatus": "Success",        
-        "providerStatus": "Success",
-        "description": "Suspend Service Successful",
-        "serviceAccNum": "1001269526537281"
+        "externalId": "{{stcInstallationId}}",
+        "lineItemIdentifier": "F001-MY12345678-1846",
+        "lineItemStatus": "IN-PROCESS",
+        "description": "Success",
+        "orderStatus": "ORDERED",
+        "comments": "",
+        "providerStatus": "ORDERED",
+        "providerMilestone": "WO Created in WFMS",
+        "providerComments": "",
+        "orderTransactionNo" : "{{stcInstallationId}}",
+        "serviceAccNum" : " " //need to ask
       }
     }
   }

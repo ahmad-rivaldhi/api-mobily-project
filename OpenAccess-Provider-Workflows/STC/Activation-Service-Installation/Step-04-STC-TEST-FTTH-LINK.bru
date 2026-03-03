@@ -22,7 +22,7 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "STC_CPE_UPDATE",
-        "externalId": "I-{{stcInstallationId}}",
+        "externalId": "{{stcInstallationId}}",
         "lineItemIdentifier": "",
         "lineItemStatus": "",
         "description": "",
@@ -31,11 +31,11 @@ body:json {
         "providerStatus": "ORDERED",
         "providerMilestone": "TEST_FTTH_LINK",
         "providerComments": "",
-        "orderTransactionNo": "I-{{stcInstallationId}}",
+        "orderTransactionNo": "{{stcInstallationId}}",
         "serviceAccNum": "MY55978025", //need to ask
         "devices": [
           {
-            "integrationId": "",
+            "integrationId": "124214",
             "newSerialNumber": "QAELIFE19923451"
           }
         ]

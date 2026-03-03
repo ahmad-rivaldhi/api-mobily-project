@@ -1,0 +1,44 @@
+meta {
+  name: 01-ITC-Create Task
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "", //not present so blank
+        "lineItemStatus": "", //not present so blank
+        "description": "Create Task, start time is {{eventTime}}",
+        "orderStatus": "Create Task",
+        "comments": "cmnt-test",
+        "providerStatus": "Create Task",
+        "providerMilestone": "", //not present
+       "providerComments": "Create Task, start time is {{eventTime}}",
+       //   "providerComments": "Create Task Started",
+        "serviceAccNum" : "1001269526537281"
+      }
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,7 +1,7 @@
 meta {
-  name: Create Service Order OA - Suspends - ITC
+  name: STC-Technician Working
   type: http
-  seq: 1
+  seq: 3
 }
 
 post {
@@ -22,17 +22,17 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "UPDATE_ORDER",
-        "externalId": "20260219074304",
-        "lineItemIdentifier": "", //not present so blank
-        "lineItemStatus": "", //not present so blank
+        "externalId": "{{stcInstallationId}}",
+        "lineItemIdentifier": "F001-MY12345678-1846",
+        "lineItemStatus": "READY",
         "description": "Success",
-        "orderStatus": "Success",
+        "orderStatus": "ORDERED",
         "comments": "",
-        "providerStatus": "Success",
-        "providerMilestone": "", //not present
-        "providerComments": "Success",
-        "orderTransactionNo" : "20250823093424",
-        "serviceAccNum" : "1001267389365550"
+        "providerStatus": "ORDERED",
+        "providerMilestone": "Technician Working",
+        "providerComments": "",
+        "orderTransactionNo" : "{{stcInstallationId}}",
+        "serviceAccNum" : "" //need to ask
       }
     }
   }
