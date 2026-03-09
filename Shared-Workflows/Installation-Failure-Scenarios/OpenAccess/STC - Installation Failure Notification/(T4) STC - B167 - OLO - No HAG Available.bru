@@ -1,0 +1,50 @@
+meta {
+  name: (T4) STC - B167 - OLO - No HAG Available
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "STC_ORDER_UPDATE",
+        "externalId": "I-MY81995397",
+        "lineItemIdentifier": "", //not present so blank
+        "lineItemStatus": "", //not present so blank
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "ORDERED",
+        "providerMilestone": "",
+        "providerComments": "B167-OLO - No HAG Available - Comments",
+        "orderTransactionNo" : "", //Need to ask
+        "serviceAccNum" : "",
+        "reasonCode": "B167-OLO",
+        "reasonText": "B167-OLO - No HAG Available"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

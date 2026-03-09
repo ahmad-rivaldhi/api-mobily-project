@@ -1,0 +1,54 @@
+meta {
+  name: (T4) DOWIYAT - No HAG
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "DOWIYAT_ORDER_UPDATE",
+        "externalId": "DAW20250917001334",
+        "lineItemIdentifier": "", //not present so blank
+        "lineItemStatus": "", //not present so blank
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Pending",
+        "providerMilestone": "Pending",
+        "providerComments": "Broadband Service Install - Comments",
+        "orderTransactionNo" : "", //Need to ask
+        "serviceAccNum" : "", //need to ask
+        "reasonCode": "",
+        "reasonText": "No HAG"
+      }
+    }
+  }
+}
+
+vars:pre-request {
+  itcOrderId: 1-260306144528
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

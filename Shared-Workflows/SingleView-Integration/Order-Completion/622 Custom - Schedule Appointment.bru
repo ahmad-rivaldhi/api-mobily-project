@@ -1,0 +1,40 @@
+meta {
+  name: 622 Custom - Schedule Appointment
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "salesOrderStateChangeNotification",
+    "event": {
+      "salesOrder": {
+        "externalId": "{{svActionId}}", 
+        "id": "{{orderId}}",
+        "orderState": "In Progress|Schedule Appointment Completed",
+        "status": "completed"
+      }
+    }
+  }  
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

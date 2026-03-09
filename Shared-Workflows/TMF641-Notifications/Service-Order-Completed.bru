@@ -1,0 +1,130 @@
+meta {
+  name: 641 completed
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/serviceOrderingManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification", //serviceChangeOrder
+    "event": {
+      "serviceOrder": {
+        "id": "20251212082409",
+        "externalId": "{{orderId}}",
+        "state": "completed",
+        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
+        "orderDate": "{{eventDate}}",
+        "completionDate": "{{eventDate}}",
+        "startDate": "{{eventDate}}",
+        "@type": "Provide",
+        "priority": "50",
+        "category": "Product",
+        "externalReference": [
+          {
+            "id": "1",
+            "name": "8100056289",
+            "externalReferenceType": "USED_PRIM_SUB_ID"
+          },
+          {
+            "id": "2",
+            "name": "8100056289",
+            "externalReferenceType": "USED_SECO_SUB_ID"
+          }
+        ],
+        "relatedParty": [
+          {
+            "id": "8100056289",
+            "role": "SUBSCRIBER",
+            "@type": "Corporate"
+          }
+        ],
+        "serviceOrderItem": [
+          {
+            "id": "1",
+            "action": "Activate",
+            "serviceOrderItemRelationship": [],
+            "service": {
+              "id": "S1",
+              "serviceRelationship": [],
+              "serviceCharacteristics": [
+                {
+                  "name": "OdbId",
+                  "value": "JED-FYSL-SAFA-02-2637"
+                },
+                {
+                  "cpeType": "cpeType",
+                  "value": "ONT"
+                },
+                {
+                  "name": "serviceAccountId",
+                  "value": "8100056289"
+                },
+                {
+                  "name": "cpeModel",
+                  "value": "DSL-X1852E/MOB"
+                },
+                {
+                  "name": "paymentType",
+                  "value": "Postpaid"
+                },
+                {
+                  "name": "cpeSerialNum",
+                  "value": "544B3342313139303030353939"
+                },
+                {
+                  "name": "cpeMacAddress",
+                  "value": "0C0E.76C6.5B0E"
+                },
+                {
+                  "name": "provider",
+                  "value": "MOBILY"
+                },
+                {
+                  "name": "cpeVendor",
+                  "value": "HWTC"
+                },
+                {
+                  "name": "cpeInstallDate",
+                  "value": "{{eventTime}}"
+                },
+                {
+                  "name": "isRcy",
+                  "value": "false"
+                },
+                {
+                  "name": "qosProfile",
+                  "value": "FiberBasic"
+                }
+              ],
+              "serviceSpecification": {
+                "name": "CFS_FTTH_DATA"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,22 @@
+meta {
+  name: 08-Rewiring
+  seq: 8
+}
+
+docs {
+  # Rewiring Journey (FTTH Cable Rewiring)
+
+  ## Workflow Steps:
+  1. **Create Rewiring Order (TMF622)** → `01-Create-Rewiring-Order-TMF622/`
+     - Rewiring request
+  2. **TMF641 Notifications** → `Shared-Workflows/TMF641-Notifications/`
+     - Acknowledged → InProgress → Completed
+  3. **WFM CPE Rewiring** → `Shared-Workflows/WFM-CPE-Workflow/`
+     - Technician workflow for cable rewiring
+
+  ## IMPORTANT - Contextual Differences:
+  - WFM comments MUST reference REWIRING activities
+  - Example: "Cable rewiring at customer premises"
+  - NOT: "New CPE installation" or "Relocation"
+  - Focus is on physical cable changes, not device changes
+}

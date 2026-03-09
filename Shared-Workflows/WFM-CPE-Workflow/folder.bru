@@ -1,0 +1,29 @@
+meta {
+  name: WFM-CPE-Workflow
+  seq: 2
+}
+
+docs {
+  # WFM CPE Workflow — Technician Work Order Lifecycle
+
+  These notifications simulate the Work Force Management (WFM) state transitions for CPE-related technician visits.
+
+  **API Endpoint:** `POST /workForceManagement/v1/notification/`
+  **Work Order ID Variable:** `{{workOrderIdCpe}}`
+
+  ## Execution Sequence:
+  1. **Step-01** — 1000 OK (Work order validated)
+  2. **Step-02** — Ready (Work order ready for dispatch)
+  3. **Step-03** — Acknowledged (Technician acknowledged)
+  4. **Step-04** — Accepted (Technician accepted)
+  5. **Step-05** — Trip Started (Technician en route)
+  6. **Step-06** — Customer Premises (Technician arrived)
+  7. **Step-07** — In Work (Installation in progress)
+  8. **Step-08** — Installation Completed (Device installed, serial number reported)
+  9. **Step-09** — UAT Completed (User Acceptance Test passed)
+
+  ## Used By Journeys:
+  - New Activation, Relocation, Device Swap, Rewiring, Maintenance
+}
+
+

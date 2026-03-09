@@ -1,0 +1,54 @@
+meta {
+  name: (T3) ITC - No Details - Wrong customer contact
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "ITC_ORDER_UPDATE",
+        "externalId": "{{itcOrderId}}", 
+        "lineItemIdentifier": "", 
+        "lineItemStatus": "", 
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Failure",
+        "providerMilestone": "Failure",
+        "providerComments": "Wrong customer contact - Comments",
+        "orderTransactionNo" : "", 
+        "serviceAccNum" : "{{itcOrderId}}",
+        "reasonCode": "No Details",
+        "reasonText": "Wrong customer contact"
+      }
+    }
+  }
+}
+
+vars:pre-request {
+  itcOrderId: 1-260306144528
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,63 @@
+meta {
+  name: 03-Relocation
+}
+
+docs {
+  # 📦 Journey: FTTH Relocation 
+  
+  **Description:**
+  This journey simulates a customer's request to relocate their existing FTTH service from an old address to a new address (e.g., Relocation within Mobily Infrastructure). According to the system design, this process is split into two main network phases (`Relocation Deactivate` and `Relocation Activate`) intertwined with a field technician visit [1].
+  
+  ---
+  
+  ### 🛑 Pre-conditions
+  *   The customer must have an active FTTH service (Completed state).
+  *   The **Telflow Product Inventory ID** from the active order must be passed in the request payload to identify the service being modified [2].
+  *   New address details and the new ODB ID must be prepared in the payload.
+  
+  ---
+  
+  ### 🚀 Workflow Steps (End-to-End Execution Sequence)
+  
+  Execute the requests in this folder sequentially from top to bottom:
+  
+  #### 1. Create Relocation Order (SingleView -> Telflow)
+  *   **Request:** `POST 01-Create-Relocation-Order-TMF622`
+  *   **Context/Payload Rules:**
+      *   The `action` parameter must be set to `"modify"` (NOT "add") [3].
+      *   The `ftthSubAction` parameter must be set to `"Relocation"` [3].
+  *   **Expected Result:** Receives HTTP 201 Created. The order transitions to `In Progress` and initiates the deactivation sub-process.
+  
+  #### 2. Relocation Deactivate - Old Location (Telflow -> NFO)
+  *   **System Behavior:** Telflow waits until a specific threshold (X hours before the technician's appointment) and then triggers Nokia FlowOne (NFO) to deactivate the service at the old location [1].
+  *   **Action:** Navigate to `Shared-Workflows/TMF641-Notifications/` and fire the NFO simulation responses:
+      1.  `POST NFO - Acknowledged` [4]
+      2.  `POST NFO - InProgress` [4]
+      3.  `POST NFO - Completed` [4]
+  *   **Expected Result:** Service at the old location is ceased. Telflow now initiates the `Relocation Activate` sub-process and dispatches a Work Order to WFM [5].
+  
+  #### 3. Field Technician Visit (WFM Simulation)
+  *   **System Behavior:** A WFM technician is assigned to perform ODB Patching and CPE Installation at the new address [6].
+  *   **Action:** Open `Shared-Workflows/WFM-CPE-Workflow/` and trigger the state machine sequence:
+      1.  `POST WFM - Ready` [7]
+      2.  `POST WFM - Acknowledged` [7]
+      3.  `POST WFM - Accepted` [7]
+      4.  `POST WFM - Trip Started` [7]
+      5.  `POST WFM - Customer Premises` [7]
+      6.  `POST WFM - In Work` [7]
+  *   **⚠️ IMPORTANT NOTE:** For Relocation scenarios, **WFM does NOT send a device serial number notification** [8]. Telflow will automatically retrieve the MAC Address from SingleView via TMF 639 once the status hits `In Work` [9].
+  
+  #### 4. Relocation Activate - New Location (Telflow -> NFO)
+  *   **System Behavior:** Once the MAC Address is retrieved, Telflow triggers NFO to provision and activate the service at the new location [9].
+  *   **Action:** Go back to `Shared-Workflows/TMF641-Notifications/` and fire the NFO simulation responses for the second time:
+      1.  `POST NFO - Acknowledged` [4]
+      2.  `POST NFO - InProgress` [4]
+      3.  `POST NFO - Completed` [4]
+  
+  #### 5. Final UAT & Order Completion
+  *   **System Behavior:** Telflow notifies WFM to initiate the User Acceptance Test (UAT) [10].
+  *   **Action:** Return to `Shared-Workflows/WFM-CPE-Workflow/` and execute the final request:
+      1.  `POST WFM - Completed` (Simulating UAT Success) [7].
+  *   **Expected Result:** The product order safely transitions to the **Completed** state [11].
+  
+}

@@ -1,0 +1,47 @@
+meta {
+  name: Accepted - notification
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "{{workOrderIdCpe}}",
+        "externalId": "{{orderId}}",
+        "state": "ACCEPTED",
+        "partition": "VIRTUALVENDOR_Acc",
+        "region": "CENTER-CENTER_1_Acc",
+        "vendorName": "VIRTUALVENDOR_Acc",
+        "engineerId": "EnggAccepted",
+        "engineerName": "EnggNameAccepted",
+        "engineerPhone": "+966-56-0019903",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

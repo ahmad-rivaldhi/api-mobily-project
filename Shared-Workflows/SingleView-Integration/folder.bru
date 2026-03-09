@@ -1,0 +1,22 @@
+meta {
+  name: SingleView-Integration
+  seq: 4
+}
+
+docs {
+  # SingleView Integration — Shared Actions & Notifications
+
+  These requests simulate SingleView callbacks and action notifications for order lifecycle management.
+
+  **API Endpoint:** `POST /singleViewServicesManagement/v1/notification/`
+
+  ## Sub-Folders:
+  1. **Appointment-Management** — Appointment Required/Not Required, Booked/Not Booked, Schedule
+  2. **Custom-Notifications** — ODB Patch Notification
+  3. **Installation-Failure-Actions** — Problem Resolved/Not Resolved, Update Contact Number, Update ODB ID
+  4. **Order-Cancellation** — Pre-Cancellation, Cancelling Order, Book Appointment for Cancellation
+  5. **Order-Completion** — Pre-Completion, Provisioning Completed, UAT Completed, Completed, Pre Failure, Schedule Appointment, Need Device Swap
+
+  ## Used By Journeys:
+  - New Activation, Relocation, Device Swap, Rewiring, Maintenance
+}

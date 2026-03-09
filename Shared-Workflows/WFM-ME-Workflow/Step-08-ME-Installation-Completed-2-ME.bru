@@ -1,0 +1,51 @@
+meta {
+  name: Installation Completed- notification - 2ME
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "{{workOrderIdMe}}",
+        "externalId": "{{orderId}}",
+        "state": "Installation Completed",
+        "devices": [
+          {
+            "integrationId": "1082498_1",
+            "newSerialNumber": "TK3B119000586"
+          },
+          {
+            "integrationId": "1082498_2",
+            "newSerialNumber": "TK3B119000598"
+          }
+        ],
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

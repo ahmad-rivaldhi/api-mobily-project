@@ -1,0 +1,45 @@
+meta {
+  name: Cancelling Order
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/singleViewServicesManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "4103-b23b-d57302dead62",
+    "eventTime": "{{eventDate}}",
+    "eventType": "ActionNotificationEvent",
+    "event": {
+      "action": {
+        "actionId": "20251215000949",
+        "resolutionCode": "0",
+        "resolutionText": "Order Cancelled",
+        "characteristic": [
+          {
+            "name": "comments",
+            "value": "Comment: from IT/Network Team // and Comment 2 // and Comment 3 : Cancelling Order"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,47 @@
+meta {
+  name: Ack - notification
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "{{workOrderIdCpe}}",
+        "externalId": "{{orderId}}",
+        "state": "ACKNOWLEDGED",
+        "partition": "PartAck",
+        "region": "RegionAck",
+        "vendorName": "VendorAck",
+        "engineerId": "EnggIDAck",
+        "engineerName": "EngNameAck",
+        "engineerPhone": "+966-56-0019902",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

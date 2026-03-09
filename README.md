@@ -1,6 +1,6 @@
 # FTTH - Mobily - Project
 
-**Organized API Collection for FTTH (Fiber To The Home) Solution - Mobily Implementation**
+**Journey-Centric API Collection for FTTH (Fiber To The Home) Solution - Mobily Implementation**
 
 ---
 
@@ -9,23 +9,18 @@
 1. [Overview](#overview)
 2. [Project Structure](#project-structure)
 3. [Environments](#environments)
-4. [API Categories](#api-categories)
-5. [Workflow Execution Order](#workflow-execution-order)
-6. [Getting Started](#getting-started)
+4. [Journey Guide](#journey-guide)
+5. [Getting Started](#getting-started)
 
 ---
 
 ## 🎯 **Overview**
 
-This Bruno API collection contains a comprehensive, well-organized set of APIs for the FTTH (Fiber To The Home) solution implementation for Mobily. The collection includes:
+This Bruno API collection contains a comprehensive, journey-centric set of APIs for the FTTH (Fiber To The Home) solution implementation for Mobily. 
 
-- **Product Order Management (TMF622)** - Create orders for Mobily and OpenAccess providers
-- **Service Notifications (TMF641)** - Order state change notifications
-- **Workforce Management (WFM)** - CPE and Mesh Extender installation workflows
-- **OpenAccess Provider Workflows** - DAWIYAT, ITC, and STC provider integrations
-- **SingleView Integration** - Customer-facing APIs for appointments, cancellations, and notifications
+**Key Design Principle:** Each journey/use case contains ALL the API requests needed (TMF622, TMF641, WFM, SingleView, etc.) with **contextual payloads** specific to that journey. This eliminates confusion when testing — you don't need to remember to change comments or payload context between different use cases.
 
-**Total APIs:** ~100+ endpoints organized across 24 functional categories
+**Total APIs:** ~100+ endpoints organized across 9 business journeys
 
 ---
 
@@ -33,37 +28,62 @@ This Bruno API collection contains a comprehensive, well-organized set of APIs f
 
 ```
 FTTH - Mobily - Project/
-├── environments/              # Environment configurations (AWS Dev & On-Prem Dev)
-├── Authentication/            # Auth APIs (Admin & Provider)
-├── Product-Order-Management-TMF622/
-│   └── Create-Order/
-│       ├── Mobily/           # Mobily orders (Regular & Royal customers)
-│       │   ├── Regular-Customer/
-│       │   │   ├── Postpaid/ (No ME, 1 ME, 2 ME, 3 ME)
-│       │   │   └── Prepaid/  (No ME, 1 ME, 2 ME, 3 ME)
-│       │   └── Royal-Customer/
-│       │       └── Postpaid/  (No ME, 1 ME, 2 ME, 3 ME)
-│       └── OpenAccess/        # OpenAccess provider orders
-│           ├── DAWIYAT/
-│           ├── ITC/
-│           └── STC/
-├── Service-Order-Notifications-TMF641/ # TMF641 Notifications
-├── Workforce-Management-WFM/
-│   ├── CPE-Installation-Workflow/      # 9-step CPE workflow
-│   ├── Mesh-Extender-Installation-Workflow/ # 11-step ME workflow
-│   └── Installation-Failure-Scenarios/
-│       ├── Mobily/
-│       └── OpenAccess/
-├── OpenAccess-Provider-Workflows/
-│   ├── DAWIYAT/              # 7-step activation + modification
-│   ├── ITC/                  # 6-step activation + modification
-│   └── STC/                  # 6-step activation + SQ notifications
-└── SingleView-Integration/
-    ├── Appointment-Management/
-    ├── Order-Cancellation/
-    ├── Order-Completion/
-    ├── Installation-Failure-Actions/
-    └── Custom-Notifications/
+├── environments/                     # Environment configs (AWS Dev & On-Prem Dev)
+├── Authentication/                   # Auth APIs (Dev 1, Dev 2, On-Prem)
+│
+├── 02-New-Activation/                # 🟢 New FTTH Installation
+│   ├── 01-Create-Order-TMF622/       # Product orders (Mobily/OpenAccess)
+│   │   ├── Mobily/
+│   │   │   ├── Regular-Customer/     # Postpaid & Prepaid
+│   │   │   └── Royal-Customer/       # Postpaid
+│   │   └── OpenAccess/               # DAWIYAT, ITC, STC
+│   ├── 02-TMF641-Notifications/      # Service order notifications
+│   ├── 03-WFM-CPE-Installation/      # CPE installation workflow (9 steps)
+│   ├── 04-WFM-ME-Installation/       # Mesh Extender installation
+│   ├── 05-OpenAccess-Provider-Workflow/  # DAWIYAT/ITC/STC workflows
+│   ├── 06-SingleView-Integration/    # Appointments, Completion, Cancellation
+│   └── 07-Installation-Failure-Scenarios/ # Failure codes & recovery
+│
+├── 03-Relocation/                    # 🔄 Service Relocation
+│   ├── 01-Create-Relocation-Order-TMF622/
+│   ├── 02-TMF641-Notifications/
+│   └── 03-WFM-CPE-Relocation/       # WFM with RELOCATION context
+│
+├── 04-Device-Swap/                   # 🔧 CPE/HAG/ONT Replacement
+│   ├── 01-Create-Swap-Order-TMF622/
+│   ├── 02-TMF641-Notifications/
+│   ├── 03-WFM-CPE-Device-Swap/      # WFM with DEVICE SWAP context
+│   └── 04-Installation-Failure-Scenarios/
+│
+├── 05-Upgrade-Downgrade/             # ⬆️ Bandwidth Changes
+│   ├── 01-Upgrade-Order-TMF622/
+│   ├── 02-Downgrade-Order-TMF622/
+│   └── 03-TMF641-Notifications/
+│
+├── 06-Suspend-Resume/                # ⏸️ Service Suspend & Resume
+│   ├── 01-Suspend-Order-TMF622/
+│   ├── 02-Create-Service-Order-OA/
+│   └── 03-Resume-Order-TMF622/
+│
+├── 07-Termination/                   # ❌ Service Deactivation
+│   ├── 01-Termination-Order-TMF622/
+│   └── 02-TMF641-Cease-Notification/
+│
+├── 08-Rewiring/                      # 🔌 Cable Rewiring
+│   ├── 01-Create-Rewiring-Order-TMF622/
+│   ├── 02-TMF641-Notifications/
+│   └── 03-WFM-CPE-Rewiring/         # WFM with REWIRING context
+│
+├── 09-Maintenance/                   # 🛠️ Service Maintenance/Repair
+│   ├── 01-Create-Maintenance-Order-TMF622/
+│   ├── 02-WFM-Maintenance-Notifications/ # WFM with MAINTENANCE context
+│   ├── 03-Close-Maintenance-Order/
+│   ├── 04-ReOpen-Maintenance-Order/
+│   └── 05-Open-Service-Request-OA/
+│
+├── 10-Request-Update/                # 📋 Order Status Updates
+│
+└── Documentation/                    # 📄 Reference documents (PDFs)
 ```
 
 ---
@@ -89,171 +109,111 @@ FTTH - Mobily - Project/
 
 ---
 
-## 📚 **API Categories**
+## 📚 **Journey Guide**
 
-### **1. Authentication**
-- `Auth-Admin.bru` - Admin authentication
-- `Auth-Provider.bru` - Provider authentication
+### **02 - New Activation** 🟢
+> New FTTH service installation from scratch
 
-### **2. Product Order Management (TMF622)**
-
-#### **Create Order - Mobily**
-**Regular Customer:**
-- Postpaid: No ME, 1 ME, 2 ME, 3 ME (4 APIs)
-- Prepaid: No ME, 1 ME, 2 ME, 3 ME (4 APIs)
-
-**Royal Customer:**
-- Postpaid: No ME, 1 ME, 2 ME, 3 ME (4 APIs)
-
-#### **Create Order - OpenAccess**
-- **DAWIYAT:** No ME, 1 ME, 2 ME, 3 ME (4 APIs)
-- **ITC:** No ME, 1 ME, 2 ME, 3 ME (4 APIs)
-- **STC:** No ME, 1 ME, 2 ME, 3 ME (4 APIs)
-
-**Total Product Order APIs:** 24
-
-### **3. Service Order Notifications (TMF641)**
-- Service-Order-Acknowledged
-- Service-Order-InProgress
-- Service-Order-Completed
-- Service-Order-Error-1000-OK
-
-**Total:** 4 APIs
-
-### **4. Workforce Management (WFM)**
-
-#### **CPE Installation Workflow (9 Steps)**
-1. CPE-1000-OK
-2. CPE-Ready
-3. CPE-Acknowledged
-4. CPE-Accepted
-5. CPE-Trip-Started
-6. CPE-Customer-Premises
-7. CPE-In-Work
-8. CPE-Installation-Completed
-9. CPE-UAT-Completed
-
-#### **Mesh Extender Installation Workflow (11 Steps)**
-1. ME-1000-OK
-2. ME-Ready
-3. ME-Acknowledged
-4. ME-Accepted
-5. ME-Trip-Started
-6. ME-Customer-Premises
-7. ME-In-Work
-8. ME-Installation-Completed (1-ME, 2-ME, 3-ME variants)
-9. ME-UAT-Completed
-
-#### **Installation Failure Scenarios**
-- **Mobily:** 7 failure scenarios
-- **OpenAccess:** 2 failure scenarios
-
-**Total WFM APIs:** 29
-
-### **5. OpenAccess Provider Workflows**
-
-#### **DAWIYAT (9 APIs)**
-- **Activation (7 steps):** Acknowledged → Dispatch → Departure → Arrival → HAG Activation → Serial Number → Completed
-- **Modification (1 API):** Modification Completed
-- **InProgress states:** Dispatch, Departure, Arrival, HAG Activation
-
-#### **ITC (7 APIs)**
-- **Activation (6 steps):** Create Task → Accepted → Assigned → SetOff → Serial Number → Success
-- **Modification (1 API):** Modification Completed
-
-#### **STC (13 APIs)**
-- **Activation (6 steps):** WO Created → Technician Assignment → Working → Test Link → Activate ONT → Closed
-- **Modification (1 API):** Modification Completed
-- **Service Qualification (6 APIs):** Acknowledged, InProgress, Feasibility Check, Approved, Rejected, Completed
-
-**Total OpenAccess APIs:** 29
-
-### **6. SingleView Integration**
-
-#### **Appointment Management (4 APIs)**
-- Schedule-Appointment
-- Appointment-Booked
-- Appointment-Not-Booked
-- Appointment-Not-Required
-
-#### **Order Cancellation (4 APIs)**
-- Pre-Cancellation
-- Cancel-Order-Verification-Booked-Appointment
-- Cancel-Order-Verification-Cancelling-Order
-
-#### **Order Completion (3 APIs)**
-- Pre-Completion
-- Provisioning-Completed
-- UAT-Completed
-
-#### **Installation Failure Actions (5 APIs)**
-- Problem-Resolved
-- Problem-Not-Resolved
-- Update-Contact-Number
-- Update-odbId
-
-#### **Custom Notifications (1 API)**
-- ODB-Patch-Notification
-
-**Total SingleView APIs:** 17
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Create-Order-TMF622` | TMF622 POST | Create product order (select provider/customer/ME variant) |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 3 | `03-WFM-CPE-Installation` | WFM | 9-step CPE installation workflow |
+| 4 | `04-WFM-ME-Installation` | WFM | Mesh Extender installation (if applicable) |
+| 5 | `05-OpenAccess-Provider-Workflow` | OA | DAWIYAT/ITC/STC activation (if OpenAccess) |
+| 6 | `06-SingleView-Integration` | SV Action | Appointments, completion, cancellation |
+| 7 | `07-Installation-Failure-Scenarios` | WFM | Failure codes & recovery flows |
 
 ---
 
-## 🔄 **Workflow Execution Order**
+### **03 - Relocation** 🔄
+> Move existing FTTH service to a new location
 
-### **Typical FTTH Activation Flow:**
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Create-Relocation-Order-TMF622` | TMF622 POST | action: modify, ftthSubAction: Relocation |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 3 | `03-WFM-CPE-Relocation` | WFM | CPE steps with **RELOCATION** context comments |
 
-#### **1. Create Order (TMF622)**
-```
-POST /tmf-api/productOrderingManagement/v4/productOrder/
-```
-Select appropriate endpoint based on:
-- Provider: Mobily or OpenAccess (DAWIYAT/ITC/STC)
-- Customer Type: Regular or Royal
-- Payment Type: Postpaid or Prepaid
-- Mesh Extenders: None, 1, 2, or 3
+⚠️ **Key Difference:** WFM comments must reference relocation, NOT installation.
 
-#### **2. Service Order Notification (TMF641)**
-```
-Acknowledged → InProgress → Completed
-```
+---
 
-#### **3. WFM CPE Installation**
-```
-1000-OK → Ready → Acknowledged → Accepted → Trip Started → 
-Customer Premises → In Work → Installation Completed → UAT Completed
-```
+### **04 - Device Swap** 🔧
+> Replace CPE, HAG, or ONT device
 
-#### **4. WFM Mesh Extender Installation** (if applicable)
-```
-1000-OK → Ready → Acknowledged → Accepted → Trip Started → 
-Customer Premises → In Work → Installation Completed (1/2/3 ME) → UAT Completed
-```
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Create-Swap-Order-TMF622` | TMF622 POST | action: modify, ftthSubAction: CPESwap |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 3 | `03-WFM-CPE-Device-Swap` | WFM | CPE steps with **DEVICE SWAP** context comments |
+| 4 | `04-Installation-Failure-Scenarios` | WFM | Device swap failure handling |
 
-#### **5. OpenAccess Provider Workflow** (if OpenAccess)
+⚠️ **Key Difference:** Payload includes `oldCpeSerialNumber`. WFM comments reference device replacement.
 
-**DAWIYAT:**
-```
-Acknowledged → Dispatch → Departure → Arrival → 
-HAG Activation → Serial Number → Completed
-```
+---
 
-**ITC:**
-```
-Create Task → Accepted → Assigned → SetOff → 
-Serial Number → Success
-```
+### **05 - Upgrade/Downgrade** ⬆️
+> Change bandwidth (no technician visit needed)
 
-**STC:**
-```
-WO Created → Technician Assignment → Working → 
-Test FTTH Link → Activate ONT → Closed
-```
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Upgrade-Order-TMF622` | TMF622 POST | Bandwidth upgrade |
+| 2 | `02-Downgrade-Order-TMF622` | TMF622 POST | Bandwidth downgrade |
+| 3 | `03-TMF641-Notifications` | TMF641 | Acknowledged → Completed (no InProgress) |
 
-#### **6. SingleView Integration**
-- Appointment scheduling and capture
-- Order completion notifications
-- Installation failure handling (if needed)
+---
+
+### **06 - Suspend & Resume** ⏸️
+> Temporarily suspend and resume service
+
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Suspend-Order-TMF622` | TMF622 POST | Suspend (Mobily + OpenAccess) |
+| 2 | `02-Create-Service-Order-OA` | OA | Notify OpenAccess providers |
+| 3 | `03-Resume-Order-TMF622` | TMF622 POST | Resume (OpenAccess only) |
+
+---
+
+### **07 - Termination** ❌
+> Permanently deactivate FTTH service
+
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Termination-Order-TMF622` | TMF622 POST | action: delete, ftthSubAction: Deactivate |
+| 2 | `02-TMF641-Cease-Notification` | TMF641 | Cease/termination notification |
+
+---
+
+### **08 - Rewiring** 🔌
+> Physical cable rewiring
+
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Create-Rewiring-Order-TMF622` | TMF622 POST | Rewiring order |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 3 | `03-WFM-CPE-Rewiring` | WFM | CPE steps with **REWIRING** context comments |
+
+---
+
+### **09 - Maintenance** 🛠️
+> Service repair and maintenance
+
+| Step | Folder | API Type | Description |
+|------|--------|----------|-------------|
+| 1 | `01-Create-Maintenance-Order-TMF622` | TMF622 POST | action: add, srAction: New |
+| 2 | `02-WFM-Maintenance-Notifications` | WFM | CPE steps with **MAINTENANCE** context |
+| 3 | `03-Close-Maintenance-Order` | PATCH | Close completed maintenance |
+| 4 | `04-ReOpen-Maintenance-Order` | PATCH | ReOpen if issue persists |
+| 5 | `05-Open-Service-Request-OA` | OA | OpenAccess maintenance (Resolved/Rejected/Closed) |
+
+---
+
+### **10 - Request Update** 📋
+> Check or update order status
+
+- Get Order status
+- Trigger update for specific provider (Mobily/DAWIYAT/ITC)
 
 ---
 
@@ -270,34 +230,34 @@ Test FTTH Link → Activate ONT → Closed
    - Choose `awsDev` or `devOnPrem` from environments dropdown
 
 2. **Authenticate**
-   - Run `Auth-Admin.bru` or `Auth-Provider.bru`
-   - Copy the auth token to `authToken` environment variable
+   - Run one of the Auth APIs in `Authentication/`
+   - Token is automatically captured via post-response script
 
-3. **Create Order**
-   - Navigate to `Product-Order-Management-TMF622/Create-Order/`
-   - Select appropriate provider and customer type
-   - Choose ME variant (No ME, 1 ME, 2 ME, 3 ME)
-   - Execute the API
+3. **Pick Your Journey**
+   - Navigate to the numbered journey folder (e.g., `03-Relocation`)
+   - Read the `folder.bru` docs for workflow guidance
+   - Follow the numbered sub-folders in order
 
-4. **Follow Workflow**
-   - Execute Service Order Notifications
-   - Execute WFM workflows in sequence (follow step numbers)
-   - Execute OpenAccess provider workflows (if applicable)
-   - Execute SingleView APIs as needed
+4. **Execute APIs in Sequence**
+   - Start with `01-` folder, then `02-`, etc.
+   - Within WFM folders, follow Step-01 → Step-02 → ... → Step-09
 
 ### **Tips**
-- **Step Numbers:** WFM and OpenAccess workflow files are prefixed with step numbers (Step-01, Step-02, etc.) for easy execution order
-- **ME Variants:** When creating orders with Mesh Extenders, ensure you use the corresponding ME installation API (1-ME, 2-ME, or 3-ME)
-- **Installation Failures:** Use files in `Installation-Failure-Scenarios/` folder to test failure and recovery flows
+- 📖 **Read folder docs:** Each journey folder's `folder.bru` contains important context notes
+- 🔢 **Follow numbering:** Sub-folders are numbered to indicate execution order
+- ⚠️ **Context matters:** WFM/notification payloads are different per journey — use the ones inside the specific journey folder
+- 🔄 **ME variants:** When testing with Mesh Extenders, use Step-08 variant matching the number of MEs ordered
+- ❌ **Failure scenarios:** Each journey with WFM has its own failure scenarios folder
 
 ---
 
 ## 📝 **Notes**
 
 - All APIs follow TMF (TM Forum) standards for telecom operations
-- APIs are organized by execution order for easy workflow testing
-- Environment variables are pre-configured for quick testing
-- Installation failure scenarios cover common real-world issues
+- **Journey-centric organization** ensures contextual correctness for each use case
+- Each journey folder contains ALL API requests needed for that use case
+- WFM notification comments are pre-configured for each journey's context
+- Environment variables are shared across all journeys
 
 ---
 
@@ -306,12 +266,12 @@ Test FTTH Link → Activate ONT → Closed
 - TMF622 Product Ordering Management API Specification
 - TMF641 Service Ordering Management API Specification
 - Mobily FTTH Solution HLD (High-Level Design)
-- FTTH Installation and Configuration Guide
+- Telflow SingleView Action API
+- Telflow Notification Event API
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** February 2026  
-**Maintained By:** Mobily FTTH Integration Team
-
-
+**Version:** 2.0  
+**Last Updated:** March 2026  
+**Maintained By:** Mobily FTTH Integration Team  
+**Organization:** Journey-Centric (reorganized from API-type grouping)

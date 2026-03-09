@@ -1,0 +1,47 @@
+meta {
+  name: In Work- notification
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "{{workOrderIdMe}}",
+        "externalId": "{{orderId}}",
+        "state": "IN WORK",
+        "partition": "VIRTUALVENDOR_IW",
+        "region": "CENTER-CENTER_1_IW",
+        "vendorName": "VIRTUALVENDOR_IW",
+        "engineerId": "EnggInWork",
+        "engineerName": "MOTTEST03_IW",
+        "engineerPhone": "+966-56-0019900",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
