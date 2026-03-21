@@ -1,7 +1,7 @@
 meta {
-  name: (T2) ITC - No Details - Internal wiring
+  name: (T5) DOWIYAT - Unknown
   type: http
-  seq: 2
+  seq: 5
 }
 
 post {
@@ -21,20 +21,20 @@ body:json {
     "eventType": "serviceOrderStateChangeNotification",
     "event": {
       "serviceOrder": {
-        "funcId": "ITC_ORDER_UPDATE",
-        "externalId": "{{itcOrderId}}", 
-        "lineItemIdentifier": "", 
-        "lineItemStatus": "", 
+        "funcId": "DOWIYAT_ORDER_UPDATE",
+        "externalId": "DAW20260310094921",
+        "lineItemIdentifier": "", //not present so blank
+        "lineItemStatus": "", //not present so blank
         "description": "",
         "orderStatus": "",
         "comments": "",
-        "providerStatus": "Failure",
-        "providerMilestone": "Failure",
-        "providerComments": "Internal wiring- Comments",
-        "orderTransactionNo" : "", 
-        "serviceAccNum" : "{{itcOrderId}}",
-        "reasonCode": "No Details",
-        "reasonText": "Internal wiring"
+        "providerStatus": "Pending",
+        "providerMilestone": "Pending",
+        "providerComments": "Broadband Service Install - Comments",
+        "orderTransactionNo" : "", //Need to ask
+        "serviceAccNum" : "", //need to ask
+        "reasonCode": "",
+        "reasonText": "No HAG available:No answer"
       }
     }
   }

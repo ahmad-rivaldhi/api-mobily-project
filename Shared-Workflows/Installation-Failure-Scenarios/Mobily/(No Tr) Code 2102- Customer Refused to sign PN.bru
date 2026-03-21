@@ -16,13 +16,13 @@ auth:bearer {
 
 body:json {
   {
-    "eventId": "Event-ORD000000030676",
+    "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
-        "id": "2-me-00000003067620260204103443",
-        "externalId": "ORD000000030676",
+        "id": "{{workOrderIdMe}}",
+        "externalId": "{{orderId}}",
         "state": "Completed",
         "partition": "VIRTUALVENDOR_Failure",
         "region": "VIC_Failure",
@@ -41,6 +41,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

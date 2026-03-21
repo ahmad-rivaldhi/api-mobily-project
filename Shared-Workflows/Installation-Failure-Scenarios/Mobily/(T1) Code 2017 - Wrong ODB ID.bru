@@ -23,7 +23,7 @@ body:json {
       "workOrder": {
         "id": "{{workOrderIdCpe}}",
         "externalId": "{{orderId}}",
-        "state": "Completed",
+        "state": "COMPLETED",
         "partition": "VIRTUALVENDOR_Failure",
         "region": "VIC_Failure",
         "vendorName": "ventorMob_Failure",
@@ -41,6 +41,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

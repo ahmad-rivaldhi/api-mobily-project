@@ -27,7 +27,7 @@ body:json {
         "id": "parent-ftth",
         "@type": "productOrderItem",
         "action": "modify",
-        "ftthSubAction": "Relocation",
+        "ftthSubAction": "Rewiring",
         "orderCharacteristic": [
           {
             "name": "appointmentDetails",
@@ -121,7 +121,7 @@ body:json {
           }
         ],
         "product": {
-          "id": "FTTH000000053957",
+          "id": "FTTH000000012661",
           "@type": "Product",
           "productSpecification": {
             "id": "MOB-FTTH-SPECIFICATION-01-00",
@@ -267,6 +267,11 @@ body:json {
       }
     ]
   }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
 }
 
 settings {

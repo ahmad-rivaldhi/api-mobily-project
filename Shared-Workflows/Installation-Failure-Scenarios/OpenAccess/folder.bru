@@ -6,3 +6,19 @@ meta {
 auth {
   mode: inherit
 }
+
+docs {
+  # OpenAccess — Installation Failure Notifications
+
+  Simulates failure notifications from OpenAccess providers (DOWIYAT, ITC, STC).
+
+  **API Endpoint:** `POST {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/`
+
+  ## Sub-Folders:
+  - **DOWIYAT** — Fiber cut, Customer cancelation, Wrong contact, No HAG, Unknown
+  - **ITC** — Wrong ODB, Internal wiring, Wrong customer contact, No HAG Available
+  - **STC** — Loss Signal (B09), Need Owner Permission (B13), Wrong Contact (B23), No HAG (B167), No Details
+
+  ## Usage:
+  Fire the appropriate notification after a failed installation attempt from the OA provider.
+}

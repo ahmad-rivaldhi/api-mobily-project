@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
   body: json
   auth: bearer
 }
@@ -22,29 +22,31 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "ITC_ORDER_UPDATE",
-        "externalId": "{{itcOrderId}}", 
-        "lineItemIdentifier": "", 
-        "lineItemStatus": "", 
+        "externalId": "{{itcOrderId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
         "description": "",
         "orderStatus": "",
         "comments": "",
         "providerStatus": "Failure",
         "providerMilestone": "Failure",
-        "providerComments": "Wrong ODB Comments",
-        "orderTransactionNo" : "", 
-        "serviceAccNum" : "{{itcOrderId}}",
+        "providerComments": "No Fiber",
+        "orderTransactionNo": "",
+        "serviceAccNum": "{{itcOrderId}}",
         "reasonCode": "No Details",
-        "reasonText": "Wrong ODB"
+        "reasonText": "No Fiber"
       }
     }
   }
+  
 }
 
 vars:pre-request {
-  itcOrderId: 1-260306144528
+  itcOrderId: 1-260309074007
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

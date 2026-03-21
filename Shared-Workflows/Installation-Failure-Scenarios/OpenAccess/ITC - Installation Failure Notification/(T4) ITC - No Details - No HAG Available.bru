@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
   body: json
   auth: bearer
 }
@@ -41,10 +41,11 @@ body:json {
 }
 
 vars:pre-request {
-  itcOrderId: 1-260306144528
+  itcOrderId: 1-260310035238
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

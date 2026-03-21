@@ -20,10 +20,17 @@ docs {
   6. **Step-06** — Customer Premises (Technician arrived)
   7. **Step-07** — In Work (Installation in progress)
   8. **Step-08** — Installation Completed (Device installed, serial number reported)
-  9. **Step-09** — UAT Completed (User Acceptance Test passed)
+  9. **Step-09** — Completed (CPE work order completed, final state)
+
+  > **Note:** Between Step-08 and Step-09, other workflow steps may need to be executed
+  > (e.g., OpenAccess provider notifications, SingleView integration) depending on the journey.
+  > Refer to each journey's `folder.bru` documentation for the full cross-workflow sequence.
 
   ## Used By Journeys:
   - New Activation, Relocation, Device Swap, Rewiring, Maintenance
 }
+
+
+
 
 

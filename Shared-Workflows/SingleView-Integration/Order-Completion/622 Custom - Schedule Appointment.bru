@@ -31,6 +31,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

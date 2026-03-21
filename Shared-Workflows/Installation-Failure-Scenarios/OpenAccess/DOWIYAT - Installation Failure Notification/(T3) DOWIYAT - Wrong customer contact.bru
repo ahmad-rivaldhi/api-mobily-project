@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
   body: json
   auth: bearer
 }
@@ -22,7 +22,7 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "DOWIYAT_ORDER_UPDATE",
-        "externalId": "DAW20250917001334",
+        "externalId": "DAW20260310075031",
         "lineItemIdentifier": "", //not present so blank
         "lineItemStatus": "", //not present so blank
         "description": "",
@@ -45,6 +45,7 @@ vars:pre-request {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

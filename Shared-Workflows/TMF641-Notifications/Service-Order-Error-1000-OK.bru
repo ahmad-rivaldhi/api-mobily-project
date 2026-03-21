@@ -1,5 +1,5 @@
 meta {
-  name: ErrorCode1000OK - notification
+  name: 641 Error - 1000 OK
   type: http
   seq: 2
 }
@@ -30,6 +30,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

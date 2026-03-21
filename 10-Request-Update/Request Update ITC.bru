@@ -5,7 +5,7 @@ meta {
 }
 
 patch {
-  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder/ORD000000033168
+  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder/{{orderId}}
   body: json
   auth: bearer
 }
@@ -245,6 +245,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

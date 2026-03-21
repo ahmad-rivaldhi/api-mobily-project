@@ -1,5 +1,5 @@
 meta {
-  name: UAT Completed- notification
+  name: Step-09 ME - UAT Completed
   type: http
   seq: 10
 }
@@ -21,7 +21,7 @@ body:json {
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
-        "id": "2-me-00000001134020260305517",
+        "id": "{{workOrderIdMe}}",
         "externalId": "{{orderId}}",
         "state": "COMPLETED", 
         "partition": "VIRTUALVENDOR_uat",

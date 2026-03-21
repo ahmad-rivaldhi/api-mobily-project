@@ -1,5 +1,5 @@
 meta {
-  name: 641 Inprogress
+  name: 641 InProgress
   type: http
   seq: 4
 }
@@ -16,20 +16,20 @@ auth:bearer {
 
 body:json {
   {
-    "eventide": "Event-ORD000000030788",
+    "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
     "eventType": "serviceOrderStateChangeNotification", //serviceChangeOrder
     "event": {
       "serviceOrder": {
         "id": "nfo-04feb2026-1",
-        "externalId": "ORD000000030788",
+        "externalId": "{{orderId}}",
         "state": "inProgress",
               "phaseNote": {
                 "id": "NOTIF_01",
                 "message": "Phase DesignAssign has completed successfully."
               },
    
-        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
+        "href": "{{nfoServiceOrderHref}}",
         "orderDate": "{{eventDate}}",
         "completionDate": "{{eventDate}}",
         "startDate": "{{eventDate}}",

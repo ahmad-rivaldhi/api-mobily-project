@@ -1,11 +1,11 @@
 meta {
-  name: 622 - Suspends Dowiyat
+  name: Downgrade - Bandwith Only - OA
   type: http
-  seq: 1
+  seq: 2
 }
 
 post {
-  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder
+  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder/
   body: json
   auth: bearer
 }
@@ -19,25 +19,20 @@ body:json {
     "@type": "ProductOrder",
     "creator": "80099310",
     "category": "B2C FTTH",
-    "externalId": "OA-DAWIYAT-FTTH-ONLY-003",
+    "externalId": "55088-250707",
     "orderDate": "{{eventTime}}",
     "productOrderItem": [
       {
-        "id": "1",
+        "id": "parent-ftth",
         "@type": "productOrderItem",
         "action": "modify",
-        "ftthSubAction": "Suspend",
+        "ftthSubAction": "Downgrade",
         "orderCharacteristic": [
           {
             "name": "customerDetails",
             "value": [
               {
                 "name": "san",
-                "value": "23432453",
-                "valueType": "string"
-              },
-              {
-                "name": "providerSAN",
                 "value": "23432453",
                 "valueType": "string"
               },
@@ -71,7 +66,7 @@ body:json {
           }
         ],
         "product": {
-          "id": "FTTH000000042573",
+          "id": "FTTH000000014320",
           "@type": "Product",
           "productSpecification": {
             "id": "MOB-FTTH-SPECIFICATION-01-00",
@@ -85,23 +80,23 @@ body:json {
               "valueType": "string"
             },
             {
-              "name": "serviceType",
-              "value": "Fiber 300 Postpaid",
-              "valueType":"string"
-            },
-            {
               "name": "ftthPaymentType",
               "value": "Prepaid",
               "valueType": "string"
             },
             {
               "name": "infraProvider",
-              "value": "DOWIYAT",
+              "value": "MOBILY",
               "valueType": "string"
             },
             {
               "name": "customerCategory",
               "value": "Regular",
+              "valueType": "string"
+            },
+            {
+              "name": "serviceType",
+              "value": "Fiber 100 Prepaid",
               "valueType": "string"
             },
             {
@@ -116,14 +111,6 @@ body:json {
                   "name": "region",
                   "value": "Central",
                   "valueType": "string"
-                },
-                {
-                  "name": "geoCoordinates",
-                  "value": {
-                    "latitude": "24.710932",
-                    "longitude": "46.685435"
-                  },
-                  "valueType": "object"
                 }
               ],
               "valueType": "array"
@@ -138,12 +125,12 @@ body:json {
                 },
                 {
                   "name": "bandwidth",
-                  "value": "100",
+                  "value": "200",
                   "valueType": "string"
                 },
                 {
-                  "name": "integrationId",
-                  "value": "ONT-DWY-0003",
+                  "name": "newBandwidth",
+                  "value": "100",
                   "valueType": "string"
                 },
                 {
@@ -152,13 +139,18 @@ body:json {
                   "valueType": "string"
                 },
                 {
+                  "name": "newQosProfile",
+                  "value": "FiberBasic",
+                  "valueType": "string"
+                },
+                {
                   "name": "cpeInstallDate",
-                  "value": "{{eventDate}}",
+                  "value": "124214",
                   "valueType": "string"
                 },
                 {
                   "name": "cpeSerialNumber",
-                  "value": "234234234",
+                  "value": "2412421421",
                   "valueType": "string"
                 },
                 {
@@ -168,7 +160,7 @@ body:json {
                 },
                 {
                   "name": "cpeMacAddress1",
-                  "value": "1234.5678.9102",
+                  "value": "1234.5678.9012",
                   "valueType": "string"
                 }
               ],

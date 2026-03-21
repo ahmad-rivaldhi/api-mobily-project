@@ -1,5 +1,5 @@
 meta {
-  name: UAT Completed- notification
+  name: Step-09 CPE - Completed
   type: http
   seq: 9
 }
@@ -23,7 +23,7 @@ body:json {
       "workOrder": {
         "id": "{{workOrderIdCpe}}",
         "externalId": "{{orderId}}",
-        "state": "Completed",
+        "state": "COMPLETED",
         "partition": "VIRTUALVENDOR_Prov",
         "region": "VIC_Prov",
         "vendorName": "ventorMob_Prov",
@@ -32,8 +32,8 @@ body:json {
         "engineerPhone": "+100-56-0019900",
         "odbPort": "343",
         "reasonCode": "0",
-        "reasonText": "CPE Swap Installation Completed",
-        "comments": "CPE Swap Installation Successful",
+        "reasonText": "CPE Completed",
+        "comments": "CPE Completed",
         "timestamp": "{{eventDate}}"
       }
     }

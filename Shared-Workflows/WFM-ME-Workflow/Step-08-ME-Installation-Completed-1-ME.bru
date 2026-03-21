@@ -1,5 +1,5 @@
 meta {
-  name: Installation Completed- notification - 1ME
+  name: Step-08 ME - Installation Completed (1 ME)
   type: http
   seq: 7
 }
@@ -16,13 +16,13 @@ auth:bearer {
 
 body:json {
   {
-    "eventId": "Event-{{orderId}}000000029713",
+    "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
-        "id": "2-me-0000000297132026020215327",
-        "externalId": "ORD000000029713",
+        "id": "{{workOrderIdMe}}",
+        "externalId": "{{orderId}}",
         "state": "Installation Completed",
         "devices": [
           {

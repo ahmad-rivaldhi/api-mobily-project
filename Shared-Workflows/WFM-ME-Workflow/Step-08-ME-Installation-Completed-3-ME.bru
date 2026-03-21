@@ -1,5 +1,5 @@
 meta {
-  name: Installation Completed- notification - 3ME
+  name: Step-08 ME - Installation Completed (3 ME)
   type: http
   seq: 9
 }
@@ -21,7 +21,7 @@ body:json {
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
-        "id": "2-me-00000001134020260305517",
+        "id": "{{workOrderIdMe}}",
         "externalId": "{{orderId}}",
         "state": "Installation Completed",
         "devices": [

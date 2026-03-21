@@ -22,7 +22,7 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "",
-        "externalId": "1-260301153446",
+        "externalId": "1-260309083639",
         "lineItemIdentifier": "",
         "lineItemStatus": "",
         "description": "",
@@ -39,6 +39,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

@@ -16,7 +16,7 @@ auth:bearer {
 
 body:json {
   {
-    "eventId": "Event-ORD000000028111",
+    "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
     "eventType": "serviceQualificationNotification",
     "event": {
@@ -40,6 +40,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 

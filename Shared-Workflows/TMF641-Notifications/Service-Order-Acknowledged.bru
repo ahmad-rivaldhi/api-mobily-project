@@ -1,5 +1,5 @@
 meta {
-  name: 641 Acknowledge
+  name: 641 Acknowledged
   type: http
   seq: 1
 }
@@ -25,7 +25,7 @@ body:json {
         "externalId": "{{orderId}}",
         "state": "acknowledged",
       //  "state": "completed",
-        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
+        "href": "{{nfoServiceOrderHref}}",
         "orderDate": "{{eventTime}}",
         "completionDate": "{{eventTime}}",
         "startDate": "{{eventTime}}",

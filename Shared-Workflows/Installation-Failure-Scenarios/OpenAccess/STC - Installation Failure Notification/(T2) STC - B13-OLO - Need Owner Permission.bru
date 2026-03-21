@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
   body: json
   auth: bearer
 }
@@ -33,7 +33,7 @@ body:json {
         "providerComments": "B23-OLO - Wrong contact Number - Comments",
         "orderTransactionNo" : "", //Need to ask
         "serviceAccNum" : "",
-        "reasonCode": "B23-OLO",
+        "reasonCode": "B13-OLO",
         "reasonText": "B23-OLO - Wrong contact Number"
       }
     }
@@ -41,6 +41,7 @@ body:json {
 }
 
 script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }
 
