@@ -1,0 +1,6 @@
+# Bruno environment files (contain secrets: password, clientsecret)
+environments/
+
+# Keep the template as reference
+!environments/.gitkeep
+!environments/env.example.bru
