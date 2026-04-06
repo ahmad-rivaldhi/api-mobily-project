@@ -1,0 +1,23 @@
+meta {
+  name: Automation
+}
+
+docs {
+  # Automation Bridge Requests
+  
+  This folder contains automation helper requests that extract dynamic IDs 
+  from the portal's B2B integration messages. These bridge the gap between 
+  API calls that require IDs generated during order processing.
+  
+  ## Usage Flow
+  1. Create an order (TMF622) → orderId is auto-captured
+  2. Wait ~60-90 seconds for system processing
+  3. Run "Extract Integration IDs" to fetch serviceOrderId + svActionId
+  4. Continue with TMF641 notifications, WFM steps, and SingleView calls
+  
+  ## Variables Set
+  - `serviceOrderId` → Used in TMF641 notification body (serviceOrder.id)
+  - `svActionId` → Used in SingleView 622 notifications (salesOrder.externalId)
+  - `workOrderIdCpe` → Auto-generated if not set (WFM CPE Step-01)
+  - `workOrderIdMe` → Auto-generated if not set (WFM ME Step-01)
+}

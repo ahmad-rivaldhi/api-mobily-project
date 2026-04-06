@@ -1,0 +1,55 @@
+meta {
+  name: Extract Integration IDs
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/b2b/message?businessInteractionIds%5B%5D={{orderId}}&maxRows=50&orderBy%5B%5D=%7B%22propertyName%22%3A%22DeliveredDate%22%2C%22direction%22%3A%22DESC%22%7D&startRowIndex=0
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+script:post-response {
+  const rows = res.body?.data?.Rows || [];
+  let extracted = { serviceOrderId: null, svActionId: null };
+
+  for (const msg of rows) {
+    if (msg.Action === 'Create Service Order Response' && !extracted.serviceOrderId) {
+      try {
+        const data = JSON.parse(msg.Message.Data);
+        if (data.id) {
+          extracted.serviceOrderId = data.id;
+          bru.setVar('serviceOrderId', data.id);
+        }
+      } catch (e) {}
+    }
+
+    if (msg.Action === '622 Northbound Order Notification' && !extracted.svActionId) {
+      try {
+        const data = JSON.parse(msg.Message.Data);
+        const extId = data.event?.productOrder?.externalId;
+        if (extId) {
+          extracted.svActionId = extId;
+          bru.setVar('svActionId', extId);
+        }
+      } catch (e) {}
+    }
+
+    if (extracted.serviceOrderId && extracted.svActionId) break;
+  }
+
+  console.log('--- Extracted Integration IDs ---');
+  console.log('serviceOrderId:', extracted.serviceOrderId || 'NOT FOUND (order may still be processing)');
+  console.log('svActionId:', extracted.svActionId || 'NOT FOUND (order may still be processing)');
+  console.log('orderId:', bru.getVar('orderId'));
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}

@@ -315,6 +315,12 @@ script:pre-request {
   bru.setVar('eventDate', new Date().toISOString());
 }
 
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setVar('orderId', res.body.id);
+  }
+}
+
 settings {
   encodeUrl: true
   timeout: 0

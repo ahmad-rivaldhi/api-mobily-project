@@ -31,6 +31,11 @@ body:json {
 }
 
 script:pre-request {
+  const orderId = bru.getVar('orderId');
+  const ts = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 16);
+  if (orderId && !bru.getVar('workOrderIdCpe')) {
+    bru.setVar('workOrderIdCpe', '1-cpe-' + orderId + ts);
+  }
   bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());
 }

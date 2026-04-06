@@ -1,7 +1,7 @@
 meta {
-  name: (T1) Code 2040 - Network Problem
+  name: Device Swap Required
   type: http
-  seq: 7
+  seq: 9
 }
 
 post {
@@ -17,24 +17,26 @@ auth:bearer {
 body:json {
   {
     "eventId": "Event-{{orderId}}",
-    "eventTime": "{{eventDate}}",
+    "eventTime": "{{eventTime}}",
     "eventType": "workOrderStateChangeNotification",
     "event": {
       "workOrder": {
         "id": "{{workOrderIdCpe}}",
         "externalId": "{{orderId}}",
-        "state": "COMPLETED",
-        "partition": "VIRTUALVENDOR_Failure",
-        "region": "VIC_Failure",
-        "vendorName": "ventorMob_Failure",
-        "engineerId": "mob-engg-1_Failure",
-        "engineerName": "enggAndy_Failure",
-        "engineerPhone": "+100-56-0019910",
+        "state": "IN WORK",
+        "partition": "VIRTUALVENDOR",
+        "region": "CENTER-CENTER_1",
+        "vendorName": "VIRTUALVENDOR",
+        "engineerId": "MOTTEST03",
+        "engineerName": "MOTTEST03",
+        "engineerPhone": "+966-56-0019900",
         "odbPort": "343",
-        "reasonCode": "2040",
-        "reasonText": "Customer Not Reachable",
-        "comments": "Comment 1 - code2040 Tr.4",
-        "timestamp": "{{eventDate}}"
+        "reasonCode": "2030",
+        "reasonText": "Device Provisioning Request",
+        "oldSerialNumber": "TK3B119001286",
+        "newSerialNumber": "TK3B119001234",
+        "comments": "Engineer Comment",
+        "timestamp": "{{eventTime}}"
       }
     }
   }

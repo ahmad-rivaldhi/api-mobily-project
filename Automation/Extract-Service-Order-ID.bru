@@ -1,0 +1,40 @@
+meta {
+  name: Extract Service Order ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/b2b/message?businessInteractionIds%5B%5D={{orderId}}&maxRows=50&orderBy%5B%5D=%7B%22propertyName%22%3A%22DeliveredDate%22%2C%22direction%22%3A%22DESC%22%7D&startRowIndex=0
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+script:post-response {
+  const rows = res.body?.data?.Rows || [];
+
+  const createSOResponse = rows.find(m => m.Action === 'Create Service Order Response');
+
+  if (createSOResponse) {
+    try {
+      const data = JSON.parse(createSOResponse.Message.Data);
+      if (data.id) {
+        bru.setVar('serviceOrderId', data.id);
+        console.log('serviceOrderId extracted:', data.id);
+      }
+    } catch (e) {
+      console.log('ERROR: Failed to parse Create Service Order Response:', e.message);
+    }
+  } else {
+    console.log('WARNING: "Create Service Order Response" not found. The service order may still be processing. Try again in 30-60 seconds.');
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
