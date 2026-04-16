@@ -22,14 +22,25 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "UPDATE_ORDER",
-        "externalId": "20260211063515",  
-        "orderStatus": "Success",        
-        "providerStatus": "Success",
-        "description": "Suspend Service Successful",
-        "serviceAccNum": "1001269526537281"
+        "externalId": "{{dawiyatOrderId}}",
+        "lineItemIdentifier": "", 
+        "lineItemStatus": "", 
+        "description": "Broadband Service Termination",
+        "orderStatus": "Completed",
+        "comments": "",
+        "providerStatus": "Completed",
+        "providerMilestone": "Completed",
+        "providerComments": "Broadband Service Termination",
+        "orderTransactionNo" : "{{dawiyatTransactionNo}}",
+        "serviceAccNum" : "{{serviceAccNum}}"
       }
     }
   }
+}
+
+vars:pre-request {
+  dawiyatOrderId: DAW20260416041113
+  dawiyatTransactionNo: DAW20260416041113
 }
 
 script:pre-request {

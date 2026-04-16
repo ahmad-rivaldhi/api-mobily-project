@@ -22,6 +22,10 @@ function log(tag, msg) {
   _log(tag, msg);
 }
 
+/** SingleView Provisioning-Completed .bru path (shared by wait + resume replay). */
+const PROVISIONING_COMPLETED_BRU =
+  'Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru';
+
 /**
  * @param {string} projectRoot - Absolute path to repo root (parent of `environments/`, `Authentication/`, etc.)
  * @param {(tag: string, msg: string) => void} [logger] - Optional injectable logger
@@ -180,6 +184,11 @@ async function runBruRequest(bruPath, vars) {
   if (parsed.body) {
     headers['Content-Type'] = 'application/json';
     const substituted = subVars(parsed.body, vars);
+    const unresolved = substituted.match(/\{\{[\w-]+\}\}/g);
+    if (unresolved && unresolved.length) {
+      const keys = [...new Set(unresolved.map((s) => s.replace(/^\{\{|\}\}$/g, '')))];
+      throw new Error(`Missing variables for ${bruPath}: ${keys.join(', ')}`);
+    }
     const cleaned = cleanJsonBody(substituted);
     try {
       JSON.parse(cleaned);
@@ -191,6 +200,11 @@ async function runBruRequest(bruPath, vars) {
     body = cleaned;
   }
 
+  log('HTTP', `${parsed.method} ${url.slice(0, 120)}`);
+  if (bruPath.includes('Provisioning-Completed') || bruPath.includes('UAT-Completed') || bruPath.includes('Pre-Completion')) {
+    log('HTTP', `Body: ${(body || '').slice(0, 400)}`);
+  }
+
   if (parsed.formBody) {
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
     const pairs = {};
@@ -200,7 +214,9 @@ async function runBruRequest(bruPath, vars) {
     body = new URLSearchParams(pairs).toString();
   }
 
-  return httpRequest(parsed.method, url, headers, body);
+  const httpRes = await httpRequest(parsed.method, url, headers, body);
+  log('HTTP', `=> ${httpRes.status} ${httpRes.ok ? 'OK' : 'FAIL'}`);
+  return httpRes;
 }
 
 // ---------------------------------------------------------------------------
@@ -296,21 +312,27 @@ async function doExtractServiceOrderId(vars, maxAttempts = 8, intervalMs = 15000
 
 /**
  * Extract svActionId (the SingleView Reference, e.g. 'MOB-FTTH-01')
- * from the order detail's externalReferences array.
+ * from the order detail response.
+ *
+ * Primary source: CustomerReference field on the order root.
+ * Fallback: externalReferences array (Name field, skipping numeric DB IDs).
  */
 function findSvReferenceInOrderData(data) {
   if (!data || typeof data !== 'object') return null;
 
+  if (data.CustomerReference) return String(data.CustomerReference);
+  if (data.customerReference) return String(data.customerReference);
+
   const refs = data.externalReferences || data.ExternalReferences;
   if (Array.isArray(refs) && refs.length > 0) {
+    log('DEBUG', `externalReferences (${refs.length}): ${JSON.stringify(refs).slice(0, 600)}`);
     for (const r of refs) {
-      const id = r.ID || r.id || r.Value || r.value || r.externalReferenceId || r.ExternalReferenceId;
-      if (id) return String(id);
+      const name = r.Name || r.name || r.ExternalReferenceType || r.externalReferenceType ||
+                   r.ReferenceValue || r.referenceValue;
+      if (name && !/^\d+$/.test(String(name))) return String(name);
     }
   }
 
-  if (data.customerReference) return data.customerReference;
-  if (data.CustomerReference) return data.CustomerReference;
   if (data.Reference) return data.Reference;
   if (data.reference) return data.reference;
 
@@ -318,10 +340,8 @@ function findSvReferenceInOrderData(data) {
 }
 
 async function doExtractSvActionId(vars, maxAttempts = 8, intervalMs = 15000) {
-  log('BRIDGE', 'Extracting svActionId (Reference) from order detail...');
-  const baseUrl = vars['demo-mob-dev'];
-  const orderId = vars.orderId;
-  const url = `${baseUrl}/portal/api/order/order/${orderId}?includeBusinessInteractionVersion=All`;
+  log('BRIDGE', 'Extracting svActionId (CustomerReference) from order detail...');
+  const url = buildOrderDetailUrl(vars);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -368,9 +388,7 @@ function deepFindCharacteristic(obj, charId) {
 
 async function doExtractWorkOrderIds(vars, opts = {}, maxAttempts = 6, intervalMs = 10000) {
   log('BRIDGE', 'Extracting workOrderIds from order detail...');
-  const baseUrl = vars['demo-mob-dev'];
-  const orderId = vars.orderId;
-  const url = `${baseUrl}/portal/api/order/order/${orderId}?includeBusinessInteractionVersion=All`;
+  const url = buildOrderDetailUrl(vars);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -407,9 +425,7 @@ async function doExtractWorkOrderIds(vars, opts = {}, maxAttempts = 6, intervalM
 
 async function doExtractOdbPatchActionId(vars, maxAttempts = 8, intervalMs = 15000) {
   log('BRIDGE', 'Polling for ODB Patching Action Response...');
-  const baseUrl = vars['demo-mob-dev'];
-  const orderId = vars.orderId;
-  const url = `${baseUrl}/portal/api/b2b/message?businessInteractionIds%5B%5D=${orderId}&maxRows=50&orderBy%5B%5D=%7B%22propertyName%22%3A%22DeliveredDate%22%2C%22direction%22%3A%22DESC%22%7D&startRowIndex=0`;
+  const url = buildB2bUrl(vars);
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -427,6 +443,10 @@ async function doExtractOdbPatchActionId(vars, maxAttempts = 8, intervalMs = 150
             }
           } catch {}
         }
+        if (isOdbPatchAlreadyCompleted(msg)) {
+          log('BRIDGE', 'ODB Patching already completed (Create ODB Patch Action Notification found) — skipping extract');
+          return;
+        }
       }
     } catch (e) {
       log('WARN', `Poll error: ${e.message}`);
@@ -440,6 +460,25 @@ async function doExtractOdbPatchActionId(vars, maxAttempts = 8, intervalMs = 150
   throw new Error('Timed out waiting for ODB Patching Action Response');
 }
 
+/**
+ * Check if a B2B message indicates ODB patching was already completed
+ * (the ODB Patch Notification .bru was sent and acknowledged).
+ */
+function isOdbPatchAlreadyCompleted(msg) {
+  const action = msg.Action || '';
+  if (!action.includes('ODB Patch') && !action.includes('Action Notification')) return false;
+  try {
+    const d = JSON.parse(msg.Message?.Data || '{}');
+    const rt =
+      d.resolutionText ||
+      d.event?.action?.resolutionText ||
+      d.action?.resolutionText ||
+      '';
+    if (rt === 'ODB Patching Completed') return true;
+  } catch {}
+  return false;
+}
+
 function buildB2bUrl(vars) {
   const baseUrl = vars['demo-mob-dev'];
   const orderId = vars.orderId;
@@ -448,7 +487,7 @@ function buildB2bUrl(vars) {
 
 function buildOrderDetailUrl(vars) {
   const baseUrl = vars['demo-mob-dev'];
-  return `${baseUrl}/portal/api/order/order/${vars.orderId}?includeBusinessInteractionVersion=All`;
+  return `${baseUrl}/portal/api/order/order/${vars.orderId}?includeBusinessInteractionVersion=All&includeInventory=true&enrichElements=Specification,PartyRole,Offering,Place`;
 }
 
 /**
@@ -543,25 +582,30 @@ function extractInventoryId(data) {
 }
 
 /**
- * Wait for an order to reach a target state.
- *
- * Primary: polls B2B messages for "State Change Notification" whose payload
- *          contains the target sub-state (e.g. "In Progress|Provisioning Completed").
- *          This is the leading indicator — the notification is generated immediately.
- * Fallback: checks the order detail API InteractionSubState.
+ * Wait for an order to reach a target state (B2B first, then portal detail).
+ * If waiting for Pending UAT while detail is still Provisioning Completed, the SV
+ * Provisioning-Completed call may be missing — see auto-retry branch below.
  */
+function needsProvisioningNotifyBeforePendingUat(subState, specificTarget) {
+  if (specificTarget !== 'Pending UAT') return false;
+  if (!subState) return false;
+  const s = String(subState).trim();
+  if (s.includes('Pending UAT')) return false;
+  return s === 'Provisioning Completed' || s.includes('Provisioning Completed');
+}
+
 async function doWaitForOrderState(vars, targetState, maxAttempts = 20, intervalMs = 15000) {
   const targetParts = targetState.split('|').map(s => s.trim());
   const specificTarget = targetParts[targetParts.length - 1];
   log('STATE', `Waiting for state: ${specificTarget}...`);
 
+  let autoProvisioningNotifyAttempted = false;
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    let b2bFound = false;
     try {
-      // --- Primary: B2B state change notifications ---
       const b2bRes = await httpRequest('GET', buildB2bUrl(vars), { 'Authorization': `Bearer ${vars.authToken}` });
       const rows = b2bRes.body?.data?.Rows || [];
-
-      let b2bFound = false;
       for (const msg of rows) {
         const action = msg.Action || '';
         if (!action.includes('State Change')) continue;
@@ -576,23 +620,51 @@ async function doWaitForOrderState(vars, targetState, maxAttempts = 20, interval
             b2bFound = true;
             break;
           }
-        } catch {}
+        } catch {
+          /* skip malformed B2B row */
+        }
       }
-      if (b2bFound) return;
+    } catch (e) {
+      log('WARN', `B2B poll error: ${e.message}`);
+    }
+    if (b2bFound) return;
 
-      // --- Fallback: order detail API ---
+    let subState = null;
+    try {
       const detailRes = await httpRequest('GET', buildOrderDetailUrl(vars), { 'Authorization': `Bearer ${vars.authToken}` });
       const data = detailRes.body?.data || detailRes.body;
-      const subState = extractSubState(data);
+      subState = extractSubState(data);
       if (subState && targetParts.includes(subState)) {
         log('STATE', `Order detail matched: "${subState}"`);
         return;
       }
-
-      log('STATE', `Attempt ${attempt}/${maxAttempts} — detail: "${subState || 'N/A'}", B2B: no match yet, target: ${specificTarget} (${intervalMs / 1000}s)...`);
     } catch (e) {
-      log('WARN', `State check error: ${e.message}`);
+      log('WARN', `Order detail error: ${e.message}`);
     }
+
+    // Not wrapped in try/catch: failures must fail the journey (previously swallowed here).
+    if (
+      needsProvisioningNotifyBeforePendingUat(subState, specificTarget) &&
+      !vars._svProvisioningCompletedOk &&
+      !autoProvisioningNotifyAttempted
+    ) {
+      autoProvisioningNotifyAttempted = true;
+      log(
+        'BRIDGE',
+        'Order is still at Provisioning Completed — sending SV Provisioning-Completed (required before Pending UAT)',
+      );
+      const res = await doNotification(vars, PROVISIONING_COMPLETED_BRU);
+      if (!res.ok) {
+        throw new Error(
+          `SV Provisioning-Completed failed (${res.status}) while waiting for Pending UAT. ` +
+            `Fix svActionId / auth or send manually. Body: ${JSON.stringify(res.body).slice(0, 300)}`,
+        );
+      }
+      await delay(3000);
+      continue;
+    }
+
+    log('STATE', `Attempt ${attempt}/${maxAttempts} — detail: "${subState || 'N/A'}", B2B: no match yet, target: ${specificTarget} (${intervalMs / 1000}s)...`);
 
     if (attempt < maxAttempts) {
       await delay(intervalMs);
@@ -608,6 +680,9 @@ async function doNotification(vars, bruFile) {
   log('STEP', label);
 
   const res = await runBruRequest(bruFile, vars);
+  if (bruFile.includes('Provisioning-Completed.bru') && res.ok) {
+    vars._svProvisioningCompletedOk = true;
+  }
   if (!res.ok) {
     log('WARN', `${label} => ${res.status}: ${JSON.stringify(res.body).slice(0, 200)}`);
   }
@@ -661,14 +736,16 @@ async function doCheckState(vars) {
   }
 
   const inventoryId = extractInventoryId(data);
-  let svActionId = vars.svActionId || null;
-
-  if (!svActionId) {
-    const ref = findSvReferenceInOrderData(data);
-    if (ref) {
-      svActionId = ref;
-      vars.svActionId = ref;
-    }
+  /** Order detail CustomerReference always wins over env / stale numeric IDs. */
+  const refFromDetail = findSvReferenceInOrderData(data);
+  let svActionId = refFromDetail || null;
+  if (!svActionId && vars.svActionId && !isNumericDbSvActionId(vars.svActionId)) {
+    svActionId = vars.svActionId;
+  }
+  if (svActionId) {
+    vars.svActionId = svActionId;
+  } else {
+    delete vars.svActionId;
   }
 
   const state = orderDetailState || b2bState || null;
@@ -723,7 +800,7 @@ async function doExtractAllIds(vars, opts = {}) {
   const orderId = vars.orderId;
   if (orderId && vars.authToken) {
     try {
-      const detailUrl = `${baseUrl}/portal/api/order/order/${orderId}?includeBusinessInteractionVersion=All&includeInventory=true`;
+      const detailUrl = buildOrderDetailUrl(vars);
       const res = await httpRequest('GET', detailUrl, { 'Authorization': `Bearer ${vars.authToken}` });
       const data = res.body?.data || res.body;
       if (data) {
@@ -743,6 +820,9 @@ async function doExtractAllIds(vars, opts = {}) {
         if (ref) {
           vars.svActionId = ref;
           out.svActionId = ref;
+        } else if (isNumericDbSvActionId(out.svActionId)) {
+          out.svActionId = null;
+          delete vars.svActionId;
         }
         const invId = extractInventoryId(data);
         if (invId) {
@@ -780,6 +860,9 @@ async function doExtractAllIds(vars, opts = {}) {
           }
         } catch {}
       }
+      if (!out.odbPatchCompleted && isOdbPatchAlreadyCompleted(msg)) {
+        out.odbPatchCompleted = true;
+      }
     }
   } catch (e) {
     log('WARN', `doExtractAllIds B2B: ${e.message}`);
@@ -789,7 +872,7 @@ async function doExtractAllIds(vars, opts = {}) {
 }
 
 const SV_NOTIFICATION_BY_TYPE = {
-  'provisioning-completed': 'Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
+  'provisioning-completed': PROVISIONING_COMPLETED_BRU,
   'uat-completed': 'Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
   'pre-completion': 'Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
   'odb-patch': 'Shared-Workflows/SingleView-Integration/Custom-Notifications/ODB-Patch-Notification.bru',
@@ -1133,6 +1216,33 @@ const MOBILY_FIELDWORK_LABELS = [
   { num: 17, label: 'Verify Completed' },
 ];
 
+/**
+ * Portal InteractionSubState / B2B productOrder.state → journey step (Mobily field-work journeys).
+ * Maps common "In Progress" sub-states so Detect position + resume work (not only coarse states).
+ */
+const MOBILY_FIELDWORK_STATE_MAP = {
+  'Pending Visit': 6,
+  'In Progress': 8,
+  'Provisioning Started': 9,
+  'Provisioning Completed': 10,
+  'Pending UAT': 12,
+  'UAT Completed': 14,
+  'Pre-Completion': 16,
+  'Completed': 17,
+};
+
+/** OpenAccess field-work journeys (different step numbers than Mobily). */
+const OA_FIELDWORK_STATE_MAP = {
+  'Pending Visit': 4,
+  'In Progress': 6,
+  'Provisioning Started': 7,
+  'Provisioning Completed': 8,
+  'Pending UAT': 10,
+  'UAT Completed': 12,
+  'Pre-Completion': 14,
+  'Completed': 15,
+};
+
 const OA_FIELDWORK_LABELS = [
   { num: 1, label: 'Auth' },
   { num: 2, label: 'Create Order' },
@@ -1241,7 +1351,7 @@ const JOURNEY_REGISTRY = {
     ],
     build: (opts) => buildMobilyActivation(opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 6, 'In Progress': 8, 'Provisioning Completed': 10, 'Pending UAT': 12, 'UAT Completed': 14, 'Pre-Completion': 16, 'Completed': 17 },
+    stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
   'mobily-failure': {
     label: 'Installation Failure',
@@ -1259,7 +1369,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildMobilyFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 6, 'In Progress': 8, 'Provisioning Completed': 10, 'Pending UAT': 12, 'UAT Completed': 14, 'Pre-Completion': 16, 'Completed': 17 },
+    stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
   'mobily-device-swap-cpe': {
     label: 'Device Swap (CPE)',
@@ -1267,7 +1377,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildMobilyFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - CPE - Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 6, 'In Progress': 8, 'Provisioning Completed': 10, 'Pending UAT': 12, 'UAT Completed': 14, 'Pre-Completion': 16, 'Completed': 17 },
+    stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
   'mobily-device-swap-hag': {
     label: 'Device Swap (HAG)',
@@ -1275,7 +1385,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildMobilyFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - HAG - Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 6, 'In Progress': 8, 'Provisioning Completed': 10, 'Pending UAT': 12, 'UAT Completed': 14, 'Pre-Completion': 16, 'Completed': 17 },
+    stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
   'mobily-rewiring': {
     label: 'Rewiring',
@@ -1283,7 +1393,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildMobilyFieldWork('08-Rewiring/01-Create-Rewiring-Order-TMF622/Rewiring Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 6, 'In Progress': 8, 'Provisioning Completed': 10, 'Pending UAT': 12, 'UAT Completed': 14, 'Pre-Completion': 16, 'Completed': 17 },
+    stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
   'mobily-upgrade': {
     label: 'Upgrade',
@@ -1333,7 +1443,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOpenAccessActivation('DAWIYAT', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'dawiyat-failure': {
     label: 'Installation Failure',
@@ -1351,7 +1461,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation Dowiyat.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'dawiyat-device-swap': {
     label: 'Device Swap (ONT)',
@@ -1359,7 +1469,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - ONT - DOWIYAT.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'dawiyat-rewiring': {
     label: 'Rewiring',
@@ -1367,7 +1477,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('08-Rewiring/01-Create-Rewiring-Order-TMF622/Rewiring Dowiyat.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'dawiyat-suspend': {
     label: 'Suspend',
@@ -1409,7 +1519,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOpenAccessActivation('STC', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'stc-failure': {
     label: 'Installation Failure',
@@ -1427,7 +1537,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation STC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'stc-device-swap': {
     label: 'Device Swap (ONT)',
@@ -1435,7 +1545,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - ONT - STC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'stc-suspend': {
     label: 'Suspend',
@@ -1477,7 +1587,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOpenAccessActivation('ITC', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'itc-failure': {
     label: 'Installation Failure',
@@ -1495,7 +1605,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation ITC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'itc-device-swap': {
     label: 'Device Swap (ONT)',
@@ -1503,7 +1613,7 @@ const JOURNEY_REGISTRY = {
     options: [ME_OPTION],
     build: (opts) => buildOAFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - ONT - ITC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
-    stateMap: { 'Pending Visit': 4, 'In Progress': 6, 'Provisioning Completed': 8, 'Pending UAT': 10, 'UAT Completed': 12, 'Pre-Completion': 14, 'Completed': 15 },
+    stateMap: OA_FIELDWORK_STATE_MAP,
   },
   'itc-suspend': {
     label: 'Suspend',
@@ -1608,7 +1718,8 @@ function listJourneyTree() {
  */
 function resolveStepFromStateString(raw, stateMap) {
   if (!raw || !stateMap) return null;
-  const s = String(raw).trim();
+  let s = String(raw).trim();
+  s = s.replace(/\s*\|\s*/g, '|');
   if (stateMap[s] != null) return stateMap[s];
   const parts = s.split('|').map(x => x.trim()).filter(Boolean);
   for (let i = parts.length - 1; i >= 0; i--) {
@@ -1673,8 +1784,29 @@ function mergePreseedVars(vars, opts) {
   ];
   for (const k of keys) {
     if (opts[k] !== undefined && opts[k] !== null && opts[k] !== '') {
+      if (k === 'svActionId' && /^\d+$/.test(String(opts[k]))) {
+        log('WARN', `Ignoring numeric svActionId "${opts[k]}" (likely a DB row ID, not the SV reference like MOB-FTTH-xx). Will re-extract.`);
+        continue;
+      }
       vars[k] = opts[k];
     }
+  }
+}
+
+/** SingleView externalId must be CustomerReference (e.g. MOB-FTTH-01), not a numeric externalReferences row ID. */
+function isNumericDbSvActionId(val) {
+  if (val == null || val === '') return false;
+  return /^\d+$/.test(String(val).trim());
+}
+
+/**
+ * Remove invalid svActionId from vars (env file or stale cache often has "168325").
+ * Otherwise resume skips extractSvActionId and the wrong value is sent to SingleView.
+ */
+function stripInvalidSvActionId(vars) {
+  if (isNumericDbSvActionId(vars.svActionId)) {
+    log('WARN', `Removing numeric svActionId "${vars.svActionId}" from env/vars (use CustomerReference like MOB-FTTH-xx). Will re-extract.`);
+    delete vars.svActionId;
   }
 }
 
@@ -1682,6 +1814,123 @@ function shouldSkipStep(step, resumeFrom) {
   if (resumeFrom == null || resumeFrom <= 1) return false;
   if (step.step == null) return false;
   return step.step < resumeFrom;
+}
+
+/**
+ * Last journey step# that still runs an action needing this extract (Mobily / OA patterns).
+ * If resumeFrom is above this, do not force the extract — user is past that phase (e.g. Pre-Completion resume must not poll ODB).
+ */
+function maxResumeStillNeedsExtract(journeyName, stepType) {
+  const oa = new Set(['dawiyat-activation', 'stc-activation', 'itc-activation']);
+  if (oa.has(journeyName)) {
+    if (stepType === 'extractWorkOrderIds') return 4;
+    if (stepType === 'extractServiceOrderId') return 6;
+    if (stepType === 'extractSvActionId') return 14;
+    return null;
+  }
+  const mobilyFw = new Set([
+    'mobily-activation',
+    'mobily-relocation',
+    'mobily-device-swap-cpe',
+    'mobily-device-swap-hag',
+    'mobily-rewiring',
+  ]);
+  if (mobilyFw.has(journeyName)) {
+    if (stepType === 'extractOdbPatchActionId') return 5;
+    if (stepType === 'extractWorkOrderIds') return 6;
+    if (stepType === 'extractServiceOrderId') return 8;
+    if (stepType === 'extractSvActionId') return 16;
+    return null;
+  }
+  return null;
+}
+
+/** When resuming past an extract step, re-run it if the ID was not pre-seeded (otherwise notify .bru may never fire). */
+function shouldForceExtractOnResume(step, resumeFrom, vars, journeyName) {
+  if (!shouldSkipStep(step, resumeFrom)) return false;
+  if (!vars.orderId) return false;
+  const maxNeed = maxResumeStillNeedsExtract(journeyName, step.type);
+  if (maxNeed != null && resumeFrom > maxNeed) return false;
+  switch (step.type) {
+    case 'extractSvActionId':
+      return !vars.svActionId || isNumericDbSvActionId(vars.svActionId);
+    case 'extractServiceOrderId':
+      return !vars.serviceOrderId;
+    case 'extractWorkOrderIds':
+      return !vars.workOrderIdCpe;
+    case 'extractOdbPatchActionId':
+      return !vars.odbPatchActionId;
+    default:
+      return false;
+  }
+}
+
+function parseResumeFrom(raw) {
+  if (raw == null || raw === '') return 1;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 1) {
+    throw new Error(`Invalid resumeFrom: ${JSON.stringify(raw)} (expected integer ≥ 1)`);
+  }
+  return Math.floor(n);
+}
+
+function logResumeFirstExecutableSteps(steps, resumeFrom, vars, journeyName) {
+  if (resumeFrom <= 1) return;
+  const names = [];
+  for (const step of steps) {
+    if (shouldSkipStep(step, resumeFrom) && !shouldForceExtractOnResume(step, resumeFrom, vars, journeyName)) {
+      continue;
+    }
+    const kind = step.type || '?';
+    const sn = step.step != null ? String(step.step) : '?';
+    const file = step.file ? path.basename(step.file) : step.state || step.label || '';
+    names.push(`${kind}@${sn}${file ? ` (${file})` : ''}`);
+    if (names.length >= 5) break;
+  }
+  if (names.length) {
+    log('START', `Resume will execute first (up to 5): ${names.join(' → ')}`);
+  }
+}
+
+/**
+ * Resume often skips step 10 (SV Provisioning-Completed) when resumeFrom is 11+ or Detect sets a higher step,
+ * while the portal is still at Provisioning Completed — send the notify once before the main loop.
+ */
+async function maybeReplayProvisioningNotifyIfSkipped(steps, resumeFrom, vars) {
+  if (resumeFrom <= 1) return;
+  const prov = steps.find(s => s.type === 'notify' && s.file && s.file.includes('Provisioning-Completed.bru'));
+  if (!prov || prov.step == null) return;
+  if (!shouldSkipStep(prov, resumeFrom)) return;
+  if (vars._svProvisioningCompletedOk) return;
+  if (!vars.orderId) {
+    log('WARN', 'Resume skipped Provisioning-Completed step but orderId is missing — cannot replay');
+    return;
+  }
+
+  let subState = null;
+  try {
+    const detailRes = await httpRequest('GET', buildOrderDetailUrl(vars), { 'Authorization': `Bearer ${vars.authToken}` });
+    const data = detailRes.body?.data || detailRes.body;
+    subState = extractSubState(data);
+  } catch (e) {
+    log('WARN', `Resume provisioning replay: could not read order detail: ${e.message}`);
+    return;
+  }
+  if (!needsProvisioningNotifyBeforePendingUat(subState, 'Pending UAT')) return;
+
+  log(
+    'BRIDGE',
+    'Resume skipped SV Provisioning-Completed step but order is still at Provisioning Completed — sending notify now',
+  );
+  if (!vars.svActionId) {
+    await doExtractSvActionId(vars);
+  }
+  const res = await doNotification(vars, prov.file);
+  if (!res.ok) {
+    throw new Error(
+      `SV Provisioning-Completed failed (${res.status}) on resume replay. ${JSON.stringify(res.body).slice(0, 300)}`,
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1706,7 +1955,7 @@ function shouldSkipStep(step, resumeFrom) {
  * @param {(info: { journeyName: string, envName: string, step: object, vars: object }) => void | Promise<void>} [onStep]
  */
 async function runJourney(journeyName, envName, opts = {}, onStep) {
-  const resumeFrom = opts.resumeFrom != null ? Number(opts.resumeFrom) : 1;
+  const resumeFrom = parseResumeFrom(opts.resumeFrom != null ? opts.resumeFrom : 1);
 
   log('START', `Journey: ${journeyName}`);
   log('START', `Env: ${envName} | ME: ${opts.me || 0} | Payment: ${opts.paymentType || 'Postpaid'}`);
@@ -1722,6 +1971,7 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
 
   const vars = parseEnvFile(envName);
   mergePreseedVars(vars, opts);
+  stripInvalidSvActionId(vars);
 
   const steps = journeyFn(opts);
 
@@ -1736,10 +1986,25 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
     log('AUTH', 'Skipping auth (resumeFrom > 1 and authToken present)');
   }
 
+  if (resumeFrom > 1) {
+    log('DEBUG', `Resume vars: orderId=${vars.orderId || 'MISSING'}, svActionId=${vars.svActionId || 'MISSING'}, authToken=${vars.authToken ? 'present' : 'MISSING'}`);
+  }
+
+  logResumeFirstExecutableSteps(steps, resumeFrom, vars, journeyName);
+  await maybeReplayProvisioningNotifyIfSkipped(steps, resumeFrom, vars);
+
   for (const step of steps) {
-    if (shouldSkipStep(step, resumeFrom)) {
+    const skip = shouldSkipStep(step, resumeFrom);
+    const forceExtract = skip && shouldForceExtractOnResume(step, resumeFrom, vars, journeyName);
+
+    if (skip && !forceExtract) {
       continue;
     }
+    if (forceExtract) {
+      log('BRIDGE', `Resume: running skipped ${step.type} (required ID not pre-seeded)`);
+    }
+
+    log('RUN', `Step ${step.step} [${step.type}]${step.file ? ' ' + path.basename(step.file, '.bru') : ''}${step.state ? ' state=' + step.state : ''}`);
 
     if (typeof onStep === 'function') {
       await onStep({ journeyName, envName, step, vars });
@@ -1757,7 +2022,19 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
       case 'notify':
         notifyNum++;
         log('PROGRESS', `[${notifyNum}/${notifyCount}]`);
-        await doNotification(vars, step.file);
+        {
+          const nRes = await doNotification(vars, step.file);
+          if (!nRes.ok) {
+            log('ERROR', `Notify ${path.basename(step.file, '.bru')} FAILED: HTTP ${nRes.status} — ${JSON.stringify(nRes.body).slice(0, 300)}`);
+          } else {
+            log('OK', `Notify ${path.basename(step.file, '.bru')} => HTTP ${nRes.status}`);
+          }
+          if (step.file && step.file.includes('Provisioning-Completed.bru') && !nRes.ok) {
+            throw new Error(
+              `SV Provisioning-Completed failed (${nRes.status}). Cannot continue. ${JSON.stringify(nRes.body).slice(0, 300)}`,
+            );
+          }
+        }
         if (step.delay > 0) await delay(step.delay);
         break;
 
@@ -1772,6 +2049,7 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
 
       case 'extractSvActionId':
         await doExtractSvActionId(vars);
+        log('DEBUG', `After extractSvActionId: svActionId=${vars.svActionId || 'STILL MISSING'}`);
         break;
 
       case 'extractOdbPatchActionId':

@@ -1,0 +1,49 @@
+meta {
+  name: Step-03-STC-InProgress
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{stcInstallationId}}",
+        "lineItemIdentifier": "F001-{{stcInstallationId}}-1846",
+        "lineItemStatus": "COMPLETED",
+        "description": "Success",
+        "orderStatus": "InProgress",
+        "comments": "",
+        "providerStatus": "InProgress",
+        "providerMilestone": "",
+        "providerComments": "",
+        "orderTransactionNo": "{{stcInstallationId}}",
+        "serviceAccNum": "{{customerSAN}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

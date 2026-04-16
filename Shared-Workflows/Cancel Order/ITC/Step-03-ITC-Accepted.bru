@@ -1,0 +1,48 @@
+meta {
+  name: Step-03-ITC-Accepted
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Engineer accepts the Task at {{eventTime}}",
+        "orderStatus": "Accepted",
+        "comments": "",
+        "providerStatus": "Accepted",
+        "providerMilestone": "",
+        "providerComments": "Engineer accepts the Task at {{eventTime}}",
+        "serviceAccNum": "{{customerSAN}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

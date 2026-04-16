@@ -1,0 +1,48 @@
+meta {
+  name: Step-02-ITC-Assigned
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Create Task, start time is {{eventTime}}",
+        "orderStatus": "Assigned",
+        "comments": "",
+        "providerStatus": "Assigned",
+        "providerMilestone": "",
+        "providerComments": "Create Task, start time is {{eventTime}}",
+        "serviceAccNum": "{{customerSAN}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

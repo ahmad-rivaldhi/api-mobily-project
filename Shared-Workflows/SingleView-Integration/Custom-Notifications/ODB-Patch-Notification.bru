@@ -30,6 +30,10 @@ body:json {
   
 }
 
+vars:pre-request {
+  odbPatchActionId: 20251003111940
+}
+
 script:pre-request {
   bru.setVar('eventTime', new Date().toISOString());
   bru.setVar('eventDate', new Date().toISOString());

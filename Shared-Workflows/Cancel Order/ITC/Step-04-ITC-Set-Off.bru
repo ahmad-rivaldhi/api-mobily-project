@@ -1,0 +1,48 @@
+meta {
+  name: Step-04-ITC-Set-Off
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "UPDATE_ORDER",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Engineer starts out at {{eventTime}}",
+        "orderStatus": "Set Off",
+        "comments": "",
+        "providerStatus": "Set Off",
+        "providerMilestone": "",
+        "providerComments": "Engineer starts out at {{eventTime}}",
+        "serviceAccNum": "{{customerSAN}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

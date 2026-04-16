@@ -1,0 +1,50 @@
+meta {
+  name: Step-05-ITC-Failure
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventTime}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "ITC_ORDER_UPDATE",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "New installation with 40m cable old cable ATB cut",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Failure",
+        "providerMilestone": "",
+        "providerComments": "Customer requested to cancel",
+        "serviceAccNum": "{{customerSAN}}",
+        "rejectionCode": "No Details",
+        "rejectionDescription": "Customer requested to cancel"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

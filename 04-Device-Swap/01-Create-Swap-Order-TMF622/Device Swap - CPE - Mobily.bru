@@ -271,7 +271,7 @@ script:pre-request {
 
 script:post-response {
   if (res.body && res.body.id) {
-    bru.setVar('orderId', res.body.id);
+    console.log('orderId:', res.body.id);
   }
 }
 
