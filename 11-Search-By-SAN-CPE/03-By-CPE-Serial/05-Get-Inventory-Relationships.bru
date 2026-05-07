@@ -1,0 +1,37 @@
+meta {
+  name: 05 - Get Inventory Relationships
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/inventory/{{inventoryId}}/relationships?verbose=true&count=200
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  count: 200
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  List semua Business Interaction (CustomerOrder, SalesOrder)
+  yang pernah/sedang pakai CPE ini.
+
+  Di response cari:
+    - businessInteractionId / relatedBusinessInteraction[].id
+    - type (ProductOrder / CustomerOrder / SalesOrder)
+
+  Inilah jawaban "CPE SN X dipakai di order mana saja" termasuk
+  history (NewActivation, DeviceSwap, Relocation, dsb.).
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

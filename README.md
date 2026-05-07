@@ -34,13 +34,13 @@ FTTH - Mobily - Project/
 ├── 02-New-Activation/                # 🟢 New FTTH Installation
 │   ├── 01-Create-Order-TMF622/       # Product orders (Mobily/OpenAccess)
 │   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/     # Postpaid & Prepaid
-│   │   │   └── Royal-Customer/       # Postpaid
-│   │   └── OpenAccess/               # DAWIYAT, ITC, STC
+│   │   │   ├── Regular-Customer/     # Postpaid & Prepaid (FTTH CONSUMER)
+│   │   │   └── Royal-Customer/       # Postpaid          (FTTH RCY)
+│   │   └── OpenAccess/               # DAWIYAT, ITC, STC, ACES
 │   ├── 02-TMF641-Notifications/      # Service order notifications
 │   ├── 03-WFM-CPE-Installation/      # CPE installation workflow (9 steps)
 │   ├── 04-WFM-ME-Installation/       # Mesh Extender installation
-│   ├── 05-OpenAccess-Provider-Workflow/  # DAWIYAT/ITC/STC workflows
+│   ├── 05-OpenAccess-Provider-Workflow/  # DAWIYAT/ITC/STC/ACES workflows
 │   ├── 06-SingleView-Integration/    # Appointments, Completion, Cancellation
 │   └── 07-Installation-Failure-Scenarios/ # Failure codes & recovery
 │
@@ -83,6 +83,11 @@ FTTH - Mobily - Project/
 │
 ├── 10-Request-Update/                # 📋 Order Status Updates
 │
+├── 11-Search-By-SAN-CPE/             # 🔎 Lookup SAN & CPE Serial Number
+│   ├── 01-By-Order-ID/               # Order ID → SAN & CPE SN
+│   ├── 02-By-SAN/                    # SAN → all orders
+│   └── 03-By-CPE-Serial/             # CPE SN → all orders
+│
 └── Documentation/                    # 📄 Reference documents (PDFs)
 ```
 
@@ -105,7 +110,108 @@ FTTH - Mobily - Project/
 - `customerId`, `customerSAN`, `customerCAN` - Customer details
 - `ftthSAI`, `feasibilityId`, `odbId` - FTTH specific IDs
 - `meshExtender1/2/3` - Mesh extender integration IDs
-- `dawiyatInstallationId`, `itcInstallationId`, `stcInstallationId` - Provider IDs
+- `dawiyatInstallationId`, `itcInstallationId`, `stcInstallationId`, `acesInstallationId` - Provider IDs
+- `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber` - ACES-specific IDs
+- `customerCategory`, `networkCategory` - **TMF 622 Phase 4B** characteristic defaults (overridden per-folder)
+
+---
+
+## 🆕 **What's New (Phase 4B - 18 Apr update)**
+
+### 1. `networkCategory` is now mandatory in all TMF 622 payloads
+
+The `Documentation/TMF 622 - Updated - 18 Apr.pdf` introduces a new mandatory
+characteristic on every Create Product Order request:
+
+| Customer Type | `customerCategory` | `networkCategory` |
+|---------------|--------------------|-------------------|
+| Regular       | `Regular`          | `FTTH CONSUMER`   |
+| Royal (RCY)   | `Royal`            | `FTTH RCY`        |
+| VIP           | `Vip`              | `FTTH CONSUMER`   |
+
+`networkCategory` is now the **primary differentiator** between Regular and
+RCY customers — replacing the historical practice of relying on separate folders.
+
+#### How this is wired in the collection (single source of truth)
+
+Every TMF 622 `.bru` references the values via `{{customerCategory}}` and
+`{{networkCategory}}`. The actual values are sourced from folder-level
+`vars:pre-request` blocks:
+
+| Folder | `customerCategory` | `networkCategory` |
+|--------|---------------------|---------------------|
+| `02-New-Activation/01-Create-Order-TMF622/Mobily/Regular-Customer/folder.bru` | `Regular` | `FTTH CONSUMER` |
+| `02-New-Activation/01-Create-Order-TMF622/Mobily/Royal-Customer/folder.bru`   | `Royal`   | `FTTH RCY`      |
+| `02-New-Activation/01-Create-Order-TMF622/OpenAccess/folder.bru`              | `Regular` | `FTTH CONSUMER` |
+
+Override at the request level (in another `vars:pre-request` block inside the
+`.bru`) only when you need to test an edge case (e.g. an OA Royal scenario).
+
+### 2. New Open Access Provider — **ACES**
+
+ACES is a new infrastructure provider added in phase 4B. Notification flows
+are mapped under:
+
+`02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/`
+
+| Sub-folder | Statuses covered |
+|------------|-------------------|
+| Activation-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
+| Cancellation-Service-Installation   | Received → Accepted → In Progress → Cancelled |
+| Modification-Service-Installation   | Completed |
+| DeviceSwap-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
+| Relocation-Service-Installation     | Accepted → In Progress → Completed |
+| Rewiring-Service-Installation       | Accepted → In Progress → Completed |
+| Suspend-Service-Installation        | Completed |
+| Resume-Service-Installation         | Completed |
+| Termination-Service-Installation    | Completed |
+| TroubleTicket-Notification          | Resolved / Rejected |
+
+Source samples: `aces/*.json` (collection root).
+
+> **Installation Failure for ACES = TBD.** A placeholder folder is prepared at
+> `Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ACES - Installation Failure Notification/`
+> with a starter `(T0)` request based on the provisional sample. Final
+> failure scenarios will be populated once the OA team confirms the contract.
+
+---
+
+### 3. New OpenAccess Activation Automation (provider-side flow)
+
+The journey runner (`Automation/journey-runner.js`) now drives **all four**
+OA providers (STC, ITC, ACES, DAWIYAT) through the **provider-side**
+activation flow — the providers' own Service-Installation notification API
+replaces the Mobily WFM-CPE workflow:
+
+| Journey ID         | Provider | Flow |
+|--------------------|----------|------|
+| `stc-activation`     | STC      | Create Order → **STC SQ Notifs (Ordered → Completed → Closed)** → STC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `itc-activation`     | ITC      | Create Order → ITC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `aces-activation` 🆕 | ACES     | Create Order → ACES Activation Notifs (4 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `dawiyat-activation` | DAWIYAT  | Create Order → DAWIYAT Activation Notifs (7 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+
+> ⚠️ **Difference from Mobily activation:** OA flows do **NOT** use the
+> WFM-CPE-Workflow folder and do **NOT** include the SV `UAT-Completed` step.
+> Provider notifications come from each provider's own
+> `02-OpenAccess-Provider-Workflow/<PROVIDER>/Activation-Service-Installation/`
+> folder.
+
+**Run examples:**
+
+```bash
+node Automation/journey-runner.js --env "Dev 3" --journey aces-activation
+node Automation/journey-runner.js --env "Dev 3" --journey stc-activation --me 1
+node Automation/journey-runner.js --env "Dev 3" --journey itc-activation
+```
+
+**Required env vars per provider:**
+
+| Provider | Required vars in `environments/<env>.bru` |
+|----------|--------------------------------------------|
+| STC      | `stcInstallationId`, `stcSqId` |
+| ITC      | `itcInstallationId` |
+| ACES     | `acesInstallationId`, `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber` |
+| DAWIYAT  | `dawiyatInstallationId` |
 
 ---
 
@@ -214,6 +320,28 @@ FTTH - Mobily - Project/
 
 - Get Order status
 - Trigger update for specific provider (Mobily/DAWIYAT/ITC)
+
+---
+
+### **11 - Search By SAN & CPE Serial** 🔎
+> Lookup SAN / CPE Serial Number via CSG Telflow Portal Internal API
+
+Base path riil = **`/portal/api/v1/...`** (bukan `/api/v1/...` dari swagger).
+
+**Insight kunci:** SAN & cpeSerialNumber **tersimpan sebagai nested Characteristic**:
+```json
+{ "Characteristic": { "ID": "san" },             "Value": "23532557" }
+{ "Characteristic": { "ID": "cpeSerialNumber" }, "Value": "TK3B119002209-test" }
+```
+Swagger tidak punya filter characteristic langsung, jadi dua strategi dipakai:
+
+| Folder | Strategi A (fast) | Strategi B (reliable) |
+|--------|-------------------|-----------------------|
+| `01-By-Order-ID` | `GET /portal/api/order/order/{id}?...includeInventory=true...` (endpoint Portal, exact URL seperti UI) — langsung dapat SAN + CPE SN + inventoryId | — |
+| `02-By-SAN` | `salesorders?q={SAN}` + `customerorders?q={SAN}` | `inventory?q={SAN}` → `inventory/{id}/relationships` → `customerorders?inventoryId=...` |
+| `03-By-CPE-Serial` | `salesorders?q={SN}` + `customerorders?q={SN}` | `inventory?q={SN}` → `inventory/{id}/relationships` → `customerorders?inventoryId=...` |
+
+Chain meng-capture `inventoryId` otomatis lewat `vars:post-response`, jadi tinggal jalankan 01 → 02 → 03 … berurutan.
 
 ---
 

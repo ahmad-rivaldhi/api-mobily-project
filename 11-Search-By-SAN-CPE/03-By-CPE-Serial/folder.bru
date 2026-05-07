@@ -1,0 +1,31 @@
+meta {
+  name: 03-By-CPE-Serial
+  seq: 3
+}
+
+docs {
+  # Lookup: Cari semua Order yang pakai CPE Serial Number tertentu
+
+  Input : `{{cpeSerialNumber}}` (mis. `TK3B119002209-test`)
+  Output: list sales/customer orders + inventory record CPE-nya.
+
+  cpeSerialNumber tersimpan sebagai Characteristic (`ID: "cpeSerialNumber"`),
+  baik di order body maupun di inventory entry CPE.
+
+  ## Strategy A — Free-text `q`
+    01 - Search Sales Orders by q
+    02 - Search Customer Orders by q
+
+  ## Strategy B — via Inventory (PALING RELIABLE untuk CPE)
+    03 - Search Inventory by CPE Serial   → capture inventoryId
+    04 - Get Inventory Detail
+    05 - Get Inventory Relationships      → related business interactions
+    06 - List Customer Orders by inventoryId
+
+  ## Tips:
+  - Pastikan `{{cpeSerialNumber}}` di env sudah di-set ke nilai yang dicari
+    (default env contoh ada `48-57-49-...` — ganti ke nilai riil).
+  - Serial number bisa juga match tanpa dash — coba variant kalau 0 hasil.
+  - Filter tambahan saat search inventory: `type=CPE` atau
+    `specificationName=CPE` untuk narrow down.
+}

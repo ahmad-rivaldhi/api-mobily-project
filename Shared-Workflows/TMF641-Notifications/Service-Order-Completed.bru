@@ -18,18 +18,18 @@ body:json {
   {
     "eventId": "Event-{{orderId}}",
     "eventTime": "{{eventDate}}",
-    "eventType": "serviceOrderStateChangeNotification", //serviceChangeOrder
+    "eventType": "serviceOrderStateChangeNotification",
     "event": {
       "serviceOrder": {
         "id": "{{serviceOrderId}}",
         "externalId": "{{orderId}}",
         "state": "completed",
-        "href": "{{nfoServiceOrderHref}}",
+        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
         "orderDate": "{{eventDate}}",
         "completionDate": "{{eventDate}}",
         "startDate": "{{eventDate}}",
-        "@type": "Provide",
-        "priority": "50",
+        "@type": "Modify",
+        "priority": "5",
         "category": "Product",
         "externalReference": [
           {
@@ -53,18 +53,22 @@ body:json {
         "serviceOrderItem": [
           {
             "id": "1",
-            "action": "Activate",
+            "action": "Relocation",
             "serviceOrderItemRelationship": [],
             "service": {
               "id": "S1",
               "serviceRelationship": [],
               "serviceCharacteristics": [
                 {
-                  "name": "OdbId",
+                  "name": "odbId",
                   "value": "JED-FYSL-SAFA-02-2637"
                 },
                 {
-                  "cpeType": "cpeType",
+                  "name": "newOdbId",
+                  "value": "NEW-SULY-7777"
+                },
+                {
+                  "name": "cpeType",
                   "value": "ONT"
                 },
                 {
@@ -97,7 +101,7 @@ body:json {
                 },
                 {
                   "name": "cpeInstallDate",
-                  "value": "{{eventTime}}"
+                  "value": "2026-04-18T10:58:01.561Z"
                 },
                 {
                   "name": "isRcy",

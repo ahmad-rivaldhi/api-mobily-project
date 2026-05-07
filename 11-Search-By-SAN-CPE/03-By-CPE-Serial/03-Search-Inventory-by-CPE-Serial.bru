@@ -1,0 +1,43 @@
+meta {
+  name: 03 - Search Inventory by CPE Serial
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/inventory?q={{cpeSerialNumber}}&verbose=true&exact=false&count=50&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  q: {{cpeSerialNumber}}
+  verbose: true
+  exact: false
+  count: 50
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:post-response {
+  inventoryId: res.body.entities[0].id
+}
+
+docs {
+  PRIMARY Strategy B step.
+
+  Search inventory entity yang punya characteristic `cpeSerialNumber`.
+  Biasanya 1 SN = 1 entity unik, sehingga hasil pertama adalah record CPE.
+
+  Post-response otomatis men-capture `inventoryId` untuk step 04-06.
+  Kalau butuh narrow down, tambahkan `type=CPE` ke params:query di atas.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

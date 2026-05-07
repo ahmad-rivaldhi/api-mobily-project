@@ -1,5 +1,5 @@
 meta {
-  name: MOB - Regular - Postpaid - FTTH v1 0 + 1ofME
+  name: MOB - Royal - Postpaid - FTTH v1 0 + 1ofME
   type: http
   seq: 1
 }
@@ -149,7 +149,12 @@ body:json {
             },
             {
               "name": "customerCategory",
-              "value": "Regular",
+              "value": "{{customerCategory}}",
+              "valueType": "string"
+            },
+            {
+              "name": "networkCategory",
+              "value": "{{networkCategory}}",
               "valueType": "string"
             },
             {

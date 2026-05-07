@@ -1,0 +1,28 @@
+meta {
+  name: Auth Dev 3
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{demo-mob-dev}}/auth/realms/telflow/protocol/openid-connect/token
+  body: formUrlEncoded
+  auth: inherit
+}
+
+body:form-urlencoded {
+  client_id: telflow-proxy
+  client_secret: {{clientsecret}}
+  username: {{username}}
+  password: {{password}}
+  grant_type: password
+}
+
+vars:post-response {
+  authToken: res.body.access_token
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

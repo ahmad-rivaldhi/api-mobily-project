@@ -1,0 +1,37 @@
+meta {
+  name: 01 - Search Sales Orders by q (CPE Serial)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/salesorders?q={{cpeSerialNumber}}&verbose=true&exact=false&count=200&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  q: {{cpeSerialNumber}}
+  verbose: true
+  exact: false
+  count: 200
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Free-text search SalesOrders dengan cpeSerialNumber value
+  (contoh: TK3B119002209-test).
+
+  Bila index Telflow cover characteristic value, response langsung berisi
+  SalesOrders yang memuat CPE tsb. Kalau kosong, pakai Strategy B (step 03).
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

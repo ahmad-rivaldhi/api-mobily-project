@@ -1,0 +1,34 @@
+meta {
+  name: 06 - List Customer Orders by inventoryId
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/customerorders?inventoryId={{inventoryId}}&verbose=true&count=200&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  inventoryId: {{inventoryId}}
+  verbose: true
+  count: 200
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Direct match Customer Orders by inventoryId.
+  `/v1/salesorders` tidak mendukung `inventoryId`, jadi kalau butuh list
+  SalesOrders, pakai step 05 (relationships) atau step 01 (q).
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,36 @@
+meta {
+  name: 04 - Get Inventory Detail
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/inventory/{{inventoryId}}?verbose=true&includeManagedEntityRelationship=true&enrichManagedEntityRelationship=true
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  includeManagedEntityRelationship: true
+  enrichManagedEntityRelationship: true
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Verifikasi bahwa inventory ini memang memuat characteristic `san`
+  dengan value yang dicari.
+  Juga dapat:
+    - specificationId / specificationName  → tipe inventory
+    - status                               → active/inactive
+    - customerId                           → pemilik
+    - bundleId                             → bundle
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

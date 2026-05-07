@@ -1,0 +1,87 @@
+meta {
+  name: 641 Suspend
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/serviceOrderingManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "id": "{{serviceOrderId}}",
+        "externalId": "{{orderId}}",
+        "state": "Completed",
+        "stateMessage": "REQUEST COMPLETED",
+        "href": "https://serviceordermanager.externalsystem.com/serviceordermanagement/serviceorder/56",
+        "orderDate": "{{eventDate}}",
+        "completionDate": "{{eventDate}}",
+        "startDate": "{{eventDate}}",
+        "@type": "Modify",
+        "priority": "5",
+        "category": "FIXED_B2C",
+        "externalReference": [
+          {
+            "id": "1",
+            "name": "8100056289",
+            "externalReferenceType": "USED_PRIM_SUB_ID"
+          },
+          {
+            "id": "2",
+            "name": "8100056289",
+            "externalReferenceType": "USED_SECO_SUB_ID"
+          }
+        ],
+        "relatedParty": [
+          {
+            "id": "8100056289",
+            "role": "SUBSCRIBER",
+            "@type": "Corporate"
+          }
+        ],
+        "serviceOrderItem": [
+          {
+            "id": "1",
+            "action": "Suspend",
+            "serviceOrderItemRelationship": [],
+            "service": {
+              "id": "S1",
+              "serviceRelationship": [],
+              "serviceCharacteristic": [
+                {
+                  "name": "serviceAccountId",
+                  "value": "8100056289"
+                }
+              ],
+              "serviceSpecification": {
+                "name": "CFS_FTTH_DATA"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

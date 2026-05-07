@@ -2,3 +2,35 @@ meta {
   name: Royal-Customer
   seq: 2
 }
+
+vars:pre-request {
+  customerCategory: Royal
+  networkCategory: FTTH RCY
+}
+
+docs {
+  # Royal (RCY) Customer (Mobily Infra)
+
+  All requests in this folder default to:
+  - `customerCategory` = **Royal**
+  - `networkCategory`  = **FTTH RCY**
+
+  These two values are injected via folder-level `vars:pre-request`, so every
+  `.bru` request inside this folder references them through the
+  `{{customerCategory}}` and `{{networkCategory}}` placeholders.
+
+  ## Why?
+  Phase 4B (TMF 622 spec, 18 Apr update) introduced `networkCategory` as the
+  major distinguishing factor between **Regular** and **Royal** customers
+  (replacing the historical hard-coded folder differentiation). To make this
+  easy to maintain in the future, both characteristics are sourced from a
+  single place — this folder.
+
+  | Customer Type | customerCategory | networkCategory |
+  |---------------|------------------|-----------------|
+  | Regular       | Regular          | FTTH CONSUMER   |
+  | Royal (RCY)   | Royal            | FTTH RCY        |
+  | VIP           | Vip              | FTTH CONSUMER   |
+
+  Override at the request level only when you need to test an edge case.
+}

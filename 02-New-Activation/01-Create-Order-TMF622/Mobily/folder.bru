@@ -2,3 +2,24 @@ meta {
   name: Mobily
   seq: 1
 }
+
+docs {
+  # Mobily Infra (TMF 622 - Create Product Order)
+
+  Mobily-owned FTTH infrastructure orders.
+
+  ## Sub-folders
+  - **Regular-Customer** — `customerCategory=Regular`, `networkCategory=FTTH CONSUMER`
+  - **Royal-Customer**   — `customerCategory=Royal`,   `networkCategory=FTTH RCY`
+
+  ## Phase 4B Change (TMF 622 - 18 Apr update)
+  The `networkCategory` characteristic is now the **mandatory** field that
+  distinguishes Regular vs Royal customers in the payload. Folder-level
+  variables (`vars:pre-request` in each customer folder.bru) inject the right
+  value automatically — every request inside references it via
+  `{{networkCategory}}` and `{{customerCategory}}`. Change once, applies to
+  all requests in that folder.
+
+  Refer to `Documentation/TMF 622 - Updated - 18 Apr.pdf` (FTTH characteristic
+  table, page 10–11) for the full spec.
+}

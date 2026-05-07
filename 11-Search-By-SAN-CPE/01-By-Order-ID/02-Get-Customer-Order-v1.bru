@@ -1,0 +1,32 @@
+meta {
+  name: 02 - Get Customer Order (v1)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/customerorders/{{orderId}}?verbose=true&expand=items,relationships&combineInventoryRelationship=true
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  expand: items,relationships
+  combineInventoryRelationship: true
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Swagger v1 representation dari customer order.
+  Response camelCase (sesuai swagger-api.txt definitions).
+  Gunakan untuk cross-check dengan response PascalCase dari Portal endpoint.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

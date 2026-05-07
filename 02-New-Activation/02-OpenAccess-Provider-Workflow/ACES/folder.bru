@@ -1,0 +1,55 @@
+meta {
+  name: ACES
+  seq: 4
+}
+
+vars:pre-request {
+  acesInstallationId: 2-260429115536
+  acesServiceAccNum: 1001269526537281
+  acesCpeIntegrationId: 1139871
+  acesCpeSerialNumber: QAELIFE19923451
+}
+
+docs {
+  # ACES (Open Access Provider)
+  
+  ACES is a new Open Access infrastructure provider added in phase 4B.
+  All notifications follow the same TMF 641-style envelope used by other
+  OpenAccess providers (DAWIYAT, ITC, STC):
+  
+  ```
+  POST {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  ```
+  
+  ## Sub-folders (notification flows)
+  
+  | Folder | Statuses covered |
+  |--------|-------------------|
+  | Activation-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
+  | Cancellation-Service-Installation   | Received → Accepted → In Progress → Cancelled |
+  | Modification-Service-Installation   | Completed |
+  | DeviceSwap-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
+  | Relocation-Service-Installation     | Accepted → In Progress → Completed |
+  | Rewiring-Service-Installation       | Accepted → In Progress → Completed |
+  | Suspend-Service-Installation        | Completed |
+  | Resume-Service-Installation         | Completed |
+  | Termination-Service-Installation    | Completed |
+  | TroubleTicket-Notification          | Resolved / Rejected |
+  
+  ## Folder-level variables
+  - `acesInstallationId`     — ACES external order id (used in `event.serviceOrder.externalId`)
+  - `acesServiceAccNum`      — Service account number returned by ACES
+  - `acesCpeIntegrationId`   — Integration id of the CPE/ONT
+  - `acesCpeSerialNumber`    — Newly assigned serial number (used in Serial Number Notification)
+  
+  Override per-request when needed.
+  
+  ## Source
+  Sample payloads provided in `/aces/*.json` (collection root).
+  Refer to `Documentation/Noti Event - Updated - 18 Apr.pdf` for the full event spec.
+  
+  ## Installation Failure
+  ACES installation-failure scenarios are **TBD**. A placeholder folder is
+  prepared at:
+  `Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ACES - Installation Failure Notification/`
+}

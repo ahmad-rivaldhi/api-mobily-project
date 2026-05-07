@@ -1,13 +1,13 @@
 meta {
   name: Shared-Workflows
-  seq: 1
+  seq: 2
 }
 
 docs {
   # Shared Workflows (Reusable Across All Journeys)
-
+  
   This folder contains **shared API requests** that are reused across multiple use case journeys. Instead of duplicating these in every journey, they are centralized here.
-
+  
   ## Contents:
   1. **TMF641-Notifications** — NFO service order state change notifications
      - Acknowledged, InProgress, Completed, Error-1000-OK, Cease
@@ -21,14 +21,9 @@ docs {
   5. **Installation-Failure-Scenarios** — Failure notification simulations
      - Split by: Mobily (WFM-based) and OpenAccess (OA provider-based)
      - Used by: New Activation, Device Swap, Maintenance
-
+  
   ## How to Use:
   - Each journey's `folder.bru` documentation describes the full workflow sequence
   - When a step references a shared workflow, navigate here to execute it
   - The `orderId` and `workOrderIdCpe`/`workOrderIdMe` variables are shared across all requests
 }
-
-
-
-
-

@@ -1,11 +1,11 @@
 meta {
   name: 04-Device-Swap
-  seq: 4
+  seq: 5
 }
 
 docs {
   # Device Swap Journey (CPE/HAG/ONT Replacement)
-
+  
   ## Workflow Steps:
   1. **Create Swap Order (TMF622)** → `01-Create-Swap-Order-TMF622/`
      - action: modify, ftthSubAction: CPESwap
@@ -16,7 +16,7 @@ docs {
      - Technician workflow for device replacement
   4. **Installation Failure Scenarios** → `Shared-Workflows/Installation-Failure-Scenarios/`
      - Device swap specific failures
-
+  
   ## IMPORTANT - Contextual Differences:
   - TMF622 action is "modify" with ftthSubAction: CPESwap
   - Payload includes oldCpeSerialNumber and new device details

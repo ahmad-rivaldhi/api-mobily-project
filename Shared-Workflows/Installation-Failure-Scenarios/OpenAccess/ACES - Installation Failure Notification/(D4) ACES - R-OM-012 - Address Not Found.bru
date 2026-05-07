@@ -1,0 +1,61 @@
+meta {
+  name: (D4) ACES - R-OM-012 - Address Not Found
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "ACES_ORDER_UPDATE",
+        "externalId": "{{acesInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Failure",
+        "providerMilestone": "Failure",
+        "providerComments": "Address lookup failed for addressId={{randomAddressId}}",
+        "orderTransactionNo": "",
+        "serviceAccNum": "{{acesServiceAccNum}}",
+        "reasonCode": "R-OM-012",
+        "reasonText": "No available address can be found with address Id {{randomAddressId}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+  
+  // Generate a random addressId (Mobily addressId pattern: 8-digit numeric, similar to HLD samples e.g. 23542874)
+  const randomDigits = (n) => {
+    let s = '';
+    s += (Math.floor(Math.random() * 9) + 1).toString(); // first digit 1-9 (no leading zero)
+    for (let i = 1; i < n; i++) s += Math.floor(Math.random() * 10).toString();
+    return s;
+  };
+  
+  bru.setVar('randomAddressId', randomDigits(8));
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

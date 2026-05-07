@@ -1,7 +1,7 @@
 meta {
-  name: STC-Cancel
+  name: ACES-TT-Resolved
   type: http
-  seq: 7
+  seq: 1
 }
 
 post {
@@ -17,29 +17,25 @@ auth:bearer {
 body:json {
   {
     "eventId": "Event-{{orderId}}",
-    "eventTime": "{{eventDate}}",
+    "eventTime": "{{eventTime}}",
     "eventType": "serviceOrderStateChangeNotification",
     "event": {
       "serviceOrder": {
-        "funcId": "UPDATE_ORDER",
-        "externalId": "{{stcOrderId}}",
-        "lineItemIdentifier": "", 
-        "lineItemStatus": "", 
-        "description": "Success",
-        "orderStatus": "Closed",
+        "funcId": "",
+        "externalId": "{{acesInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
         "comments": "",
-        "providerStatus": "Closed",
-        "providerMilestone": "", 
-        "providerComments": "",
-        "orderTransactionNo" : "{{stcOrderId}}",
-        "serviceAccNum" : ""
+        "providerStatus": "Resolved",
+        "providerMilestone": "",
+        "providerComments": "ODB Port Clean",
+        "orderTransactionNo": "",
+        "serviceAccNum": ""
       }
     }
   }
-}
-
-vars:pre-request {
-  stcOrderId: I-MY95080522
 }
 
 script:pre-request {

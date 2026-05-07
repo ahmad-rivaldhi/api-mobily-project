@@ -1,0 +1,42 @@
+meta {
+  name: 01 - Search Sales Orders by q (SAN)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/salesorders?q={{customerSAN}}&verbose=true&exact=false&count=200&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  q: {{customerSAN}}
+  verbose: true
+  exact: false
+  count: 200
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Free-text search Sales Orders dengan value SAN (mis. 23532557).
+  Telflow text index biasanya meng-index characteristic value,
+  sehingga SAN value muncul meskipun tersimpan sebagai
+    { "Characteristic": { "ID": "san" }, "Value": "23532557" }.
+
+  Kalau response `entities` > 0 → sukses; tiap entity adalah SalesOrder
+  yang memuat SAN tersebut.
+
+  Kalau kosong, berarti indeks Telflow belum cover characteristic di
+  env ini → lanjut ke Strategy B (step 03 → 05 → 06).
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

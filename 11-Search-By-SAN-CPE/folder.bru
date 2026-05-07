@@ -1,0 +1,85 @@
+meta {
+  name: 11-Search-By-SAN-CPE
+  seq: 12
+}
+
+docs {
+  # Search By SAN & CPE Serial Number Journey
+  
+  Tujuan:
+    1. "Order X itu SAN & CPE Serial Number-nya apa?"           → 01-By-Order-ID
+    2. "SAN 23532557 dipakai di sales order mana saja?"          → 02-By-SAN
+    3. "cpeSerialNumber TK3B119002209-test dipakai di order mana?" → 03-By-CPE-Serial
+    4. (bonus) "Inventory ID-nya apa?" → di-capture otomatis di chain
+  
+  -----------------------------------------------------------------
+  Actual structure di dalam response order (dari pengamatan live
+  di `https://mobily-dev2.live.demo-in.telflow.com/portal/api/order/order/...`):
+  
+    {
+      ...
+      "Characteristic": { "ID": "san" },
+      "Value": "23532557"
+    },
+    {
+      "Characteristic": { "ID": "cpeSerialNumber" },
+      "Value": "TK3B119002209-test"
+    }
+  
+  → Keduanya tersimpan sebagai **nested Characteristic** (bukan top-level field).
+  -----------------------------------------------------------------
+  
+  Swagger TIDAK menyediakan parameter khusus `characteristicId=san&value=...`.
+  Query params yang tersedia untuk cross-search di salesorders/customerorders/inventory:
+  
+  | endpoint          | parameter yang relevan              |
+  |-------------------|-------------------------------------|
+  | /v1/salesorders   | q, customerReference, externalReferenceId, customerId |
+  | /v1/customerorders| q, inventoryId, customerReference, externalReferenceId, customerId, relatedBusinessInteractionID |
+  | /v1/inventory     | q, name, externalReferenceId, businessInteractionId, specificationName, type, class |
+  
+  → Strategi pencarian yang bekerja:
+  
+  **Strategy A — Free-text `q` (cepat, tapi bergantung index)**
+    GET /portal/api/v1/salesorders?q=23532557&verbose=true
+    GET /portal/api/v1/customerorders?q=23532557&verbose=true
+    (Telflow text index biasanya meng-index characteristic value juga.
+     Kalau 0 hasil → index belum cover characteristic → pakai Strategy B.)
+  
+  **Strategy B — Via Inventory (reliable, multi-hop)**
+    1. Cari inventory dengan q=<value>            → dapat inventoryId
+    2. GET inventory/{id}/relationships           → list BusinessInteractions
+    3. GET customerorders?inventoryId=<id>        → direct match
+    4. Untuk SalesOrders, fetch each BI ID dari step 2
+       (salesorders tidak punya `inventoryId` param, tapi bisa via relationships).
+  
+  -----------------------------------------------------------------
+  Real base path: `/portal/api/v1/...` (bukan `/api/v1/...`).
+  Detail order pakai endpoint dedicated Portal: `/portal/api/order/order/{id}`.
+  -----------------------------------------------------------------
+  
+  Folder:
+  
+  ### 01-By-Order-ID — lookup SAN/CPE dari orderId
+    01 - Get Order Detail (Portal)  ← exact URL spt live system
+    02 - Get Customer Order (v1 swagger-style)
+    03 - Get Customer Order Relationships
+    04 - Get Sales Order
+    05 - Get Sales Order Items
+  
+  ### 02-By-SAN — reverse lookup by SAN value
+    01 - Search Sales Orders by q (SAN)          ← PRIMARY fast path
+    02 - Search Customer Orders by q (SAN)
+    03 - Search Inventory by SAN                 ← capture inventoryId
+    04 - Get Inventory Detail
+    05 - Get Inventory Relationships             ← list related BI (orders)
+    06 - List Customer Orders by inventoryId     ← direct match by inventory
+  
+  ### 03-By-CPE-Serial — reverse lookup by cpeSerialNumber value
+    01 - Search Sales Orders by q (CPE Serial)
+    02 - Search Customer Orders by q (CPE Serial)
+    03 - Search Inventory by CPE Serial          ← capture inventoryId
+    04 - Get Inventory Detail
+    05 - Get Inventory Relationships
+    06 - List Customer Orders by inventoryId
+}

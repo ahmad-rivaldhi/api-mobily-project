@@ -1,0 +1,29 @@
+meta {
+  name: ACES
+  seq: 4
+}
+
+docs {
+  # ACES — Create Order (TMF 622)
+
+  Create Product Order requests for the **ACES** Open Access infrastructure
+  provider (`infraProvider = ACES`).
+
+  ## Variants
+  | File | Mesh Extender |
+  |------|---------------|
+  | FTTH-ACES-Postpaid-No-ME       | none |
+  | FTTH-ACES-Postpaid-With-1-ME   | 1    |
+  | FTTH-ACES-Postpaid-With-2-ME   | 2    |
+  | FTTH-ACES-Postpaid-With-3-ME   | 3    |
+
+  ## Phase 4B characteristics
+  - `customerCategory` → `{{customerCategory}}` (default `Regular`, sourced from `OpenAccess/folder.bru`)
+  - `networkCategory`  → `{{networkCategory}}`  (default `FTTH CONSUMER`)
+
+  Override per-request via `vars:pre-request` if testing Royal/RCY scenario.
+
+  ## Downstream
+  Once the order is acknowledged, ACES emits notifications under
+  `02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/Activation-Service-Installation/`.
+}

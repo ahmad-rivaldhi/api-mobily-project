@@ -1,0 +1,35 @@
+meta {
+  name: 02 - Search Customer Orders by q (SAN)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/customerorders?q={{customerSAN}}&verbose=true&exact=false&count=200&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  q: {{customerSAN}}
+  verbose: true
+  exact: false
+  count: 200
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Same pattern sebagai step 01, tapi hit ke Customer Orders.
+  Salah satu dari keduanya biasanya mengembalikan hasil, karena Mobily
+  membuat keduanya (SalesOrder + CustomerOrder) untuk setiap aktivitas.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

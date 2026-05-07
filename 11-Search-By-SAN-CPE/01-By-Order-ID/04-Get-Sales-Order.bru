@@ -1,0 +1,30 @@
+meta {
+  name: 04 - Get Sales Order
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/salesorders/{{orderId}}?verbose=true&expand=items
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  expand: items
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Jalankan ini bila `{{orderId}}` adalah sales order ID (bukan customer order).
+  Jika 404, artinya ID-nya bukan sales order — abaikan request ini.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

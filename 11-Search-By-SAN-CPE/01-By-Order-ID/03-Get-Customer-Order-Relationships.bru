@@ -1,0 +1,31 @@
+meta {
+  name: 03 - Get Customer Order Relationships
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/customerorders/{{orderId}}/relationships?verbose=true&expand=inventory&count=200
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  expand: inventory
+  count: 200
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  List inventory items yang terkait order: CPE, ONT, HAG, Mesh Extender.
+  Setiap record punya `serialNumber` / `name` / `id` inventory.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

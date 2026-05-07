@@ -1,0 +1,37 @@
+meta {
+  name: 05 - Get Inventory Relationships
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/inventory/{{inventoryId}}/relationships?verbose=true&count=200
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  count: 200
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  List semua Business Interaction (Customer Order, Sales Order)
+  yang terhubung dengan inventory SAN ini.
+
+  Di response, cari field seperti:
+    - relatedBusinessInteraction[].id      → IDs order
+    - or businessInteractionId
+    - type: ProductOrder / SalesOrder / CustomerOrder
+
+  Ini adalah jawaban DEFINITIF untuk "SAN ini dipakai di sales order mana".
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,163 @@
+﻿ID,Work Item Type,Title,Test Step,Step Action,Step Expected,Area Path,Assigned To,State
+"63042","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation of Mobily Activation Order (UAT Counter > 3 / Max Timeout Exceeded)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Force trigger the UAT Timer expiry","Telflow evaluates the condition uatCounter > 3 and bypasses the 'Handle UAT Timer Expiry' node",,,
+,,,"2","Navigate to Telflow Portal (NSP) and verify the Order Status.","Order state transitions directly to Assessing Cancellation, then Pending Cancellation",,,
+,,,"3","Check Southbound Logs / System Tab to verify NFO Rollback.","TMF 641 request is successfully sent to Nokia FlowOne with @type = Cease and action = Deactive",,,
+,,,"4","Simulate NFO Rollback Completion by sending ServiceOrderStateChangeEvent from NFO.
+- state: ""completed""
+- stateMessage: ""REQUEST COMPLETED""","Telflow accepts the NFO rollback completion response",,,
+,,,"5","Check Southbound Logs to verify Inventory and WFM Rollback.","Telflow sends Update Inventory (RETURN) request to MapleWave.",,,
+,,,"6","Verify the final Action API updates sent to SingleView.","Telflow sends Close CPE Action (and Close ME Action if applicable) to SingleView",,,
+,,,"7","Monitor final state transition in Telflow Portal.","Final Order state = CANCELLED",,,
+"63043","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (STC) FTTH During Activation order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate STC Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""ORDERED""
+- reasonCode: ""B166-OLO""
+- reasonText: ""B166-OLO - Commercial Site""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards STC.","Cancel Service Installation Request is successfully sent to STC",,,
+,,,"5","Simulate STC Cancellation Completion by sending the async notification from STC.","Telflow successfully accepts the STC rollback completion response.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"63044","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation of Mobily Activation Order (UAT Counter <= 3 with Customer Rejection)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Force trigger the UAT Timer expiry","Telflow evaluates uatCounter <= 3 and enters the 'Handle UAT Timer Expiry' node",,,
+,,,"2","Check Southbound Logs / System Tab to verify SV Action creation.","Telflow sends a POST request to SingleView to create an Action with type: ""Contact Customer for UAT""",,,
+,,,"3","Simulate SingleView synchronous success response.","Telflow accepts the response and stores the returned actionId.",,,
+,,,"4","Simulate Customer Rejection by triggering ActionNotificationEvent from SingleView (via Bruno) 
+Payload criteria:
+-resolutionCode: ""1""
+-resolutionText: ""Cancel Order""","API returns HTTP 200 OK The 'Trigger AutoCancellation' node evaluates to Yes",,,
+,,,"5","Navigate to Telflow Portal (NSP) and verify the Order Status.","Order state transitions to Assessing Cancellation, then Pending Cancellation",,,
+,,,"6","Check Southbound Logs / System Tab to verify NFO Rollback.","TMF 641 request is successfully sent to NFO with @type = Cease and action = Deactivate",,,
+,,,"7","Simulate NFO Rollback Completion by sending ServiceOrderStateChangeEvent from NFO.
+- state: ""completed""
+- stateMessage: ""REQUEST COMPLETED""","Telflow accepts the NFO rollback completion response.",,,
+,,,"8","Check Southbound Logs to verify Inventory and WFM Rollback.","Telflow sends Update Inventory (RETURN) request to MapleWave.",,,
+,,,"9","Monitor final state transition in Telflow Portal.","Final Order state = CANCELLED",,,
+"64083","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (ITC) FTTH During Activation order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate ITC Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Failure""
+- reasonCode: ""No Details""
+- reasonText: ""Internal Wiring""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards ITC.","Cancel Service Installation Request is successfully sent to ITC",,,
+,,,"5","Simulate ITC Cancellation Completion by sending the async notification from ITC.","Telflow successfully accepts the ITC rollback completion response.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64084","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (DOWIYAT) FTTH During Activation order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate DOWIYAT Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Pending""
+- reasonCode: NULL
+- reasonText: ""FIBER CUT""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards DOWIYAT.","Cancel Service Installation Request is successfully sent to DOWIYAT",,,
+,,,"5","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64085","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (STC) FTTH During Device Swap Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate STC Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""ORDERED""
+- reasonCode: ""B166-OLO""
+- reasonText: ""B166-OLO - Commercial Site""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards STC.","Cancel Service Installation Request is successfully sent to STC",,,
+,,,"5","Simulate STC Cancellation Completion by sending the async notification from STC.","Telflow successfully accepts the STC rollback completion response.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64086","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (ITC) FTTH During Activation Device Swap Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate ITC Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Failure""
+- reasonCode: ""No Details""
+- reasonText: ""Internal Wiring""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards ITC.","Cancel Service Installation Request is successfully sent to ITC",,,
+,,,"5","Simulate ITC Cancellation Completion by sending the async notification from ITC.","Telflow successfully accepts the ITC rollback completion response.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64087","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (DOWIYAT) FTTH During Activation Device Swap Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate DOWIYAT Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Pending""
+- reasonCode: null
+- reasonText: ""FIBER CUT""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards DOWIYAT.","Cancel Service Installation Request is successfully sent to DOWIYAT",,,
+,,,"5","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64090","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (DOWIYAT) FTTH During Activation Rewiring Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate DOWIYAT Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Pending""
+- reasonCode: null
+- reasonText: FIBER CUT","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards DOWIYAT.","Cancel Service Installation Request is successfully sent to DOWIYAT",,,
+,,,"5","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64187","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (STC) FTTH During Relocation Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate STC Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""ORDERED""
+- reasonCode: ""B166-OLO""
+- reasonText: ""B166-OLO - Commercial Site""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards STC.","Cancel Service Installation Request is successfully sent to STC",,,
+,,,"5","Simulate STC Cancellation Completion by sending the async notification from STC.","Telflow successfully accepts the STC rollback completion response.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64188","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (ITC) FTTH During Activation Relocation Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate ITC Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Failure""
+- reasonCode: ""No Details""
+- reasonText: ""Internal Wiring""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards ITC.","Cancel Service Installation Request is successfully sent to ITC",,,
+,,,"5","Simulate ITC Cancellation Completion by sending the async notification from ITC.","Telflow successfully accepts the ITC rollback completion response.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64189","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation in Open Access (DOWIYAT) FTTH During Activation Relocation Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate DOWIYAT Installation Failure by sending serviceOrderStateChangeNotification to Telflow.
+Example Payload:
+- providerStatus: ""Pending""
+- reasonCode: null
+- reasonText: ""FIBER CUT""","API returns HTTP 200 OK	",,,
+,,,"2","Check System Tab to verify Telflow initiates the Treatment process.","Telflow successfully sends the mapped Action API request to SingleView.",,,
+,,,"3","Monitor the Order State transition in the Telflow Portal.","Order state transitions from IN PROGRESS / On Hold to Assessing Cancellation, and then Pending Cancellation.",,,
+,,,"4","Check System Tab to verify Rollback execution towards DOWIYAT.","Cancel Service Installation Request is successfully sent to DOWIYAT",,,
+,,,"5","Monitor the final state transition in the Telflow Portal and verify final TMF 622 notification.","Final Order state = CANCELLED
+TMF 622 Notification sent to SV with state = cancelled.",,,
+"64258","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation of Mobily during Relocation Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate Mobily WFM Device Swap Failure by sending workOrderStateChangeNotification","API returns HTTP 200 OK",,,
+,,,"2","Navigate to Telflow Portal (NSP) and verify the Order Status.","Order state transitions automatically to IN PROGRESS / On Hold.",,,
+,,,"3","Force trigger or wait for the 'X' days Treatment Resolution Timeout SLA to expire without resolving the action.","Telflow SLA Timer expires automatically.",,,
+,,,"4","Monitor the Order flow progression based on the BPMN gateway.","The Auto-Cancellation Triggered? gateway evaluates to Yes.",,,
+,,,"5","Verify the final Action API requests sent by Telflow back to SingleView.","Telflow sends a Close Relocation Action request to SingleView via the rollback handler.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal.","The flow executes the Set Status Cancelled and terminates the Order.",,,
+"64259","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation of Mobily during Rewiring Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate Mobily WFM Device Swap Failure by sending workOrderStateChangeNotification","API returns HTTP 200 OK",,,
+,,,"2","Navigate to Telflow Portal (NSP) and verify the Order Status.","Order state transitions automatically to IN PROGRESS / On Hold.",,,
+,,,"3","Force trigger or wait for the 'X' days Treatment Resolution Timeout SLA to expire without resolving the action.","Telflow SLA Timer expires automatically.",,,
+,,,"4","Monitor the Order flow progression based on the BPMN gateway.","The Auto-Cancellation Triggered? gateway evaluates to Yes.",,,
+,,,"5","Verify the final Action API requests sent by Telflow back to SingleView.","Telflow sends a Close Rewiring Action request to SingleView via the rollback handler.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal.","The flow executes the Set Status Cancelled and terminates the Order.",,,
+"64260","Test Case","Phase4B.Dev3.Mobily - Verify Auto-Cancellation of Mobily during Device Swap Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Simulate Mobily WFM Device Swap Failure by sending workOrderStateChangeNotification","API returns HTTP 200 OK",,,
+,,,"2","Navigate to Telflow Portal (NSP) and verify the Order Status.","Order state transitions automatically to IN PROGRESS / On Hold.",,,
+,,,"3","Force trigger or wait for the 'X' days Treatment Resolution Timeout SLA to expire without resolving the action.","Telflow SLA Timer expires automatically.",,,
+,,,"4","Monitor the Order flow progression based on the BPMN gateway.","The Auto-Cancellation Triggered? gateway evaluates to Yes.",,,
+,,,"5","Verify the final Action API requests sent by Telflow back to SingleView.","Telflow sends a Close CPE/HAG Swap Action request to SingleView via the rollback handler.",,,
+,,,"6","Monitor the final state transition in the Telflow Portal.","The flow executes the Set Status Cancelled and terminates the Order.",,,

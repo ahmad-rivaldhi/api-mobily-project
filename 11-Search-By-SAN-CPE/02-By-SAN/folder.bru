@@ -1,0 +1,37 @@
+meta {
+  name: 02-By-SAN
+  seq: 2
+}
+
+docs {
+  # Lookup: Cari semua Sales/Customer Order yang pakai SAN tertentu
+
+  Input : `{{customerSAN}}` (mis. `23532557`)
+  Output: list sales/customer orders + inventory record terkait.
+
+  SAN value tersimpan sebagai nested Characteristic (`ID: "san"`, `Value: "23532557"`).
+  Tidak ada param filter langsung di swagger → dua strategi:
+
+  ## Strategy A (fast) — Free-text `q` ke order endpoints
+    01 - Search Sales Orders by q (SAN)       → salesorders?q=23532557
+    02 - Search Customer Orders by q (SAN)    → customerorders?q=23532557
+    Kalau hasil > 0 di salah satu, search index sudah cover
+    characteristic value → langsung dapat list order.
+
+  ## Strategy B (reliable) — via Inventory
+    03 - Search Inventory by SAN              → capture inventoryId
+    04 - Get Inventory Detail                 → verify SAN characteristic ada
+    05 - Get Inventory Relationships          → list related BusinessInteractions
+    06 - List Customer Orders by inventoryId  → direct filter by inventory
+
+  Biasanya SAN melekat pada inventory entity tipe "Service" / "SubscriberAccount"
+  / "Customer Account". Step 03 akan menemukan satu entity; relasinya
+  (step 05) akan memetakan ke Customer Order + Sales Order yang pernah/sedang
+  memakai SAN ini.
+
+  ## Tips:
+  - Bruno akan men-capture `inventoryId` dari step 03 secara otomatis
+    (lihat `vars:post-response`).
+  - Kalau step 03 kosong, coba juga `specificationName=Service` atau
+    hapus filter `type=` lalu cek hasil.
+}

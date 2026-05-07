@@ -1,0 +1,52 @@
+meta {
+  name: 01 - Get Order Detail (Portal)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/order/order/{{orderId}}?combineInventoryRelationship=Parent,Component&countAssociation=true&enrichBusinessInteractionRelationship=Container,Parent,Child,Bundle,BundleItem,Target&enrichElements=Specification,PartyRole,Offering,Place&includeActivity=true&includeBusinessInteractionRelationship=Container,Parent,Child,Bundle,BundleItem,Target&includeBusinessInteractionVersion=All&includeContract=true&includeCost=true&includeInventory=true&includeMargin=true&includePrice=true
+  body: none
+  auth: bearer
+}
+
+params:query {
+  combineInventoryRelationship: Parent,Component
+  countAssociation: true
+  enrichBusinessInteractionRelationship: Container,Parent,Child,Bundle,BundleItem,Target
+  enrichElements: Specification,PartyRole,Offering,Place
+  includeActivity: true
+  includeBusinessInteractionRelationship: Container,Parent,Child,Bundle,BundleItem,Target
+  includeBusinessInteractionVersion: All
+  includeContract: true
+  includeCost: true
+  includeInventory: true
+  includeMargin: true
+  includePrice: true
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  URL & query params identik dengan yang di-hit oleh Telflow Portal saat
+  buka detail order (dikonfirmasi di env Dev 2 dengan orderId ORD000000027977).
+
+  Di response (Bruno → "Response" tab → Ctrl+F) cari:
+    - "Characteristic": { "ID": "san" }          → "Value": "23532557" (SAN)
+    - "Characteristic": { "ID": "cpeSerialNumber"} → "Value": "TK3B119002209-test"
+    - "Characteristic": { "ID": "cpeMacAddress" }  → CPE MAC
+    - "Characteristic": { "ID": "ftthSAI" }        → FTTH SAI
+    - "Characteristic": { "ID": "odbId" }          → ODB ID
+
+  Juga lihat:
+    - data.Inventory[]                    → inventory entries (CPE, HAG, ONT)
+    - data.RelatedParty[]                 → customer info
+    - data.BusinessInteractionItems[]     → line items
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

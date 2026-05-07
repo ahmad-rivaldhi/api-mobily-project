@@ -1,0 +1,62 @@
+meta {
+  name: (D2) ACES - R-OM-007 - Product Not Orderable
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "ACES_ORDER_UPDATE",
+        "externalId": "{{acesInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Failure",
+        "providerMilestone": "Failure",
+        "providerComments": "Product specCode {{randomProdSpecCode}} blocked by agreement",
+        "orderTransactionNo": "",
+        "serviceAccNum": "{{acesServiceAccNum}}",
+        "reasonCode": "R-OM-007",
+        "reasonText": "This product {{randomProdSpecCode}} cannot be ordered as the agreement"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+  
+  // Generate a random prodSpecCode (Mobily product spec pattern: MOB-FTTH-<FAMILY>-<NN>-<NN>)
+  const randomDigits = (n) => {
+    let s = '';
+    for (let i = 0; i < n; i++) s += Math.floor(Math.random() * 10).toString();
+    return s;
+  };
+  const families = ['SPEC', 'BB', 'VAS', 'BUNDLE', 'CPE'];
+  const family = families[Math.floor(Math.random() * families.length)];
+  
+  bru.setVar('randomProdSpecCode', 'MOB-FTTH-' + family + '-' + randomDigits(2) + '-' + randomDigits(2));
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

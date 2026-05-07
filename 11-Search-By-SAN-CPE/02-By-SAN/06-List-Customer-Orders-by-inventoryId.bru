@@ -1,0 +1,36 @@
+meta {
+  name: 06 - List Customer Orders by inventoryId
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/customerorders?inventoryId={{inventoryId}}&verbose=true&count=200&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  inventoryId: {{inventoryId}}
+  verbose: true
+  count: 200
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Shortcut dari Strategy B: langsung list Customer Orders yang pakai inventory ini.
+  (`/v1/customerorders` mendukung `inventoryId`, tapi `/v1/salesorders` tidak.)
+
+  Untuk Sales Orders, pakai step 05 (relationships) lalu fetch per ID,
+  atau pakai step 01 (`q=`).
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

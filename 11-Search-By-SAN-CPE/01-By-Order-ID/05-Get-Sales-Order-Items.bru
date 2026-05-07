@@ -1,0 +1,30 @@
+meta {
+  name: 05 - Get Sales Order Items
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/salesorders/{{orderId}}/items?verbose=true&count=200
+  body: none
+  auth: bearer
+}
+
+params:query {
+  verbose: true
+  count: 200
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Sales order line items + inventory references.
+  Berguna untuk mapping offering → inventory → serial number CPE.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

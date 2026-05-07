@@ -1,0 +1,491 @@
+﻿ID,Work Item Type,Title,Test Step,Step Action,Step Expected,Area Path,Assigned To,State
+"51782","Test Case","AWS - Verify TMF 622 to create FTTH - Mobily - Regular customer - Postpaid",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Send TMF 622 request via Bruno","Return 201 response and FTTH (Mobily - Regular - Postpaid) order successfully created in Tellfow Portal",,,
+,,,"2","Ensure Acknowledged state given in response","Acknowledged state given in response",,,
+,,,"3","Validate the payload","All attributes and characteristics from the request must be accurately mapped to the corresponding fields in Telflow Order Details",,,
+"51785","Test Case","AWS - Verify TMF 622 to create FTTH - Mobily - Royal customer - Postpaid",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Send TMF 622 request via Bruno","Return 201 response and FTTH (Mobily - Royal - Postpaid) order successfully created in Tellfow Portal",,,
+,,,"2","Ensure Acknowledged state given in response","Acknowledged state given in response",,,
+,,,"3","Validate the payload","All attributes and characteristics from the request must be accurately mapped to the corresponding fields in Telflow Order Details",,,
+"51860","Test Case","AWS - Verify TMF 622 to create FTTH with Mesh Extender - Mobily - Regular customer - Postpaid",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Send TMF 622 request via Bruno","Return 201 response and FTTH with ME  (Mobily - Regular - Postpaid) order successfully created in Tellfow Portal",,,
+,,,"2","Ensure Acknowledged state given in response","Acknowledged state given in response",,,
+,,,"3","Validate the payload","All attributes and characteristics from the request must be accurately mapped to the corresponding fields in Telflow Order Details",,,
+"52125","Test Case","AWS - Ensure ODB Patching Action Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Initiate ODB Patch process","Initiate ODB Patch process is triggered for Regular Customer ",,,
+,,,"2","Open Telflow System tab","ODB Patching Action Request should be generated when Initiate ODB Patch process is triggered ",,,
+"52132","Test Case","AWS - Verify ODB Patching Action Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Initiate ODB Patch process","Initiate ODB Patch process is triggered for Regular Customer ",,,
+,,,"2","Open Telflow System tab, and verify ODB Patching Action Request","""ODB Patching"" type, orderId (Singleview), odbId, serviceAddress, appointmentId and appointmentStartDate are captured within the ODB Patching Action Request",,,
+"52137","Test Case","AWS - Ensure ODB Patching Action Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Initiate ODB Patch process","Initiate ODB Patch process is triggered for Regular Customer ",,,
+,,,"2","Open Telflow System tab","ODB Patching Action Response should be generated after ODB Patching Action Request successfully proceed",,,
+"52153","Test Case","AWS - Verify ODB Patching Action Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Initiate ODB Patch process","Initiate ODB Patch process is triggered for Regular Customer ",,,
+,,,"2","Open Telflow System tab","ODB Patching Action Request and Response should be generated when Initiate ODB Patch process is triggered ",,,
+,,,"3","Verify ODB Patching Action Response","actionId and ""ODB Patching"" type should be captured within the response",,,
+"52165","Test Case","AWS - Ensure CPE Installation Word Order Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request is generated in Telflow System tab",,,
+"52166","Test Case","AWS - Verify CPE Installation Work Order Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request is generated in Telflow System tab",,,
+,,,"2","Very the payload for CPE Installation Work Order Request which generated in Telflow System tab","- Payload structure complies with the defined API schema
+- salesOrder id, type ""Create Account"", san, workOrder id, taskCategory ""fulfillment"", typeOfService, typeOfOrder ""Create Account"", odbCode, geoCoordinates, customerLocation, customerInfo, appointmentId and sourceApp ""Telflow"" are captured",,,
+"52169","Test Case","AWS - Ensure CPE Installation Word Order Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request is generated in Telflow System tab",,,
+,,,"2","Ensure an immediate CPE Installation Work Order Response is coming after CPE Installation Word Order Request is successfully sent to WFM","A CPE Installation Work Order Response is generated in the Telflow system tab after CPE Installation Word Order Request is successfully sent to WFM",,,
+"52171","Test Case","AWS - Verify CPE Installation Word Order Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Verify CPE Installation Word Order Response","Payload contains success code (""code"": 0)",,,
+"52176","Test Case","AWS - Ensure CPE Installation Action Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","After CPE Install Work Order successfully performed in WFM, ensure Telflow initiates an action in SingleView for CPE installation","CPE Installation Action Request is successfully generated and displayed in the Telflow system tab immediately after CPE Install Work Order successfully performed in WFM and  Telflow starts to initiate the CPE installation action in SingleView ",,,
+"52178","Test Case","AWS - Verify CPE Installation Action Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","After CPE Install Work Order successfully performed in WFM, ensure Telflow initiates an action in SingleView for CPE installation","CPE Installation Action Request is successfully generated and displayed in the Telflow system tab immediately after CPE Install Work Order successfully performed in WFM and  Telflow starts to initiate the CPE installation action in SingleView ",,,
+,,,"3","Verify the payload of CPE Installation Action Request","The payload of the CPE Installation Action Request should include the type ‘CPE Installation’, the SingleView orderId, the taskStatus set to ‘Pending Visit’, and the appointmentId",,,
+"52179","Test Case","AWS - Ensure CPE Installation Action Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","After CPE Install Work Order successfully performed in WFM, ensure Telflow initiates an action in SingleView for CPE installation","Telflow successfully sent CPE Installation Action Request to Singleview",,,
+,,,"3","Ensure an immediate sync response give to Telflow as a response back that coming after Telflow successfully sent CPE Installation Action Request to Singleview ","CPE Installation Action Response is successfully generated and displayed in the Telflow system tab",,,
+"52180","Test Case","AWS - Verify CPE Installation Action Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","After CPE Install Work Order successfully performed in WFM, ensure Telflow initiates an action in SingleView for CPE installation","Telflow successfully sent CPE Installation Action Request to Singleview and get sync response for CPE Installation Action (both are generated and displayed within Telflow System tab)",,,
+,,,"3","Open Telflow System tab and very the payload within CPE Installation Action Response","actionId with type ""CPE Installation"" is coming within this sync response",,,
+"52277","Test Case","AWS - Verify for email notification sends to patching team post Create Patch ODB Action in SV",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Trigger the Initiate ODB Patching process (for Regular Customer Category)","ODB Patching Action Request and ODB Patching Action Response are generated in Telflow System tab",,,
+,,,"2","Check in Email Inbox","Initiate ODB Patching email is received to Patching team",,,
+"52280","Test Case","AWS -  WFM - Verify for Ready notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for ""Ready"" notification from Bruno","Response 200 given from 'Ready' notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for ""Ready"" is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for ""Ready""","The following information are captured within a sync response in CPE Installation Work Order Notification for ""Ready"" Notification
+- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- ""state"": ""Ready""
+- ""partition""
+- ""region""",,,
+,,,"5","Verify Tellfow Order status","Tellfow Order status is updated as ""In Progress/Ready"" post a sync response is sent",,,
+,,,"6","Verify on Telflow Order Details","Under CPE Work Order Details on Telflow Order Details, the following information are captured and mapped accordingly from the a sync response
+- WorkOrder Id
+- Task Status as ""Ready""
+- Partition
+- Region",,,
+"52281","Test Case","AWS -  WFM - Verify for Acknowledged notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for ""Acknowledged "" notification from Bruno","Response 200 given from 'Acknowledged ' notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for ""Acknowledged"" is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for ""Acknowledged ""","The following information are captured within a sync response in CPE Installation Work Order Notification for ""Acknowledged "" Notification
+- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- ""state"": ""Acknowledged ""
+- ""partition""
+- ""region""
+- ""vendorName""
+- ""engineerId""
+- ""engineerName""
+- ""engineerPhone""",,,
+,,,"5","Verify Tellfow Order status","Tellfow Order status is updated as ""In Progress/Acknowledged "" post a sync response is sent",,,
+,,,"6","Verify on Telflow Order Details","Under CPE Work Order Details on Telflow Order Details, the following information are captured and mapped accordingly from the a sync response
+- WorkOrder Id
+- Task Status as ""Acknowledged ""
+- Partition
+- Region
+- Vendor
+- Engineer Id
+- Engineer Name
+- Engineer Phone",,,
+"52282","Test Case","AWS -  WFM - Verify for Accepted notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for ""Accepted"" notification from Bruno","Response 200 given from 'Accepted' notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for ""Accepted"" is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for ""Accepted""","The following information are captured within a sync response in CPE Installation Work Order Notification for ""Accepted"" Notification
+- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- ""state"": ""Accepted""
+- ""partition""
+- ""region""
+- ""vendorName""
+- ""engineerId""
+- ""engineerName""
+- ""engineerPhone""",,,
+,,,"5","Verify Tellfow Order status","Tellfow Order status is updated as ""In Progress/Accepted"" post a sync response is sent",,,
+,,,"6","Verify on Telflow Order Details","Under CPE Work Order Details on Telflow Order Details, the following information are captured and mapped accordingly from the a sync response
+- WorkOrder Id
+- Task Status as ""Accepted""
+- Partition
+- Region
+- Vendor
+- Engineer Id
+- Engineer Name
+- Engineer Phone",,,
+"52283","Test Case","AWS -  WFM - Verify for Trip Started notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for ""Trip Started"" notification from Bruno","Response 200 given from 'Trip Started' notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for ""Trip Started"" is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for ""Trip Started""","The following information are captured within a sync response in CPE Installation Work Order Notification for ""Trip Started"" Notification
+- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- ""state"": ""Trip Started""
+- ""partition""
+- ""region""
+- ""vendorName""
+- ""engineerId""
+- ""engineerName""
+- ""engineerPhone""",,,
+,,,"5","Verify Tellfow Order status","Tellfow Order status is updated as ""In Progress/Trip Started"" post a sync response is sent",,,
+,,,"6","Verify on Telflow Order Details","Under CPE Work Order Details on Telflow Order Details, the following information are captured and mapped accordingly from the a sync response
+- WorkOrder Id
+- Task Status as ""Trip Started""
+- Partition
+- Region
+- Vendor
+- Engineer Id
+- Engineer Name
+- Engineer Phone",,,
+"52284","Test Case","AWS -  WFM - Verify for Customer Premises notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for ""Customer Premises"" notification from Bruno","Response 200 given from 'Customer Premises' notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for ""Customer Premises"" is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for ""Customer Premises""","The following information are captured within a sync response in CPE Installation Work Order Notification for ""Customer Premises"" Notification
+- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- ""state"": ""Customer Premises""
+- ""partition""
+- ""region""
+- ""vendorName""
+- ""engineerId""
+- ""engineerName""
+- ""engineerPhone""",,,
+,,,"5","Verify Tellfow Order status","Tellfow Order status is updated as ""In Progress/Customer Premises"" post a sync response is sent",,,
+,,,"6","Verify on Telflow Order Details","Under CPE Work Order Details on Telflow Order Details, the following information are captured and mapped accordingly from the a sync response
+- WorkOrder Id
+- Task Status as ""Customer Premises""
+- Partition
+- Region
+- Vendor
+- Engineer Id
+- Engineer Name
+- Engineer Phone",,,
+"52285","Test Case","AWS -  WFM - Verify for In Work notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for ""In Work"" notification from Bruno","Response 200 given from 'In Work' notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for ""In Work"" is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for ""In Work ""","The following information are captured within a sync response in CPE Installation Work Order Notification for ""In Work "" Notification
+- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- ""state"": ""In Work ""
+- ""partition""
+- ""region""
+- ""vendorName""
+- ""engineerId""
+- ""engineerName""
+- ""engineerPhone""",,,
+,,,"5","Verify Tellfow Order status","Tellfow Order status is updated as ""In Progress/In Work "" post a sync response is sent",,,
+,,,"6","Verify on Telflow Order Details","Under CPE Work Order Details on Telflow Order Details, the following information are captured and mapped accordingly from the a sync response
+- WorkOrder Id
+- Task Status as ""In Work""
+- Partition
+- Region
+- Vendor
+- Engineer Id
+- Engineer Name
+- Engineer Phone",,,
+"52899","Test Case","AWS - WFM - Verify for Ok notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Initiate the Install CPE process (for Mobily infra provider)","CPE Install Work Order Request and CPE Install Work Order Response are generated in Telflow System tab",,,
+,,,"2","Hits a synchronous response for Ok notification from Bruno","Response 200 given from Ok notification request and ""Received WFM notification: ""workOrderStateChangeNotification"" is created in Bruno response body",,,
+,,,"3","Open Tellfow System tab","CPE Installation Work Oder Notification for Ok is generated and displayed in Tellfow System tab",,,
+,,,"4","Verify the payload of CPE Installation Work Oder Notification for Ok","- ""workOrder id"" is captured from Telflow Order Details
+- ""externalId"" is captured from Tellfow Order Id
+- state"": ""Ok""
+- ""code:"" ""1000""",,,
+"53578","Test Case","AWS - Verify Telflow receives ODB Patching Completed notification from SingleView (simulated via Bruno)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Trigger Initiate ODB Patch process","ODB Patching Action Request and ODB Patching Action Response are generated and displayed in Tellfow System tab",,,
+,,,"2","Trigger ODB Patching Completion Notification via Bruno","Response 200 and ""Received notification"": ""ActionNotificationEvent"" are returned from Bruno response body",,,
+,,,"3","Open Tellfow System tab","Create ODB Patch Action Notification is generated and displayed in Telflow System tab",,,
+,,,"4","Validate the payload of 'Create ODB Patch Action Notification'","- ""actionId"": matched as the actionID retrieved from ODB Patching Action Response
+ - ""resolutionCode"": ""0"",
+ - ""resolutionText"": ""ODB Patching Completed""",,,
+,,,"5","Ensure process should be able to proceed further once after the ""ODB Patching Completed"" notification is received in Telflow System","Process is able to passed and proceed further until ""Retrieve CPE MAC Address""",,,
+"53584","Test Case","AWS - Mapplewave -  Verify for Update CPE Inventory",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers the Update CPE Inventory process for Mobily Infra ","The Update CPE Inventory Request and Update CPE Inventory Response are generated and displayed in Telflow System tab",,,
+,,,"2","Open Tellfow System tab and verify the Update CPE Inventory Request ","customerId, CPE Serial Number and status ""SALE"" are sending within the Update CPE Inventory Request to MV",,,
+,,,"3","Open Tellfow System tab and verify the Update CPE Inventory Response","status ""Success"" with seriesFolio are coming from the Update CPE Inventory Response from MV",,,
+"53686","Test Case","AWS - ME - Ensure ME Installation Work Order Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","Ensure ME Installation Work Order Request is generated and visible in Telflow System",,,
+"53689","Test Case","AWS - ME - Verify ME Installation Work Order Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","Mobily Infra Fulfilment  process is running to ME path and trigger Install ME process",,,
+,,,"2","Navigate to the System tab","Ensure ME Installation Work Order Request are generated in the Telflow System.",,,
+,,,"3","View the payload for ""ME Installation Work Order Request""","The payload includes: 
+ (e.g., salesOrder (id, type, san), workOrder (id, taskCategory, typeOfService ""Mesh Devices"", parentId), partitionInfo (odbCode, region, geoCoordinates), customerLocation (buildingName, street, zip), customerInfo (name, email, can, cid), equipment (name, deviceType ""me"", numberOfDevices), and sourceApp ""Telflow"").",,,
+"53706","Test Case","AWS - ME - Ensure ME Installation Action Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"3","After ME Installation Work Order Success Performed in WFM, ensure Telflow initiates an action in SingleView for ME Installation","Ensure ME Installation Action Request is successfully generated and displayed in the Telflow System tab immediately.",,,
+"53776","Test Case","AWS - ME - Verify ME Installation Action Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"3","After ME Installation Work Order Success Performed in WFM, ensure Telflow initiates an action in SingleView for ME Installation","Ensure ME Installation Action Request is successfully generated and displayed in the Telflow System tab immediately.",,,
+,,,"4","Verify the ME Installation Action Request in the System tab.","The payload must includes  type ""ME Installation"", orderId (SAN), and characteristic (taskStatus ""Pending Visit"", appointmentId))",,,
+"53777","Test Case","AWS - ME - Verify ME Installation Action Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"3","Ensure ME Installation Action Response Coming after ME Installation Action Request successfully sent to SingleView","An ME Installation Action Response Generated in Telflow System ",,,
+,,,"4","Verify the ME Installation Action Response.","The payload provides a valid also unique actionId and type 'ME Installation'",,,
+"53778","Test Case","AWS - ME - Ensure Update ME Inventory Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)",,,
+,,,"2","Progress the FTTH order through the Provisioning Completed stage.","The order reaches the Update ME Inventory task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure Update ME Inventory Request is initiated request to MapleWave to update Mesh Extender complete installed and sale, after performing Provisioning Completed","The Update ME Inventory Request is generated and addressed to the inventory module.",,,
+"53779","Test Case","AWS - ME - Ensure ME Installation Action Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"3","Ensure ME Installation Action Response Coming after ME Installation Action Request successfully sent to SingleView","An ME Installation Action Response Generated in Telflow System ",,,
+"53818","Test Case","AWS - ME - Verify Update ME Inventory Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","WFM installation record is updated in the Telflow System tab.",,,
+,,,"2","Progress the FTTH order through the Provisioning Completed stage.","The order reaches the Update ME Inventory task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure Update ME Inventory Request is initiated request to MapleWave to update Mesh Extender complete installed and sale, after performing Provisioning Completed","The Update ME Inventory Request is generated and addressed to the inventory module.",,,
+,,,"5","Verify the Update ME Inventory Request in the System tab.","The payload includes the correct customerIds, inventoryIds and sets the equipment status to ""SALE"".",,,
+"53821","Test Case","AWS - ME - Verify ME Provisioning Completion Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure after Provisioning Complete process passed, ME Provisioning Completion Request is coming to Telflow System","The ME Provisioning Completion Request is generated ",,,
+,,,"5","Verify the ME Provisioning Completion Request in the System tab.","The payload correctly maps the current soId and woId.",,,
+"53914","Test Case","AWS - ME - Verify ME Installation Work Order Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","ME Installation Work Order Response is generated and displayed in Telflow System tab",,,
+,,,"3","Validate the payload of ME Installation Work Order Response ","The payload content  ""code"": 0",,,
+"53920","Test Case","AWS - ME - Ensure ME Installation Work Order Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Navigate to the System tab","ME Installation Work Order Response  is generated and displayed in Telflow System tab",,,
+"53950","Test Case","AWS - ME - Ensure ME Provisioning Completion Request is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure after Provisioning Complete process passed, ME Provisioning Completion Request is coming to Telflow System","The ME Provisioning Completion Request is generated ",,,
+"53952","Test Case","AWS - ME -  Ensure Update ME Inventory Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)",,,
+,,,"2","Progress the FTTH order through the Provisioning Completed stage.","The order reaches the Update ME Inventory task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure Update ME Inventory Response Coming after Update ME Inventory Request is sent to MapleWave ","An Update ME Inventory Response Generated in Telflow System ",,,
+"53953","Test Case","AWS - ME - Verify Update ME Inventory Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)",,,
+,,,"2","Progress the FTTH order through the Provisioning Completed stage.","The order reaches the Update ME Inventory task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure Update ME Inventory Response Coming after Update ME Inventory Request is sent to MapleWave ","An Update ME Inventory Response Generated in Telflow System ",,,
+,,,"5","Verify the Update ME Inventory Response.","The status is Success and the seriesFolio contains a valid transaction identifier",,,
+"53954","Test Case","AWS - ME - Ensure ME Provisioning Completion Response is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure after ME Provisioning Completion Request sent ME Provisioning Completion Response coming to Telflow System","The ME Provisioning Completion Response is generated ",,,
+"53955","Test Case","AWS - ME - Verify ME Provisioning Completion Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure after ME Provisioning Completion Request sent ME Provisioning Completion Response coming to Telflow System","The ME Provisioning Completion Response is generated ",,,
+,,,"5","Verify the ME Provisioning Completion Response.","The response payload must include code is 0 and testUpdate contains the string ""test succeed"".",,,
+"53956","Test Case","AWS - ME - Ensure ME Provisioning Completion Notification is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Hit the WFM Notification API with the successful installation payload.","Ensure ME Provisioning Completion Notification Generated after 200 OK Success Response",,,
+"53958","Test Case","AWS - ME - Verify ME Provisioning Completion Notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Hit the WFM Notification API with the successful installation payload.","Ensure ME Provisioning Completion Notification Generated after Success Response",,,
+,,,"5","Verify payload ME Provisioning Completion Notification","The task captures the full engineer and completion metadata.",,,
+,,,"6","Verify the data is mapped correctly and properly on ME Work Order Details under Telflow Details tab","Ensure the data mapped correctly as per ME Provisoning Completion Notification payload
+""workOrder id""
+""externalId"" (Tellfow Order Id)
+""state"": ""Completed""
+""partition""
+""region""
+Vendor
+""engineerId""
+""engineerName""
+""engineerPhone""
+odbPort
+reasonCode
+reasonText",,,
+"53959","Test Case","AWS - ME - Ensure ME Installation Action Request (Closed) is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure after ME Installation Action Request (Closure) is coming after receive ME Provisioning Completion Notification to Telflow System","The ME InstallationAction Request closure is generated ",,,
+"53960","Test Case","AWS - ME - Verify ME Installation Action Request (Closed)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure after ME Installation Action Request (Closure) is coming after receive ME Provisioning Completion Notification to Telflow System","The ME InstallationAction Request closure is generated ",,,
+,,,"5","Verify the ME Installation Action Request closure in the System tab.","Payload reflects status: Complete and contains all technician characteristics.",,,
+"53961","Test Case","AWS - ME - Ensure ME Installation Action Response (Closed) is generated in Telflow System",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure ME Installation Action Response Coming after ME Installation Action Request successfully sent to SingleView","Ensure ME Installation Action Response Coming after ME Installation Action Request successfully sent to SingleView",,,
+"53962","Test Case","AWS - ME - Verify ME Installation Action Response (Closed)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Initiate the FTTH order with Mesh Extender (for Mobily infra provider)","The process reaches the ""Install Mesh Extender"" step in the flow",,,
+,,,"2","Progress the FTTH order until the network provisioning is finalized","The order reaches the internal completion task in the orchestration flow.",,,
+,,,"3","Navigate to the System tab","Telflow System Tab Opened Successfully",,,
+,,,"4","Ensure ME Installation Action Response Coming after ME Installation Action Request successfully sent to SingleView","Ensure ME Installation Action Response Coming after ME Installation Action Request successfully sent to SingleView",,,
+,,,"5","Verify the Update ME Installatio Action Response payload.","Payload reflects status: Action Closed and comment: SV Updated.",,,
+"54060","Test Case","AWS - CPE -  Verify for TMF 622 Notifications are sending to Singleview",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Progress FTTH new product order for Mobily until completed","Completed status is successfully performed on FTTH new product order for Mobily",,,
+,,,"2","Verify for TMF 622 Notification that generated and displayed in Tellfow System tab","TMF 622 Notifications for the following states are generated and displayed in Tellfow System tab
+- Pending Visit
+- Installation Completed
+- Provisioning Started
+- Provisioning Completed
+- Pending UAT
+- Completed",,,
+"54061","Test Case","AWS - TMF 639 - Verify Retrieve Resource (CPE) Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Progress Mobily Infra Fulfilment Process into Retrieve CPE MAC Address process","Retrieve Resource (CPE) Request and  Retrieve Resource (CPE) Response is generated and displayed in Telflow System tab",,,
+,,,"2","Validate in Retrieve Resource (CPE) Request","Retrieve Resource (CPE) Request contains ""integrationKeyValues"": ""{\""cpeSerialNo\"":\""CPE SERIAL Number\""}""",,,
+"54062","Test Case","AWS - TMF 639 - Verify Retrieve Resource (CPE) Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Progress Mobily Infra Fulfilment Process into Retrieve CPE MAC Address process","Retrieve Resource (CPE) Request and  Retrieve Resource (CPE) Response is generated and displayed in Telflow System tab",,,
+,,,"2","Validate in Retrieve Resource (CPE) Response","Telflow gets CPE MAC Address from Retrieve Resource (CPE) Response",,,
+"54063","Test Case","AWS - Verify TMF 641 Service Order Request",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers the process until Provision Service is performed","Create Service Order Request and Create Service Order Response are generated and displayed in Tellfow System tab",,,
+,,,"2","Validate the Create Service Order Request ","the payload of Create Service Order Request contains serviceAccountId, CPE MAC Address, CPE Serial Number, CPE Serial Number (Hex) and Skip CPE Discovery",,,
+"54064","Test Case","AWS - Verify TMF 641 Service Order Response",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers the process until Provision Service is performed","Create Service Order Request and Create Service Order Response are generated and displayed in Tellfow System tab",,,
+,,,"2","Validate the Create Service Order Response ","the payload of Create Service Order Response contains id from NFO ",,,
+"54067","Test Case","AWS - Verify CPE Installation Action for Ready",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Ready via Bruno","CPE Installation Work Order Notification (for Ready state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for Ready state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for Ready state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request","""CPE Installation"" type, partition, appointmentId, taskStatus and region are contained in CPE Installation Action Request for 'Ready' state or any information that coming from CPE Installation Work Order Notification - Ready",,,
+,,,"4","Verify  CPE Installation Action Response ","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for Ready",,,
+"54068","Test Case","AWS - Verify CPE Installation Action for Acknowledged",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Acknowledged via Bruno","CPE Installation Work Order Notification (for Acknowledged state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for Acknowledged state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for Acknowledged state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request"," ""CPE Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in CPE Installation Action Request for 'Acknowledged' state or any information that coming from CPE Installation Work Order Notification - Acknowledged",,,
+,,,"4","Verify  CPE Installation Action Response ","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for Acknowledged",,,
+"54069","Test Case","AWS - Verify CPE Installation Action for Accepted",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Accepted via Bruno","CPE Installation Work Order Notification (for Accepted state) is displayed in Telflow System tab ",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for Accepted state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for Accepted state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request","""CPE Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in CPE Installation Action Request for 'Acknowledged' state or any information that coming from CPE Installation Work Order Notification - Accepted ",,,
+,,,"4","Verify  CPE Installation Action Response ","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for Accepted ",,,
+"54070","Test Case","AWS - Verify CPE Installation Action for Trip Started",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Trip Started via Bruno","CPE Installation Work Order Notification (for Trip Started state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for Trip Started state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for Trip Started state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request","""CPE Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in CPE Installation Action Request for 'Acknowledged' state or any information that coming from CPE Installation Work Order Notification - Trip Started",,,
+,,,"4","Verify  CPE Installation Action Response","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for Trip Started",,,
+"54071","Test Case","AWS - Verify CPE Installation Action for Customer Premises",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Customer Premises via Bruno","CPE Installation Work Order Notification (for Customer Premises state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for Customer Premises state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for Customer Premises state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request","""CPE Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in CPE Installation Action Request for 'Acknowledged' state or any information that coming from CPE Installation Work Order Notification - Customer Premises",,,
+,,,"4","Verify  CPE Installation Action Response","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for Customer Premises",,,
+"54072","Test Case","AWS - Verify CPE Installation Action for In Work",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - In Work via Bruno","CPE Installation Work Order Notification (for In Work state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for In Work state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for In Work state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request","""CPE Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in CPE Installation Action Request for 'Acknowledged' state or any information that coming from CPE Installation Work Order Notification - In Work",,,
+,,,"4","Verify  CPE Installation Action Response","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for In Work",,,
+"54073","Test Case","AWS - Verify CPE Installation Action for Installation Completed",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Installation Completed via Bruno","CPE Installation Work Order Notification (for Installation Completed state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Action Request and CPE Installation Action Response for Installation Completed state are generated and displayed in Telflow System tab","CPE Installation Action Request and CPE Installation Action Response for Installation Completed state are generated and displayed in Telflow System",,,
+,,,"3","Verify CPE Installation Action Request","SingleView orderId, ""CPE Installation"" type, appointmentId, taskStatus 'Installation Completed', and cpeSerialNumber are contained in CPE Installation Action Request for 'Installation Completed' state",,,
+,,,"4","Verify  CPE Installation Action Response","Telflow gets actionId, 'CPE Installation' type and 'Action Closed' status from the CPE Installation Action Response for 'Installation Completed'",,,
+"54074","Test Case","AWS - Verify TMF 641 Notification for 'In Progress'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers the Provision Service process in Mobily Infra Fulfilment process","Create Service Order Request and Create Service Order Response are generated and displayed in Telflow System tab",,,
+,,,"2","Verify for TMF 641 Notification for 'In Progress'' response","Service Order Notification for In Progress state is generated and displayed in Tellfow System tab",,,
+"54076","Test Case","AWS - Verify TMF 641 Notification for 'Completed'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers the Provision Service process in Mobily Infra Fulfilment process","Create Service Order Request and Create Service Order Response are generated and displayed in Telflow System tab",,,
+,,,"2","Verify for TMF 641 Notification for 'Completed'","Service Order Notification for Completed state is generated and displayed in Tellfow System tab",,,
+,,,"3","Ensure the process is moving forward into next process after this response is received by Telflow","Process is continue to Notifies SV on Order Status - Provisioning Completed",,,
+"54077","Test Case","AWS - WFM - Verify for CPE Provisioning Completion",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Mobily Infra Fulfilment process onto Initiate UAT","CPE Provisioning Completion Request and CPE Provisioning Completion Response are generated in Telflow System tab",,,
+,,,"2","Verify CPE Provisioning Completion Request in Telflow System tab","response 'success', work order id (woId) and Telflow Order ID (soId) are populated in CPE Provisioning Completion Request",,,
+,,,"3","Verify CPE Provisioning Completion Response in Telflow System tab","code '0' is populated in CPE Provisioning Completion Response",,,
+"54079","Test Case","AWS - Verify CPE Installation Action for Pending UAT",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Initiate UAT in Mobily Infra Fulfilment process","CPE Provisioning Completion Request and CPE Provisioning Completion Response are generated and displayed in Telflow System tab",,,
+,,,"2","Telflow send CPE Installation Action Request for 'Pending UAT' task status to Singleview","CPE Installation Action Request is send to Singleview and Telflow generated and display the request in Telflow System tab",,,
+,,,"3","Validate the payload in CPE Installation Action Request","CPE Installation Action Request contains with type 'CPE Installation', Singleview orderId, task Status 'Pending UAT' and appoitmentId",,,
+,,,"4","Ensure Telflow gets an immediate response back from Singleview for CPE Installation Action Response","CPE Installation Action Response is generated and displayed in Telflow System tab",,,
+,,,"5","Validate the payload in CPE Installation Action Response","CPE Installation Action Response contains with actionId, sttaus 'Action Closed' and type 'CPE Installation'",,,
+"54080","Test Case","AWS - WFM - Verify for CPE Provisioning Completion Notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Initiate UAT process in Mobily Infra Fulfilment process","CPE Provisioning Completion Request and CPE Provisioning Completion Response are performed and both request and response are generated and displayed in Telflow system tab, following by CPE Installation Action Request and Response.",,,
+,,,"2","Send CPE Provisioning Completion Notification (for UAT Completed) via Bruno","Telflow generate and display CPE Provisioning Completion Notification (for UAT Completed) in Telflow System tab",,,
+,,,"3","Verify the payload of CPE Provisioning Completion Notification (for UAT Completed)","CPE Provisioning Completion Notification contains reasonCode ""0"" and reasonText ""Successful""",,,
+,,,"4","Verify on Tellfow Order Status","Telflow updates order status from ""IN  PROGRESS/PENDING UAT"" onto 'IN PROGRESS/UAT COMPLETED'",,,
+,,,"5","Verify on Telflow Order Details","Tellfow updates Order Details for Reason Code '0' and Reason Text 'Successful'",,,
+"54081","Test Case","AWS - Verify Telflow send Order State Change Notification 'UAT Completed' to Singleview",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers Process ""Order Status Notification"" (to Notifies SV on Order Status - UAT Completed) in Mobily Infra Fulfilment Process","Order State Change Notification Request is generated and displayed in Telflow System tab",,,
+,,,"2","Verify Order State Change Notification Request","Order State Change Notification Request contains state ""In Progress|UAT Completed""",,,
+"54082","Test Case","AWS - Verify Telflow gets response back from Singleview for Order State Change Notification 'UAT Completed'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Progress FTTH new product order for Mobily until UAT Completed","Order reaches In Progress / UAT Completed state",,,
+,,,"2","Verify process Order Status Notification – UAT Completed is triggered","Process is triggered successfully",,,
+,,,"3"," Verify Telflow generates Order State Change Notification Request"," Request is generated and displayed in Telflow System tab",,,
+,,,"4","Verify Telflow generates Order State Change Notification details","Notification contains orderState = In Progress | UAT Completed",,,
+"54084","Test Case","AWS -  Verify CPE Installation Action for UAT Completed",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers  the Initiate UAT process for Mobily Infra Provider","CPE Provisioning Completion Request and CPE Provisioning Completion Response have been generated and displayed in Telflow System tab",,,
+,,,"2","Open Telflow System tab","CPE Installation Action Request (for Pending UAT taskStatus) and CPE Installation Action Response are generated and displayed in Telflow System tab",,,
+,,,"3","Verify CPE Installation Action Request","CPE Installation Action Request contains taskStatus ""Pending UAT"", appointmentId, type ""CPE Installation"" and Singleview orderId",,,
+,,,"4","Verify CPE Installation Action Respose","CPE Installation Action Response contains actionId, status ""Action Closed"" and type ""CPE Installation""",,,
+"54085","Test Case","AWS - Verify Telflow send Order State Change Notification 'Pre-Completion' to Singleview",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Progress FTTH new product order for Mobily from UAT Completed to Pre-Completion","Order reaches Pre-Completion state",,,
+,,,"2","Verify process Order Status Notification – Pre-Completion is triggered","Process is triggered successfully",,,
+,,,"3","Verify Telflow generates Order State Change Notification Request","Request is generated and displayed in Telflow System tab",,,
+,,,"4","Verify Order State Change Notification Request","Notification contains orderState = Pre-Completion",,,
+"54086","Test Case","AWS - Verify Telflow gets response back from Singleview for Order State Change Notification 'Pre-Completion'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Progress FTTH new product order for Mobily until Pre-Completion","The status order is Pre-Completion",,,
+,,,"2","Verify Telflow receives Order State Change Notification – Pre Completion from SingleView","Telflow receives Order State Change Notification from SingleView regarding to Pre Completion state",,,
+"54184","Test Case","AWS - Verify TMF 641 Notification for 'Acknowledged'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers the Provision Service process in Mobily Infra Fulfilment process","Create Service Order Request and Create Service Order Response are generated and displayed in Telflow System tab",,,
+,,,"2","Verify for TMF 641 Notification for 'Acknowledged' response","Service Order Notification for Acknowledged state is generated and displayed in Tellfow System tab",,,
+"54207","Test Case","AWS - Verify CPE Installation Action for OK",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Triggers CPE Installation Work Order Notification - Ready via Bruno","CPE Installation Work Order Notification (for OK state) is displayed in Telflow System tab",,,
+,,,"2","Ensure CPE Installation Work Order Notification for OK state are generated and displayed in Telflow System tab","CPE Installation Work Order Notification for OK state are generated and displayed in Telflow System",,,
+"54221","Test Case","AWS - ME - Verify ME Installation Action for OK",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - Ready via Bruno","ME Installation Work Order Notification (for OK state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Work Order Notification for OK state are generated and displayed in Telflow System tab","ME Installation Work Order Notification for OK state are generated and displayed in Telflow System",,,
+"54223","Test Case","AWS - ME - Verify ME Installation Action for Ready",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - Ready via Bruno","ME Installation Work Order Notification (for Ready state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Action Request and CPE Installation Action Response for Ready state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for Ready state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request","""ME Installation"" type, partition, appointmentId, taskStatus and region are contained in ME Installation Action Request for 'Ready' state or any information that coming from ME Installation Work Order Notification - Ready",,,
+,,,"4","Verify  ME Installation Action Response ","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for Ready",,,
+"54224","Test Case","AWS - ME - Verify ME Installation Action for Acknowledge",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - Acknowledged via Bruno","ME Installation Work Order Notification (for Acknowledged state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Action Request and ME Installation Action Response for Acknowledged state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for Acknowledged state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request"," ""ME Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in ME Installation Action Request for 'Acknowledged' state or any information that coming from ME Installation Work Order Notification - Acknowledged",,,
+,,,"4","Verify  ME Installation Action Response ","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for Acknowledged",,,
+"54225","Test Case","AWS - ME - Verify ME Installation Action for Accepted",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - Accepted via Bruno","ME Installation Work Order Notification (for Accepted state) is displayed in Telflow System tab ",,,
+,,,"2","Ensure ME Installation Action Request and CPE Installation Action Response for Accepted state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for Accepted state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request","""MEInstallation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in ME Installation Action Request for 'Acknowledged' state or any information that coming from ME Installation Work Order Notification - Accepted ",,,
+,,,"4","Verify  ME Installation Action Response ","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for Accepted ",,,
+"54226","Test Case","AWS - ME - Verify ME Installation Action for Trip Started",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME 1Installation Work Order Notification - Trip Started via Bruno","ME Installation Work Order Notification (for Trip Started state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Action Request and ME Installation Action Response for Trip Started state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for Trip Started state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request","""ME Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in ME Installation Action Request for 'Acknowledged' state or any information that coming from ME Installation Work Order Notification - Trip Started",,,
+,,,"4","Verify  ME Installation Action Response","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for Trip Started",,,
+"54227","Test Case","AWS - ME - Verify ME Installation Action for Customer Premises",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - Customer Premises via Bruno","ME Installation Work Order Notification (for Customer Premises state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Action Request and ME Installation Action Response for Customer Premises state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for Customer Premises state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request","""ME Installation"" type, appointmentId, taskStatus, partition, vendorName, region, engineerId, engineerName, and engineerPhone are contained in ME Installation Action Request for 'Acknowledged' state or any information that coming from ME Installation Work Order Notification - Customer Premises",,,
+,,,"4","Verify  ME Installation Action Response","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for Customer Premises",,,
+"54228","Test Case","AWS - ME - Verify ME Installation Action for In Work",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - In Work via Bruno","ME Installation Work Order Notification (for In Work state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Action Request and ME Installation Action Response for In Work state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for In Work state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request","""ME Installation"" type, appointmentId, taskStatus, partition, vendorName, region, eng1ineerId, engineerName, and engineerPhone are contained in ME Installation Action Request for 'Acknowledged' state or any information that coming from ME Installation Work Order Notification - In Work",,,
+,,,"4","Verify  ME Installation Action Response","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for In Work",,,
+"54229","Test Case","AWS - ME - Verify ME Installation Action for Installation Complete",,,,"New Stack Impl\Solution\CSG\CSG QandO","Ahmad Rivaldhi <Ahmad.Rivaldhi@csgi.com>","Closed"
+,,,"1","Triggers ME Installation Work Order Notification - Installation Completed via Bruno","ME Installation Work Order Notification (for Installation Completed state) is displayed in Telflow System tab",,,
+,,,"2","Ensure ME Installation Action Request and ME Installation Action Response for Installation Completed state are generated and displayed in Telflow System tab","ME Installation Action Request and ME Installation Action Response for Installation Completed state are generated and displayed in Telflow System",,,
+,,,"3","Verify ME Installation Action Request","SingleView orderId, ""ME Installation"" type, appointmentId, taskStatus 'Installation Completed', and cpeSerialNumber are contained in ME Installation Action Request for 'Installation Completed' state",,,
+,,,"4","Verify  ME Installation Action Response","Telflow gets actionId, 'ME Installation' type and 'Action Closed' status from the ME Installation Action Response for 'Installation Completed'",,,
+"54266","Test Case","AWS - Verify attributes and value of ""CPE Details"" are mapped and stored on Telflow Order Details",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Send TMF 622 request via Bruno","Return 201 response and FTTH (Mobily Infra) order successfully created in Tellfow Portal",,,
+,,,"2","Ensure Acknowledged state given in response","Acknowledged state given in response",,,
+,,,"3","Validate CPE Details","All attributes and characteristics from the TMF-622 request must is mapped to the corresponding fields in Telflow CPE Details section",,,
+,,,"4","Validate CPE Name is mapped in Telflow","Ensure CPE Name is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"5","Validate QoS Profile is mapped in Telflow","Ensure QoS Profile is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"6","Validate Bandwidth is mapped in Telflow","Ensure Bandwidth is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"7","Validate Integration ID is mapped in Telflow","Ensure Integration ID is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"8","Validate CPE Type is mapped in Telflow","Ensure CPE Type is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"9","Validate CPE Install Date is mapped in Telflow","Ensure CPE Install Date is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"10","Validate Delivery Partner ID is mapped in Telflow","Ensure Delivery Partner ID is mapped in Telflow CPE Details section as per TMF-622 payload",,,
+,,,"11","Validate Sell Partner ID is mapped in Telflow","Ensure Sell Partner ID is mapped in Telflow CPE Details section as per TMF-622 payload",,,

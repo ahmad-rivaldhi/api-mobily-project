@@ -1,0 +1,44 @@
+meta {
+  name: 03 - Search Inventory by SAN
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/inventory?q={{customerSAN}}&verbose=true&exact=false&count=50&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  q: {{customerSAN}}
+  verbose: true
+  exact: false
+  count: 50
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:post-response {
+  inventoryId: res.body.entities[0].id
+}
+
+docs {
+  Cari inventory entity yang memuat SAN sebagai characteristic.
+  SAN umumnya melekat pada inventory tipe Service / SubscriberAccount.
+
+  Post-response akan men-capture `inventoryId` dari hasil pertama ke env,
+  sehingga step 04 – 06 langsung bisa di-run.
+
+  Kalau hasil > 1 dan Anda ingin pilih yang spesifik, override
+  `{{inventoryId}}` manual di environment sebelum run step 04 dst.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

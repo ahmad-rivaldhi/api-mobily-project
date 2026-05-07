@@ -1,0 +1,33 @@
+meta {
+  name: 02 - Search Customer Orders by q (CPE Serial)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{demo-mob-dev}}/portal/api/v1/customerorders?q={{cpeSerialNumber}}&verbose=true&exact=false&count=200&sort=creationDate&order=desc
+  body: none
+  auth: bearer
+}
+
+params:query {
+  q: {{cpeSerialNumber}}
+  verbose: true
+  exact: false
+  count: 200
+  sort: creationDate
+  order: desc
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Free-text search Customer Orders dengan cpeSerialNumber value.
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

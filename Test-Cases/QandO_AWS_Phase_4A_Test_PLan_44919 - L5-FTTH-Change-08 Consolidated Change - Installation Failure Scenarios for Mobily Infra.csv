@@ -1,0 +1,338 @@
+﻿ID,Work Item Type,Title,Test Step,Step Action,Step Expected,Area Path,Assigned To,State
+"54629","Test Case","AWS - Mobily - Triggers Installation Failure for Regular Customer",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Create order via TMF-622 with customer category ""Regular""","Ensure the response is ""201 Created"" as success response",,,
+,,,"2","Verify the order is created in Telflow portal","The corresponding order is created in Telflow portal",,,
+,,,"3","Verify the ""Regular"" customer path is triggered","Ensure the path for ""Regular"" customer is triggered and will trigger the ""Initiate ODB Patch"" node",,,
+,,,"4","Fire the Installation Failure payload ","Ensure CPE Installation Work Order Notification for Installation Failure is received in System tab from WFM
+",,,
+,,,"5","Fire the Installation Failure Action Notification payload","Ensure the Installation Failure Action Notification payload is received in System tab from SingleView 
+",,,
+,,,"6","Fire the Appointment Capture Notification payload","Ensure the Appointment Capture Action Notification is received in System tab from SingleView",,,
+,,,"7","Verify Close ODB Patch Action is triggered","Ensure the path for ""Regular"" customer is triggered and will trigger the ""Close ODB Patch"" node",,,
+,,,"8","Verify the path will be passing through next node (Re-Initiate)","Ensure once the Close ODB Patch Action is triggered, then it will pass through next node which is ""Re-Initiate"" and can be starting the process from the initial",,,
+"54630","Test Case","AWS - Mobily - Triggers Installation Failure for Royal Customer",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Create order via TMF-622 with customer category ""Royal""","Ensure the response is ""201 Created"" as success response",,,
+,,,"2","Verify the order is created in Telflow portal","The corresponding order is created in Telflow portal",,,
+,,,"3","Verify the ""Royal"" customer path is triggered","Ensure the path for ""Royal"" customer is triggered and will skip the ""Initiate ODB Patch"" node",,,
+,,,"4","Fire the Installation Failure payload ","Ensure CPE Installation Work Order Notification for Installation Failure is received in System tab from WFM",,,
+,,,"5","Fire the Installation Failure Action Notification payload","Ensure the Installation Failure Action Notification payload is received in System tab from SingleView ",,,
+,,,"6","Fire the Appointment Capture Notification payload","Ensure the Appointment Capture Action Notification is received in System tab from SingleView",,,
+,,,"7","Verify the process will trigger the ""Close CPE Installation Action"" node","- Ensure the path trigger the ""Royal"" customer category
+- Ensure the ""Close ODB Patch Action"" node is skipped
+- Ensure the ""Close ODB Patch Installation Action"" node is triggered",,,
+"54631","Test Case","AWS - Mobily - Verify FTTH Installation Failure from Network Problem (Treatment 1)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Create the order via TMF-622","Ensure the order is successfully created in Telflow",,,
+,,,"2","Verify the Install CPE node is triggered in MobilyInfra Fulfillment process","Ensure the Install CPE node is triggered successfully",,,
+,,,"3","Verify the synchronous ""Installation Failure"" notification payload","Ensure the reasonCode and reasonText are as per Treatment 1 type
+",,,
+,,,"4","Trigger synchronous ""Installation Failure"" notification payload via bruno","Ensure the payloads is giving 200 OK as success response",,,
+,,,"5","Verify synchronous for ""Installation Failure"" notification in Telflow system tab","Ensure Telflow receives CPE Installation Work Order Notification from WFM for Installation Failure based on reasonCode and reasonText",,,
+,,,"6","Verify the MOB Handle Installation Failure v1.0 process is triggered","Ensure The MOB Handle Installation Failure v1.0 process will be triggered as ""WFM v1.0"" sub-process",,,
+,,,"7","Verify the Treatment1 v1.0 process is triggered","Ensure the Treatment1 v1.0 process will be triggered as MOB Handle Installation Failure sub-process in ""Treatment process"" node",,,
+,,,"8","Verify the mapped data on Telflow CPE Work Order details ","Ensure the attributes and value in the CPE Installation Work Order Notification payload is mapped properly and synchronized on Telflow Details tab-CPE Work Order Details section",,,
+"54632","Test Case","AWS - Mobily - Verify FTTH Installation Failure from System Issues (Treatment 2)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Create the order via TMF-622","Ensure the order is successfully created in Telflow",,,
+,,,"2","Verify the Install CPE node is triggered in MobilyInfra Fulfillment process","Ensure the Install CPE node is triggered successfully",,,
+,,,"3","Verify the synchronous ""Installation Failure"" notification payload in Bruno","Ensure the reasonCode and reasonText are as per Treatment 2 type",,,
+,,,"4","Trigger synchronous ""Installation Failure"" notification payload via bruno","Ensure the payloads is giving 200 OK as success response",,,
+,,,"5","Verify synchronous for ""Installation Failure"" notification in Telflow system tab","Ensure Telflow receives CPE Installation Work Order Notification from WFM for Installation Failure based on reasonCode and reasonText",,,
+,,,"6","Verify the MOB Handle Installation Failure v1.0 process is triggered","Ensure The MOB Handle Installation Failure v1.0 process will be triggered as ""WFM v1.0"" sub-process",,,
+,,,"7","Verify the Treatment2 v1.0 process is triggered","Ensure the Treatment2 v1.0 process will be triggered as MOB Handle Installation Failure sub-process in ""Treatment process"" node",,,
+,,,"8","Verify the mapped data on Telflow CPE Work Order details ","Ensure the attributes and value in the CPE Installation Work Order Notification payload is mapped properly and synchronized on Telflow Details tab-CPE Work Order Details section",,,
+"54633","Test Case","AWS - Mobily - Verify FTTH Installation Failure from Wrong Information (Treatment 3)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Create the order via TMF-622","Ensure the order is successfully created in Telflow",,,
+,,,"2","Verify the Install CPE node is triggered in MobilyInfra Fulfillment process","Ensure the Install CPE node is triggered successfully",,,
+,,,"3","Verify the synchronous ""Installation Failure"" notification payload","Ensure the reasonCode and reasonText are as per Treatment 3  type",,,
+,,,"4","Trigger synchronous ""Installation Failure"" notification payload via bruno","Ensure the payloads is giving 200 OK as success response",,,
+,,,"5","Verify synchronous for ""Installation Failure"" notification in Telflow system tab","Ensure Telflow receives CPE Installation Work Order Notification from WFM for Installation Failure based on reasonCode and reasonText",,,
+,,,"6","Verify the MOB Handle Installation Failure v1.0 process is triggered","Ensure The MOB Handle Installation Failure v1.0 process will be triggered as ""WFM v1.0"" sub-process",,,
+,,,"7","Verify the Treatment3 v1.0 process is triggered","Ensure the Treatment3 v1.0 process will be triggered as MOB Handle Installation Failure sub-process in ""Treatment process"" node",,,
+,,,"8","Verify the mapped data on Telflow CPE Work Order details ","Ensure the attributes and value in the CPE Installation Work Order Notification payload is mapped properly and synchronized on Telflow Details tab-CPE Work Order Details section",,,
+"54634","Test Case","AWS - Mobily - Verify FTTH Installation Failure from Mobily Customer Rejection (Treatment 4)",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Create the order via TMF-622","Ensure the order is successfully created in Telflow",,,
+,,,"2","Verify the Install CPE node is triggered in MobilyInfra Fulfillment process","Ensure the Install CPE node is triggered successfully",,,
+,,,"3","Verify the synchronous ""Installation Failure"" notification payload","Ensure the reasonCode and reasonText are as per Treatment 4 type",,,
+,,,"4","Trigger synchronous ""Installation Failure"" notification payload via bruno","Ensure the payloads is giving 200 OK as success response",,,
+,,,"5","Verify synchronous for ""Installation Failure"" notification in Telflow system tab","Ensure Telflow receives CPE Installation Work Order Notification from WFM for Installation Failure based on reasonCode and reasonText",,,
+,,,"6","Verify the MOB Handle Installation Failure v1.0 process is triggered","Ensure The MOB Handle Installation Failure v1.0 process will be triggered as ""WFM v1.0"" sub-process",,,
+,,,"7","Verify the Treatment4 v1.0 process is triggered","Ensure the Treatment4 v1.0 process will be triggered as MOB Handle Installation Failure sub-process in ""Treatment process"" node",,,
+,,,"8","Verify the mapped data on Telflow CPE Work Order details ","Ensure the attributes and value in the CPE Installation Work Order Notification payload is mapped properly and synchronized on Telflow Details tab-CPE Work Order Details section",,,
+"54637","Test Case","AWS - Mobily - Initiate an action in Singleview from Network Problem Installation Failure",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Verify Telflow initiates an action in SingleView ","Installation Failure Action Request is generated under Telflow System tab ",,,
+,,,"2","Verify Installation Failure Action Request","Ensure the values are mapped properly:
+ - type: FTTH Installation Failure - Network Problem 
+- orderId is SingleView ID
+- characteristics: reasonText, reasonCode, engineerId, vendorName, taskStatus (On Hold), engineerPhone, treatmentCategory (Network Problem), engineerName, comments ",,,
+,,,"3","Verify SingleView sends immediate response back to Telflow","Installation Failure Action Response is generated under Telflow System tab ",,,
+,,,"4","Verify Installation Failure Action Response","Ensure Telflow receives immediate response from SingleView 
+- ""name"": ""CPE / ME Installation Sucess/Failure"",
+- ""actionId"": (generate actionID)
+- ""type"": ""FTTH Installation Failure - Network Problem""
+
+",,,
+"54638","Test Case","AWS - Mobily - Verify Installation Failure Action Notification for 'Updated ODB Id'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Verify the Installation Failure Action Notification payload for ODB ID in the Bruno","Ensure the payload is as per expected: 
+- eventType : ActionNotificationEvent
+ - Ensure the actionId is the actionId which coming from Installation Failure Action Response payload
+- resolution
+- ""resolutionCode"": ""0"",
+- ""resolutionText"": ""Updated ODB Id"",
+- characteristics:
+    - ""name"": ""updatedOdbId"",
+    - ""name"": ""comments"",",,,
+,,,"2","Trigger the Installation Failure Action Notification for 'Updated ODB Id' via Bruno","Ensure receive 200 OK as success response
+",,,
+,,,"3","Verify the generated Installation Failure Action Notification payload","- Ensure the Installation Failure Action Notification is generated in Telflow System tab
+
+ - Ensure the attributes and value in as synchronied as per Installation Failure Action Notification for 'Updated ODB Id' payload in Bruno
+
+",,,
+"54653","Test Case","AWS - Mobily - Verify Installation Failure Action Notification for 'Updated Contact Number'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Verify the Installation Failure Action Notification payload for Updated Contact Number in the Bruno","Ensure the payload is as per expected: 
+- eventType : ActionNotificationEvent
+ - Ensure the actionId is the actionId which coming from Installation Failure Action Response payload
+- resolution
+- ""resolutionCode"": ""0"",
+- ""resolutionText"": ""updatedContactNumber"",
+- characteristics:
+    - ""name"": ""updatedContactNumber"",
+    - ""name"": ""comments"",",,,
+,,,"2","Trigger the Installation Failure Action Notification for 'Updated Contact Number' via Bruno","Ensure receive 200 OK as success response",,,
+,,,"3","Verify the generated Installation Failure Action Notification payload","- Ensure the Installation Failure Action Notification is generated in Telflow System tab
+ - Ensure the attributes and value in as synchronied as per Installation Failure Action Notification for 'Updated Contact Number' payload in Bruno",,,
+"54654","Test Case","AWS - Mobily - Verify Installation Failure Action Notification for 'Problem Resolved'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Verify the Installation Failure Action Notification payload for Problem Resolved in the Bruno","Ensure the payload is as per expected: 
+- eventType : ActionNotificationEvent
+ - Ensure the actionId is the actionId which coming from Installation Failure Action Response payload
+- resolution
+- ""resolutionCode"": ""0"",
+- ""resolutionText"": ""Problem Resolved"",
+- characteristics:
+    - ""name"": ""comments"",",,,
+,,,"2","Trigger the Installation Failure Action Notification for 'Problem Resolved' via Bruno","Ensure receive 200 OK as success response",,,
+,,,"3","Verify the generated Installation Failure Action Notification payload","- Ensure the Installation Failure Action Notification is generated in Telflow System tab
+-  Ensure the attributes and value in as synchronied as per Installation Failure Action Notification for 'Problem Resolved payload in Bruno
+",,,
+"54655","Test Case","AWS - Mobily - Verify Installation Failure Action Notification for 'Problem Not Resolved'",,,,"New Stack Impl\Solution\CSG\CSG QandO","Valen Legawati <Valen.Legawati@csgi.com>","Closed"
+,,,"1","Verify the Installation Failure Action Notification payload for Problem Not Resolved in the Bruno","Ensure the payload is as per expected: 
+- eventType : ActionNotificationEvent
+ - Ensure the actionId is the actionId which coming from Installation Failure Action Response payload
+- resolution
+",,,
+,,,"2","Trigger the Installation Failure Action Notification for 'Problem Not Resolved' via Bruno","Ensure receive 200 OK as success response",,,
+,,,"3","Verify the generated Installation Failure Action Notification payload","- Ensure the Installation Failure Action Notification is generated in Telflow System tab",,,
+"54685","Test Case","AWS - Mobily - Initiate an action in Singleview from System Issues Installation Failure",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Verify Telflow initiates an action in SingleView ","Installation Failure Action Request is generated under Telflow System tab ",,,
+,,,"2","Verify synchronous Installation Failure Action Request","Ensure the values are mapped properly:
+ - type: FTTH Installation Failure -  System Issues
+- orderId is SingleView ID
+- characteristics: reasonText, reasonCode, engineerId, vendorName, taskStatus (On Hold), engineerPhone, treatmentCategory (System Issues), engineerName, comments ",,,
+,,,"3","Verify SingleView sends immediate response back to Telflow","Installation Failure Action Response is generated under Telflow System tab ",,,
+,,,"4","Verify synchronous  Installation Failure Action Response","Ensure Telflow receives immediate response from SingleView 
+- ""name"": ""CPE / ME Installation Sucess/Failure"",
+- ""actionId"": (generate actionID)
+- ""type"": ""FTTH Installation Failure - System Issues""",,,
+"54686","Test Case","AWS - Mobily - Initiate an action in Singleview from Wrong Information Installation Failure",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Verify Telflow initiates an action in SingleView ","Installation Failure Action Request is generated under Telflow System tab ",,,
+,,,"2","Verify synchronous Installation Failure Action Request","Ensure the values are mapped properly:
+ - type: FTTH Installation Failure - Wrong Information 
+- orderId is SingleView ID
+- characteristics: reasonText, reasonCode, engineerId, vendorName, taskStatus (On Hold), engineerPhone, treatmentCategory (Wrong Information), engineerName, comments ",,,
+,,,"3","Verify SingleView sends immediate response back to Telflow","Installation Failure Action Response is generated under Telflow System tab ",,,
+,,,"4","Verify synchronous Installation Failure Action Response","Ensure Telflow receives immediate response from SingleView 
+- ""name"": ""CPE / ME Installation Sucess/Failure"",
+- ""actionId"": (generate actionID)
+- ""type"": ""FTTH Installation Failure - Wrong Information""",,,
+"54764","Test Case","AWS - Mobily - Initiate an Appointment Capture Action in Singleview",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Verify synchronous Appointment Capture Action Request","- Ensure the Appointment Capture Action Request is generated in the Telflow System tab
+- Ensure the mapped the data in Request is as per expected based on previous triggered notifications
+   - type : ""FTTH Appointment Capture""
+   - orderId : SingleView Reference ID
+   - characteristics:
+   - reasonText
+   - reasonCode
+   - engineerId
+   - taskStatus
+   - engineerPhone
+   - treatmentCategory
+   - engineerName
+   - comments (the comments should map the comments in previous notification)",,,
+,,,"2","Verify synchronous Appointment Capture Action Response","- Ensure Telflow receives immediate Appointment Capture Action Response from SingleView with type ""FTTH Appointment Capture""
+- Ensure Telflow receives immediate response from SingleView 
+   - ""name"": ""CPE / ME Installation Sucess/Failure"",
+   - ""actionId"": 
+   - ""type"":  ""FTTH Appointment Capture""
+",,,
+"54765","Test Case","AWS - Mobily - Verify Appointment Capture Action Notification for ""Appointment Booked""",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger Appointment Capture Action Notification for ""Appointment Booked"" via Bruno","Ensure receives 200Ok as success response",,,
+,,,"2","Verify Appointment Capture Action Notification is generated in Telflow System tab","Ensure the mapped data is correct:
+ - ""eventType"": ""ActionNotificationEvent"",
+ - ""actionId""
+ - ""resolutionCode"": ""0"",
+ - ""resolutionText"": ""Appointment Booked"",
+- slotId, appointmentId, appointmentStartDate, appointmentEndDate, comments
+ ",,,
+,,,"3","Verify the data is mapped in Telflow details tab","slotId, appointmentId, appointmentStartDate, appointmentEndDate will be updated in System tab",,,
+"54766","Test Case","AWS - Mobily - Verify Appointment Capture Action Notification for ""Appointment Not Required""",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger Appointment Capture Action Notification for ""Appointment Not Required"" via Bruno","Ensure receives 200Ok as success response",,,
+,,,"2","Verify Appointment Capture Action Notification is generated in Telflow System tab","Ensure the mapped data is correct:
+ - ""eventType"": ""ActionNotificationEvent"",
+ - ""actionId""
+ - ""resolutionCode"": ""0"",
+ - ""resolutionText"": ""Appointment Not Required"",
+- slotId, appointmentId, appointmentStartDate, appointmentEndDate, comments
+ ",,,
+"54767","Test Case","AWS - Mobily - Initiate a Cancel Order Verification Action in Singleview",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Verify ""Cancel Order Verification Action Request"" payload is generated in Telflow
+","1. Ensure Cancel Order Verification Action Request is generated in Telflow System
+
+2. Ensure the payload is maaping:
+- type : FTTH Order Verification
+- orderId : SingleView ID
+- reasonText 
+- reasonCode 
+- engineerId
+- vendorName
+- taskStatus : On Hold
+- engineerPhone
+- treatmentCategory 
+- engineerName
+- comments ",,,
+,,,"2","Verify ""Cancel Order Verification Action Response"" payload is generated in Telflow","2. Ensure Telflow immediate action Cancel Order Verification Action Response back from SingleView 
+2. Ensure the payload in the response is as per expected:
+   - name : CPE / ME Installation Sucess/Failure
+   - actionId 
+   - type :  FTTH Order Verification",,,
+,,,"3","Verify the Treatment v1.0 process is going to correct path successfully","Ensure in the Treatment process is triggering to ""No"" path and triggering ""Create Action to Sales Team""node",,,
+"54791","Test Case","AWS - Mobily - Verify Appointment Capture Action Notification for ""Appointment Not Booked""",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger Appointment Capture Action Notification for Appointment Not Booked"" via Bruno","Ensure receives 200Ok as success response",,,
+,,,"2","Verify Appointment Capture Action Notification is generated in Telflow System tab","Ensure the mapped data is correct:
+ - ""eventType"": ""ActionNotificationEvent"",
+ - ""actionId""
+ - ""resolutionCode"": ""1"",
+ - ""resolutionText"": ""Appointment Not Booked"",
+- slotId, appointmentId, appointmentStartDate, appointmentEndDate, comments
+ ",,,
+"54850","Test Case","AWS - Mobily - Verify Appointment Capture Action Notification for Re-Initiate Appointment",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger the Cancel Verification for Booked Appointment payload via Bruno","Ensure the 200 OK is received as success response",,,
+,,,"2","Verify the Cancel Order Verification Action Notification in the System tab","Ensure the data is as per expected
+- eventType : ActionNotificationEvent
+- actionId
+- resolutionCode : ""0""
+- resolutionText : ""Book Appointment"",
+- characteristics : comments",,,
+,,,"3","Verify the ""Re-Initiate"" is triggered in Treatment process","- Ensure the Re-Initiate is triggered and the process will be coming back to ""Create Action to Appointment Team"" node",,,
+,,,"4","Verify the Appointment Capture Action Request and Response payload","Ensure sync Appointment Capture Action Request and Response is generated in Telflow System tab
+",,,
+,,,"5","Trigger the Synchronous Appointment Capture Notification as Appointment Booked ","Ensure the Synchronous Appointment Capture Notification is generated in Telflow system tab
+
+Ensure the data is mapping as per payload ",,,
+,,,"6","Verify the new appointment details in Telflow Details tab","Ensure the new appointments details is reflected in Telflow Details tab",,,
+"54853","Test Case","AWS - Mobily - Verify Cancel Order Verification process",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger the Cancel Verification for Booked Appointment payload via Bruno","Ensure the 200 OK is received as success response",,,
+,,,"2","Verify the Cancel Order Verification Action Notification in the System tab","Ensure the data is as per expected
+- eventType : ActionNotificationEvent
+- actionId
+- resolutionCode : 0 
+- resolutionText : Cancelling Order
+- characteristics : comments",,,
+,,,"3","Verify the path will trigger the timer (wait to receive cancel order from SingleView)","Ensure the path is reaching the timer",,,
+,,,"4","Cancel the order from portal","Before the 5 minutes timer ends, cancel the order from portal",,,
+,,,"5","Verify all processes is stoped","Ensure once the order is cancelled via portal, all running processes will be terminated (stop) ",,,
+"54890","Test Case","AWS - Mobily - Verify Triggers ""Stop Install Mesh Extender"" when CPE Failed",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Verify the Installation Failure Notification payload for CPE in the Bruno","Ensure the data is as per expected",,,
+,,,"2","Trigger the Installation Failure Notification payload for CPE in the Bruno","Ensure the 200 OK response is received as success response",,,
+,,,"3","Verify the CPE Installation Work Order Notification in System tab","Ensure the data is synchronized with the payload and reflected in CPE Work Order Details under Telflow Details tab",,,
+,,,"4","Trigger Installation Failure Action Notification payload in Bruno","Ensure received 200 OK notification and generated in System tab
+",,,
+,,,"5","Trigger Appointment Capture Action Notification payload in Bruno","Ensure received 200 OK notification and generated in System tab",,,
+,,,"6","Verify the Mobily Infra Fulfillment process","- Ensure the ""Install Mesh Extender"" received ""Stop Install Mesh Extender"" signal 
+- Ensure ""Stop Install Mesh Extender"" is triggered and continue to ""Close ODB Patch Action""
+",,,
+"55213","Test Case","AWS - Mobily - Verify the ""Technician Comments"" is visible on Order Level in Telflow Details tab",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger the Installation Failure Notification payload in Bruno","- The Installation Failure Action Request and Response will be generated in Telflow System tab
+- Ensure the comments is visible from Installation Failure Notification and it will be stored under CPE Work Order Details section
+",,,
+,,,"2","Trigger Installation Failure Action Notification for ""Not Resolved""","- The Installation Failure Action Notification will be generated in Telflow System tab
+- The comments will be visible in Order Level on Telflow Detail tab",,,
+,,,"3","Trigger Cancel Verification Notification for ""Book Appointment""","- The Appointment Capture Action Notification will be generated in Telflow System tab
+- The comments will be visible in Order Level on Telflow Detail tab",,,
+,,,"4","Trigger Appointment Capture Action Notification for ""Appointment Booked""","- The Appointment Capture Action Notification will be generated in Telflow System tab
+- The comments will be visible in Order Level on Telflow Detail tab
+- Ensure the comments on CPE Work Order details remains consistent based on CPE Work Order Notification for Installation Failure",,,
+"55218","Test Case","AWS - Mobily - Verify the ""Comments"" value is Synchronized between Installation Failure's Notification",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger the Installation Failure Notification payload in Bruno","- The CPE Installation Work Order Notification for Installation Failure will be generated in System tab
+ - The Installation Failure Action Request and Response will be generated in Telflow System tab
+- Verify the process will go to ""Create Action to Mobily Team"" node
+",,,
+,,,"2","Verify the comments in sync Installation Failure Action Request ","Ensure the ""comments"" will store the comments which coming from previous notification (CPE Installation Work Order Notification for Installation Failure)",,,
+,,,"3","Trigger Installation Failure Action Notification for ""Not Resolved""","- The Installation Failure Action Notification will be generated in Telflow System tab
+- The Cancel Order Verification Action Request will be generated in Telflow System Tab
+- Verify the process will go to ""Cancel Order Verification"" node",,,
+,,,"4","Verify the comments in Cancel Order Verification Action Request ","Ensure the ""comments"" will store the comments which coming from previous notification (Installation Failure Action Notification)",,,
+,,,"5","Trigger Cancel Order Verification Action Notification for ""Book Appointment""","- The Cancel Order Verification Action Notification will be generated in Telflow System tab
+- The Appointment Capture Action Request will be generated in Telflow System Tab
+- Verify the process will go to ""Re-Initiate appointment"" and trigger the ""Create Action to Appointment Team""",,,
+,,,"6","Verify the comments in Appointment Capture Action Request","Ensure the ""comments"" will store the comments which coming from previous notification (Cancel Order Verification Action Notification)",,,
+,,,"7","Trigger the Appointment Capture Action Notification for ""Booked Appointment""","- The Appointment Capture Action Notification will be generated in Telflow System tab
+- Verify the process will go parent process since the Treatment process is successfully done",,,
+,,,"8","Verify the final comments will be visible on ""Technician Comments"" in Telflow Order Level (details tab)","The most updated comments should be visible on Technician Comments in Telflow Details tab",,,
+"55221","Test Case","AWS - Mobily - Verify the ODB Action ID is stored correctly on Telflow Order Level",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Create order via TMF-622 payload in Bruno","- Ensure received 201 Created as success response
+- Ensure the order is created in Telflow portal",,,
+,,,"2","Verify the ODB Patch Action is triggered","Ensure the ODB Patching Action Request and Response is generated in Telflow System tab",,,
+,,,"3"," Trigger the ODB Patch Notification"," - Ensure the Create ODB Patch Action Notification is generated in Telflow System tab with generated action ID",,,
+,,,"4","Verify the ODB Action ID is reflected in Telflow Details tab","Ensure actionId is generated in ODB Patch Action Response and will be reflected on Telflow Details tab
+",,,
+,,,"5","Trigger the complete Installation Failure flow","- Trigger the positive flow for Installation Failure
+- Ensure the process will trigger ""Close ODB Patch Action"" in parent process (mobily infra fulfillment process)",,,
+,,,"6","Verify the Close ODB Patch Action is triggered","Ensure the Close ODB Patch Action Request and Response is generated in Telflow System tab",,,
+,,,"7","Verify the process will go to Re-Initiate and trigger the ODB Patch Action node"," Ensure the Close ODB Patch Action Request and Response is generated in Telflow System tab",,,
+,,,"8","  Trigger the ODB Patch Notification","  - Ensure the Create ODB Patch Action Notification is generated in Telflow System tab with generated action ID",,,
+,,,"9","Verify the ODB Action ID is reflected in Telflow Details tab","Ensure actionId is generated in ODB Patch Action Response and will be reflected on Telflow Details tab which will be replacing current ODB Action ID",,,
+"55276","Test Case","AWS - Mobily - Verify the ME Inventory is Inactive when ME Installation Failure is triggered",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger the ME Installation Failure Notification","- Ensure received 200 OK as success response
+- Ensure the ME Work Order Notification is generated in Telflow system tab
+
+",,,
+,,,"2","Verify the mapped value is reflected in Telflow Details tab","Ensure the mapped value is reflected in Telflow Details tab",,,
+,,,"3","Verify the Inactive Mesh Extender Inventory is triggered","The Inactive Mesh Extender Inventory is triggered on Mobily Infra Fulfillment process",,,
+,,,"4","Verify the inventory is Inactive","Ensure the status of ME Inventory is ""Inactive""",,,
+,,,"5","Verify the process will trigger ""Mesh Extender Installation Completed""","Ensure the path will trigger Mesh Extender Installation Completed ",,,
+,,,"6","Verify the ME Update Inventory and ME Send Provisioning Completion Message node is skipped","- Ensure the ME Update Inventory and ME Send Provisioning Completion Message node is skipped 
+- Ensure the ""Close ME Installation Action"" is triggered",,,
+"55553","Test Case","AWS - Mobily - Verify the process when CPE Installation is Failed on FTTH without ME Product Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger TMF-622 payload in Bruno for FTHH product order without ME","- Ensure the response is 201 Created as success response
+- Ensure the product is created in Telflow portal",,,
+,,,"2","Trigger ODB Patch Action payload (SV Simulated) in Bruno","Ensure the ODB Patch Action Notification is generated in System tab
+",,,
+,,,"3","Trigger the CPE Installation Failure Notification (WFM Simulated) in Bruno","- Ensure 200 OK response is received
+- Ensure the CPE Work Order Notification for Installation Failure is generated in System tab
+",,,
+,,,"4","Verify the corresponding Treatment process is triggered","Treatment process is triggered based on reasonCode and reasonText ",,,
+,,,"5","Complete the Treatment process","Proceed the treatment process flow until its completed and ensure it will be coming back to initial process",,,
+,,,"6","Verify the Re-Initiate node is triggered","Ensure the Re-Initiate node is triggered and coming back to initial process on Mobily Infra fulfillment process",,,
+,,,"7","Complete the order from initial state to complete state","Ensure no failure happens when the order is re-initiated and able to be completed",,,
+,,,"8","Verify the order status is ""Completed""","Ensure once the whole processes are proceeded without failure, the order can reach the ""Completed"" status on Telflow portal",,,
+"55554","Test Case","AWS - Mobily - Verify the Process when both CPE and ME Installation is Failed on FTTH with ME Product Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger TMF-622 payload in Bruno for FTHH product order without ME","- Ensure the response is 201 Created as success response
+- Ensure the product is created in Telflow portal",,,
+,,,"2","Trigger ODB Patch Action payload (SV Simulated) in Bruno","Ensure the ODB Patch Action Notification is generated in System tab",,,
+,,,"3","Trigger the CPE Installation Failure Notification (WFM Simulated) in Bruno","- Ensure 200 OK response is received
+- Ensure the CPE Work Order Notification for Installation Failure is generated in System tab",,,
+,,,"4","Verify the corresponding Treatment process is triggered","Treatment process is triggered based on reasonCode and reasonText ",,,
+,,,"5","Complete the Treatment process","Proceed the treatment process flow until its completed and ensure it will be coming back to initial process",,,
+,,,"6","Verify the CPE Installation path will trigger the ""Stop Install Mesh Extender""","Trigger the Stop Install Mesh Extender then signaling the ME path to stop the ME Installation",,,
+,,,"7","Verify the Re-Initiate node is triggered","Ensure the Re-Initiate node is triggered and coming back to initial process on Mobily Infra fulfillment process",,,
+,,,"8","Complete the order from initial state to complete state","Ensure no failure happens when the order is re-initiated and able to be completed",,,
+,,,"9","Verify the order status is ""Completed""","Ensure once the whole processes are proceeded without failure, the order can reach the ""Completed"" status on Telflow portal",,,
+"55555","Test Case","AWS - Mobily - Verify the process when only ME is failed and CPE is Success to Install on FTTH with ME Product Order",,,,"New Stack Impl\Solution\CSG\CSG QandO","Fajarisma Asfiana Putri <Fajarisma.AsfianaPutri@csgi.com>","Closed"
+,,,"1","Trigger TMF-622 payload in Bruno for FTHH product order without ME","- Ensure the response is 201 Created as success response
+- Ensure the product is created in Telflow portal",,,
+,,,"2","Trigger ODB Patch Action payload (SV Simulated) in Bruno","Ensure the ODB Patch Action Notification is generated in System tab",,,
+,,,"3","Trigger the OK-Installation Completed for CPE Installation Notification (WFM Simulated) in Bruno","- Ensure 200 OK response is received
+- Ensure the CPE Work Order Notification started from OK up to Installation Completed is generated in System tab",,,
+,,,"4","Trigger ME Installation Failure Notification","Ensure the ME Installation Failure is triggering the Skip ME Installation which will be directed to parent process",,,
+,,,"5","Verify the ME Inventory Status to Inactive is triggered","Ensure the ME Inventory Status is set to inactive",,,
+,,,"6","Verify the ME process will skip the Update ME Inventory and ME Provisioning Completion Message","Ensure the further process of ME Installation will skip the Update ME Inventory and ME Provisioning Completion Message node as part of ""Skip ME Failure"" pah",,,
+,,,"7","Verify the complete order","Ensure the order can be completed for CPE Installation success and ME is failed",,,
