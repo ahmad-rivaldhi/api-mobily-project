@@ -110,8 +110,7 @@ function Do-Auth($vars, $envName) {
     Write-Log "AUTH" "Authenticating..."
     $authDir = Join-Path $ROOT "Authentication"
     $authFile = Get-ChildItem $authDir -Recurse -File -Filter "*.bru" |
-      Where-Object { $_.DirectoryName -notmatch '\\\.git(\\|$)' } |
-      Where-Object { $_.Name -like "*$envName*" -and $_.Name -notmatch '^folder\.bru$' } |
+      Where-Object { $_.Name -ne 'folder.bru' -and $_.Name -like "*$envName*" } |
       Select-Object -First 1
     if (-not $authFile) { throw "No auth file for env '$envName'" }
 
