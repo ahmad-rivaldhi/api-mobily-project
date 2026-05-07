@@ -8,16 +8,9 @@
  * executor can treat every journey identically (Liskov substitution).
  */
 
-const WFM_CPE_STEPS = [
-  'Shared-Workflows/WFM-CPE-Workflow/Step-01-CPE-1000-OK.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-02-CPE-Ready.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-03-CPE-Acknowledged.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-04-CPE-Accepted.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-05-CPE-Trip-Started.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-06-CPE-Customer-Premises.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-07-CPE-In-Work.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-08-CPE-Installation-Completed.bru',
-];
+const { wfmCpeStepPaths, WFM_STEP_09_CPE_COMPLETED } = require('../constants/paths');
+
+const WFM_CPE_STEPS = wfmCpeStepPaths();
 
 const WFM_ME_BASE = [
   'Shared-Workflows/WFM-ME-Workflow/Step-01-ME-1000-OK.bru',
@@ -68,7 +61,7 @@ function buildOAFieldWork(createFile, opts) {
       delay: 5000,
     },
     { step: 9, type: 'waitForState', state: 'In Progress|Pending UAT' },
-    { step: 10, type: 'notify', file: 'Shared-Workflows/Step-09-CPE-Completed.bru', delay: 5000 },
+    { step: 10, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: 5000 },
     ...(meCount > 0
       ? [
           {

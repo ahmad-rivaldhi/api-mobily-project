@@ -29,20 +29,15 @@ This Bruno API collection contains a comprehensive, journey-centric set of APIs 
 ```
 FTTH - Mobily - Project/
 ├── environments/                     # Environment configs (AWS Dev & On-Prem Dev)
-├── Authentication/                   # Auth APIs (Dev 1, Dev 2, On-Prem)
+├── Authentication/                   # Token per env (DEV 1 … SIT — nested folders)
 │
-├── 02-New-Activation/                # 🟢 New FTTH Installation
-│   ├── 01-Create-Order-TMF622/       # Product orders (Mobily/OpenAccess)
-│   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/     # Postpaid & Prepaid (FTTH CONSUMER)
-│   │   │   └── Royal-Customer/       # Postpaid          (FTTH RCY)
-│   │   └── OpenAccess/               # DAWIYAT, ITC, STC, ACES
-│   ├── 02-TMF641-Notifications/      # Service order notifications
-│   ├── 03-WFM-CPE-Installation/      # CPE installation workflow (9 steps)
-│   ├── 04-WFM-ME-Installation/       # Mesh Extender installation
-│   ├── 05-OpenAccess-Provider-Workflow/  # DAWIYAT/ITC/STC/ACES workflows
-│   ├── 06-SingleView-Integration/    # Appointments, Completion, Cancellation
-│   └── 07-Installation-Failure-Scenarios/ # Failure codes & recovery
+├── Activation Order/                  # 🟢 New activation (Mobily TMF622 + OA + WFM CPE)
+│   ├── Mobily/                        # Appointment update, Mobily-specific aux
+│   ├── TMF-622 Create Sales Order/    # Regular (Consumer postpaid/prepaid) + Royal (RCY)
+│   ├── WFM CPE Installation - Notification/
+│   │   ├── Steps 01-08 - Field Work/  # Run folder alone → steps 01–08 only (no Step 09)
+│   │   └── Step 09 - Completed/       # Post–intermediate milestones WFM closure (separate)
+│   └── OpenAccess/                     # ACES, STC, ITC, DOWIYAT (TMF622 + OA ONT workflows)
 │
 ├── 03-Relocation/                    # 🔄 Service Relocation
 │   ├── 01-Create-Relocation-Order-TMF622/
@@ -140,9 +135,9 @@ Every TMF 622 `.bru` references the values via `{{customerCategory}}` and
 
 | Folder | `customerCategory` | `networkCategory` |
 |--------|---------------------|---------------------|
-| `02-New-Activation/01-Create-Order-TMF622/Mobily/Regular-Customer/folder.bru` | `Regular` | `FTTH CONSUMER` |
-| `02-New-Activation/01-Create-Order-TMF622/Mobily/Royal-Customer/folder.bru`   | `Royal`   | `FTTH RCY`      |
-| `02-New-Activation/01-Create-Order-TMF622/OpenAccess/folder.bru`              | `Regular` | `FTTH CONSUMER` |
+| `Activation Order/TMF-622 Create Sales Order/FTTH Consumer/folder.bru` | `Regular` | `FTTH CONSUMER` |
+| `Activation Order/TMF-622 Create Sales Order/FTTH RCY/folder.bru`   | `Royal`   | `FTTH RCY`          |
+| `Activation Order/OpenAccess/folder.bru`              | `Regular` | `FTTH CONSUMER` |
 
 Override at the request level (in another `vars:pre-request` block inside the
 `.bru`) only when you need to test an edge case (e.g. an OA Royal scenario).
@@ -150,13 +145,11 @@ Override at the request level (in another `vars:pre-request` block inside the
 ### 2. New Open Access Provider — **ACES**
 
 ACES is a new infrastructure provider added in phase 4B. Notification flows
-are mapped under:
+are mapped under `Activation Order/OpenAccess/ACES/`.
 
-`02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/`
-
-| Sub-folder | Statuses covered |
-|------------|-------------------|
-| Activation-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
+| Sub-folder | Purpose |
+|------------|---------|
+| OA ONT Installation - Notification     | Accepted → In Progress → Serial Number → Completed |
 | Cancellation-Service-Installation   | Received → Accepted → In Progress → Cancelled |
 | Modification-Service-Installation   | Completed |
 | DeviceSwap-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
@@ -179,7 +172,7 @@ Source samples: `aces/*.json` (collection root).
 ### 3. New OpenAccess Activation Automation (provider-side flow)
 
 The journey runner (`Automation/journey-runner.js`) now drives **all four**
-OA providers (STC, ITC, ACES, DAWIYAT) through the **provider-side**
+OA providers (STC, ITC, ACES, **DOWIYAT**) through the **provider-side**
 activation flow — the providers' own Service-Installation notification API
 replaces the Mobily WFM-CPE workflow:
 
@@ -188,13 +181,9 @@ replaces the Mobily WFM-CPE workflow:
 | `stc-activation`     | STC      | Create Order → **STC SQ Notifs (Ordered → Completed → Closed)** → STC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
 | `itc-activation`     | ITC      | Create Order → ITC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
 | `aces-activation` 🆕 | ACES     | Create Order → ACES Activation Notifs (4 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
-| `dawiyat-activation` | DAWIYAT  | Create Order → DAWIYAT Activation Notifs (7 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `dawiyat-activation` | DOWIYAT  | Create Order → DOWIYAT OA ONT notifications (7 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
 
-> ⚠️ **Difference from Mobily activation:** OA flows do **NOT** use the
-> WFM-CPE-Workflow folder and do **NOT** include the SV `UAT-Completed` step.
-> Provider notifications come from each provider's own
-> `02-OpenAccess-Provider-Workflow/<PROVIDER>/Activation-Service-Installation/`
-> folder.
+> ⚠️ **Difference from Mobily activation:** OA flows do **NOT** run **Mobily** WFM CPE steps (`Activation Order/WFM CPE Installation - Notification`) and do **NOT** include the SV `UAT-Completed` step. Provider simulations live under **`Activation Order/OpenAccess/<PROVIDER>/OA ONT Installation - Notification/`**.
 
 **Run examples:**
 
@@ -211,24 +200,22 @@ node Automation/journey-runner.js --env "Dev 3" --journey itc-activation
 | STC      | `stcInstallationId`, `stcSqId` |
 | ITC      | `itcInstallationId` |
 | ACES     | `acesInstallationId`, `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber` |
-| DAWIYAT  | `dawiyatInstallationId` |
+| DOWIYAT  | `dawiyatInstallationId` |
 
 ---
 
 ## 📚 **Journey Guide**
 
-### **02 - New Activation** 🟢
-> New FTTH service installation from scratch
+### **Activation Order** 🟢
+> New FTTH installation assets (Mobily/Open Access TMF622, WFM CPE 01–08 vs Step 09, OA ONT notifications). Shared workflows (TMF641, SingleView, ME mesh, failures) stay under **`Shared-Workflows/`**.
 
-| Step | Folder | API Type | Description |
-|------|--------|----------|-------------|
-| 1 | `01-Create-Order-TMF622` | TMF622 POST | Create product order (select provider/customer/ME variant) |
-| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
-| 3 | `03-WFM-CPE-Installation` | WFM | 9-step CPE installation workflow |
-| 4 | `04-WFM-ME-Installation` | WFM | Mesh Extender installation (if applicable) |
-| 5 | `05-OpenAccess-Provider-Workflow` | OA | DAWIYAT/ITC/STC activation (if OpenAccess) |
-| 6 | `06-SingleView-Integration` | SV Action | Appointments, completion, cancellation |
-| 7 | `07-Installation-Failure-Scenarios` | WFM | Failure codes & recovery flows |
+| Area | Folder | Notes |
+|------|--------|--------|
+| Mobily create order | `Activation Order/TMF-622 Create Sales Order/` | FTTH Consumer (postpaid/prepaid) and FTTH RCY, each under `without ME` / `with 1 ME` … `with 3 ME` |
+| WFM CPE | `Activation Order/WFM CPE Installation - Notification/` | Run folder **Steps 01-08 - Field Work** alone for notifications 01–08 only |
+| OA providers | `Activation Order/OpenAccess/<ACES|STC|ITC|DOWIYAT>/` | TMF622 + **OA ONT Installation - Notification** + lifecycle subfolders |
+
+Cross-cutting steps (TMF641, appointments, completions, failures) remain in **`Shared-Workflows`** and **`11-Search-By-SAN-CPE`**—see Bruno collection sidebar.
 
 ---
 
@@ -319,7 +306,7 @@ node Automation/journey-runner.js --env "Dev 3" --journey itc-activation
 > Check or update order status
 
 - Get Order status
-- Trigger update for specific provider (Mobily/DAWIYAT/ITC)
+- Trigger update for specific provider (Mobily / DOWIYAT / ITC)
 
 ---
 

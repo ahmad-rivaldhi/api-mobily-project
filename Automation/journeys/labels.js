@@ -176,7 +176,7 @@ const MOBILY_FAILURE_CODES = [
   { value: 'Device Swap Failure', label: 'Device Swap Failure' },
 ];
 
-const DAWIYAT_FAILURE_CODES = [
+const DOWIYAT_FAILURE_CODES = [
   { value: '(T1) DOWIYAT - Fiber cut', label: '(T1) Fiber cut' },
   { value: '(T2) DOWIYAT - Customer cancelation', label: '(T2) Customer cancelation' },
   { value: '(T3) DOWIYAT - Wrong customer contact', label: '(T3) Wrong contact' },
@@ -216,7 +216,7 @@ module.exports = {
   MAINTENANCE_LABELS,
   SUSPEND_OA_LABELS,
   MOBILY_FAILURE_CODES,
-  DAWIYAT_FAILURE_CODES,
+  DOWIYAT_FAILURE_CODES,
   STC_FAILURE_CODES,
   ITC_FAILURE_CODES,
 };

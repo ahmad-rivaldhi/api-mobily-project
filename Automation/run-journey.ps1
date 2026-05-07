@@ -109,8 +109,12 @@ function Send-BruRequest($bruFile, $vars) {
 function Do-Auth($vars, $envName) {
     Write-Log "AUTH" "Authenticating..."
     $authDir = Join-Path $ROOT "Authentication"
-    $authFile = Get-ChildItem $authDir -Filter "*.bru" | Where-Object { $_.Name -ne "folder.bru" -and $_.Name -like "*$envName*" } | Select-Object -First 1
+    $authFile = Get-ChildItem $authDir -Recurse -File -Filter "*.bru" |
+      Where-Object { $_.DirectoryName -notmatch '\\\.git(\\|$)' } |
+      Where-Object { $_.Name -like "*$envName*" -and $_.Name -notmatch '^folder\.bru$' } |
+      Select-Object -First 1
     if (-not $authFile) { throw "No auth file for env '$envName'" }
+
 
     $c = Get-Content $authFile.FullName -Raw
     $url = ""; if ($c -match "url:\s*(.+)") { $url = Expand-Vars $Matches[1].Trim() $vars }
@@ -184,9 +188,14 @@ Write-Log "START" ("=" * 60)
 $vars = Get-BrunoEnv $Env
 Do-Auth $vars $Env
 
-# Step 2: Create order
+# Step 2: Create order (paths mirror Automation/constants/paths.js — mobilyCreateOrderPath)
 $meSuffix = if ($ME -gt 0) { "With-$ME-ME" } else { "No-ME" }
-$createFile = "02-New-Activation/01-Create-Order-TMF622/Mobily/$CustomerType/$PaymentType/FTTH-$PaymentType-$meSuffix.bru"
+$meFolder = if ($ME -le 0) { "without ME" } else { "with $ME ME" }
+if ($CustomerType -eq "Royal-Customer") {
+    $createFile = "Activation Order/TMF-622 Create Sales Order/FTTH RCY/$meFolder/FTTH-Royal-Postpaid-$meSuffix.bru"
+} else {
+    $createFile = "Activation Order/TMF-622 Create Sales Order/FTTH Consumer/$PaymentType/$meFolder/FTTH-$PaymentType-$meSuffix.bru"
+}
 Do-CreateOrder $vars $createFile
 
 # Step 3: Generate workOrderIdCpe
@@ -198,14 +207,15 @@ if ($ME -gt 0) {
     Write-Log "GEN" "workOrderIdMe: $($vars.workOrderIdMe)"
 }
 
-# Step 4: WFM CPE Steps 01-08
+# Step 4: WFM CPE Steps 01-08 (`Steps 01-08 - Field Work` — run folder in Bruno without Step 09)
+$cpeStepsDir = "Activation Order/WFM CPE Installation - Notification/Steps 01-08 - Field Work"
 $cpeSteps = @("Step-01-CPE-1000-OK","Step-02-CPE-Ready","Step-03-CPE-Acknowledged","Step-04-CPE-Accepted",
               "Step-05-CPE-Trip-Started","Step-06-CPE-Customer-Premises","Step-07-CPE-In-Work","Step-08-CPE-Installation-Completed")
 $total = $cpeSteps.Count + 2 + $(if ($ME -gt 0) { 9 } else { 0 })
 $n = 0
 foreach ($s in $cpeSteps) {
     $n++; Write-Log "PROGRESS" "[$n/$total]"
-    Do-Notification $vars "Shared-Workflows/WFM-CPE-Workflow/$s.bru"
+    Do-Notification $vars "$cpeStepsDir/$s.bru"
     Start-Sleep -Seconds 2
 }
 
@@ -239,7 +249,7 @@ Start-Sleep -Seconds 45
 
 # Step 9: WFM Step 09 Completed
 $n++; Write-Log "PROGRESS" "[$n/$total]"
-Do-Notification $vars "Shared-Workflows/Step-09-CPE-Completed.bru"
+Do-Notification $vars "Activation Order/WFM CPE Installation - Notification/Step 09 - Completed/Step-09-CPE-Completed.bru"
 
 if ($ME -gt 0) {
     Do-Notification $vars "Shared-Workflows/WFM-ME-Workflow/Step-09-ME-UAT-Completed.bru"

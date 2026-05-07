@@ -28,11 +28,11 @@ function parseB2bMessageData(msg) {
 }
 
 /**
- * The DAWIYAT provider also appears in some action strings as "DOWIYAT" (the
- * legacy spelling), so we accept both tokens.
+ * The canonical provider key is **DOWIYAT**; legacy B2B action strings may still
+ * contain either token, so matching accepts both.
  */
 function getProviderTokens(provider) {
-  if (provider === 'DAWIYAT') return ['DAWIYAT', 'DOWIYAT'];
+  if (provider === 'DOWIYAT') return ['DOWIYAT', 'DAWIYAT'];
   return [provider];
 }
 

@@ -1,5 +1,5 @@
 /**
- * OpenAccess provider definitions (DAWIYAT / STC / ITC / ACES).
+ * OpenAccess provider definitions (DOWIYAT / STC / ITC / ACES).
  *
  * Each provider declares:
  *   - `notifications`  : the Service-Qualification + Service-Installation
@@ -22,52 +22,56 @@ const {
   extractExternalIdFromB2bPayload,
 } = require('./../lib/b2b');
 
+const { openAccessCreateOrderPath } = require('../constants/paths');
+
+const OA_BASE = 'Activation Order/OpenAccess';
+
 const OA_PROVIDER_NOTIFICATIONS = {
   STC: {
     sqNotifications: [
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Service-Qualification-Notifications/STC-Ordered.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Service-Qualification-Notifications/STC-Completed.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Service-Qualification-Notifications/STC-Closed.bru',
+      `${OA_BASE}/STC/Service Qualification - Notification/STC-Ordered.bru`,
+      `${OA_BASE}/STC/Service Qualification - Notification/STC-Completed.bru`,
+      `${OA_BASE}/STC/Service Qualification - Notification/STC-Closed.bru`,
     ],
     activationNotifications: [
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Activation-Service-Installation/Step-01-STC-WO-Created-In-WFMS.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Activation-Service-Installation/Step-02-STC-Technician-Assignment.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Activation-Service-Installation/Step-03-STC-Technician-Working.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Activation-Service-Installation/Step-04-STC-TEST-FTTH-LINK.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Activation-Service-Installation/Step-05-STC-Activate-ONT.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/STC/Activation-Service-Installation/Step-06-STC-Closed.bru',
+      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-01-STC-WO-Created-In-WFMS.bru`,
+      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-02-STC-Technician-Assignment.bru`,
+      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-03-STC-Technician-Working.bru`,
+      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-04-STC-TEST-FTTH-LINK.bru`,
+      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-05-STC-Activate-ONT.bru`,
+      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-06-STC-Closed.bru`,
     ],
   },
   ITC: {
     sqNotifications: [],
     activationNotifications: [
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ITC/Activation-Service-Installation/01-ITC-Create Task.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ITC/Activation-Service-Installation/02-ITC-Accepted.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ITC/Activation-Service-Installation/03-ITC-Assigned.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ITC/Activation-Service-Installation/04-ITC-SetOff.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ITC/Activation-Service-Installation/05-ITC- Installation Completed - Serial Number Notification.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ITC/Activation-Service-Installation/06-ITC-Success.bru',
+      `${OA_BASE}/ITC/OA ONT Installation - Notification/01-ITC-Create Task.bru`,
+      `${OA_BASE}/ITC/OA ONT Installation - Notification/02-ITC-Accepted.bru`,
+      `${OA_BASE}/ITC/OA ONT Installation - Notification/03-ITC-Assigned.bru`,
+      `${OA_BASE}/ITC/OA ONT Installation - Notification/04-ITC-SetOff.bru`,
+      `${OA_BASE}/ITC/OA ONT Installation - Notification/05-ITC- Installation Completed - Serial Number Notification.bru`,
+      `${OA_BASE}/ITC/OA ONT Installation - Notification/06-ITC-Success.bru`,
     ],
   },
   ACES: {
     sqNotifications: [],
     activationNotifications: [
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/Activation-Service-Installation/Step-01-ACES-Accepted.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/Activation-Service-Installation/Step-02-ACES-InProgress.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/Activation-Service-Installation/Step-03-ACES-Serial-Number-Notification.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/ACES/Activation-Service-Installation/Step-04-ACES-Completed.bru',
+      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-01-ACES-Accepted.bru`,
+      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-02-ACES-InProgress.bru`,
+      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-03-ACES-Serial-Number-Notification.bru`,
+      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-04-ACES-Completed.bru`,
     ],
   },
-  DAWIYAT: {
+  DOWIYAT: {
     sqNotifications: [],
     activationNotifications: [
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-01-DAWIYAT-Acknowledged.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-02-DAWIYAT-InProgress-Dispatch.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-03-DAWIYAT-InProgress-Departure.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-04-DAWIYAT-InProgress-Arrival.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-05-DAWIYAT-InProgress-HAG-Activation.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-06-DAWIYAT-Serial-Number-Notification.bru',
-      '02-New-Activation/02-OpenAccess-Provider-Workflow/DAWIYAT/Activation-Service-Installation/Step-07-DAWIYAT-Completed.bru',
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-01-DOWIYAT-Acknowledged.bru`,
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-02-DOWIYAT-InProgress-Dispatch.bru`,
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-03-DOWIYAT-InProgress-Departure.bru`,
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-04-DOWIYAT-InProgress-Arrival.bru`,
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-05-DOWIYAT-InProgress-HAG-Activation.bru`,
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-06-DOWIYAT-Serial-Number-Notification.bru`,
+      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-07-DOWIYAT-Completed.bru`,
     ],
   },
 };
@@ -88,7 +92,7 @@ const OA_PROVIDER_ID_SPECS = {
     required: ['acesInstallationId'],
     extractors: [{ key: 'acesInstallationId', kind: 'Service Installation' }],
   },
-  DAWIYAT: {
+  DOWIYAT: {
     required: ['dawiyatInstallationId'],
     extractors: [{ key: 'dawiyatInstallationId', kind: 'Service Installation' }],
   },
@@ -200,7 +204,7 @@ async function doExtractOpenAccessProviderIds(
 /**
  * Build the OpenAccess activation step list.
  *
- * Step numbering (no-SQ providers — ITC / ACES / DAWIYAT):
+ * Step numbering (no-SQ providers — ITC / ACES / DOWIYAT):
  *   2 create order
  *   3 extract OA installation external ID
  *   5 provider activation notifications
@@ -217,8 +221,7 @@ async function doExtractOpenAccessProviderIds(
  */
 function buildOpenAccessActivation(provider, opts) {
   const meCount = opts.me || 0;
-  const meSuffix = meCount > 0 ? `With-${meCount}-ME` : 'No-ME';
-  const createFile = `02-New-Activation/01-Create-Order-TMF622/OpenAccess/${provider}/FTTH-${provider}-Postpaid-${meSuffix}.bru`;
+  const createFile = openAccessCreateOrderPath(provider, meCount);
 
   const providerSpec = OA_PROVIDER_NOTIFICATIONS[provider];
   if (!providerSpec) {

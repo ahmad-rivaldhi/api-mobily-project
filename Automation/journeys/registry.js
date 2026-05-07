@@ -33,7 +33,7 @@ const {
   MAINTENANCE_LABELS,
   SUSPEND_OA_LABELS,
   MOBILY_FAILURE_CODES,
-  DAWIYAT_FAILURE_CODES,
+  DOWIYAT_FAILURE_CODES,
   STC_FAILURE_CODES,
   ITC_FAILURE_CODES,
 } = require('./labels');
@@ -184,28 +184,28 @@ const JOURNEY_REGISTRY = {
     stateMap: {},
   },
 
-  // ===== DAWIYAT (OpenAccess) ==============================================
+  // ===== DOWIYAT (OpenAccess; journey slug kept as dawiyat-* for compat) =====
   'dawiyat-activation': {
     label: 'New Activation',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'activation',
     options: [ME_OPTION],
-    build: (opts) => buildOpenAccessActivation('DAWIYAT', opts),
+    build: (opts) => buildOpenAccessActivation('DOWIYAT', opts),
     stepLabels: OA_PROVIDER_ACTIVATION_LABELS,
     stateMap: OA_PROVIDER_ACTIVATION_STATE_MAP,
   },
   'dawiyat-failure': {
     label: 'Installation Failure',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'failure',
     options: [
       {
         key: 'failureCode',
         label: 'Failure Code',
-        choices: DAWIYAT_FAILURE_CODES,
-        default: DAWIYAT_FAILURE_CODES[0].value,
+        choices: DOWIYAT_FAILURE_CODES,
+        default: DOWIYAT_FAILURE_CODES[0].value,
       },
     ],
     build: (opts) =>
@@ -217,7 +217,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-relocation': {
     label: 'Relocation',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'relocation',
     options: [ME_OPTION],
@@ -228,7 +228,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-device-swap': {
     label: 'Device Swap (ONT)',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'device-swap',
     options: [ME_OPTION],
@@ -239,7 +239,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-rewiring': {
     label: 'Rewiring',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'rewiring',
     options: [ME_OPTION],
@@ -250,7 +250,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-suspend': {
     label: 'Suspend',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'suspend',
     options: [],
@@ -265,7 +265,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-resume': {
     label: 'Resume',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
@@ -275,7 +275,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-termination': {
     label: 'Termination',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'termination',
     options: [],
@@ -289,7 +289,7 @@ const JOURNEY_REGISTRY = {
   },
   'dawiyat-maintenance': {
     label: 'Maintenance',
-    provider: 'DAWIYAT',
+    provider: 'DOWIYAT',
     providerCategory: 'openaccess',
     journeyType: 'maintenance',
     options: [],
@@ -562,7 +562,7 @@ function listJourneys() {
 
 function listJourneyTree() {
   const mobily = [];
-  const oa = { DAWIYAT: [], STC: [], ITC: [], ACES: [] };
+  const oa = { DOWIYAT: [], STC: [], ITC: [], ACES: [] };
   const oaShared = [];
 
   for (const [id, j] of Object.entries(JOURNEY_REGISTRY)) {
@@ -577,7 +577,7 @@ function listJourneyTree() {
     {
       category: 'OpenAccess',
       subcategories: [
-        { provider: 'DAWIYAT', journeys: oa.DAWIYAT },
+        { provider: 'DOWIYAT', journeys: oa.DOWIYAT },
         { provider: 'STC', journeys: oa.STC },
         { provider: 'ITC', journeys: oa.ITC },
         { provider: 'ACES', journeys: oa.ACES },

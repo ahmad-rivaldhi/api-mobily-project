@@ -14,20 +14,16 @@ const {
   customerCategoryFor,
   requiresOdbPatch,
 } = require('./network-category');
+const {
+  mobilyCreateOrderPath,
+  wfmCpeStepPaths,
+  WFM_STEP_09_CPE_COMPLETED,
+} = require('../constants/paths');
 
 const ODB_PATCH_NOTIFICATION_BRU =
   'Shared-Workflows/SingleView-Integration/Custom-Notifications/ODB-Patch-Notification.bru';
 
-const WFM_CPE_STEPS = [
-  'Shared-Workflows/WFM-CPE-Workflow/Step-01-CPE-1000-OK.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-02-CPE-Ready.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-03-CPE-Acknowledged.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-04-CPE-Accepted.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-05-CPE-Trip-Started.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-06-CPE-Customer-Premises.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-07-CPE-In-Work.bru',
-  'Shared-Workflows/WFM-CPE-Workflow/Step-08-CPE-Installation-Completed.bru',
-];
+const WFM_CPE_STEPS = wfmCpeStepPaths();
 
 const WFM_ME_BASE = [
   'Shared-Workflows/WFM-ME-Workflow/Step-01-ME-1000-OK.bru',
@@ -74,8 +70,7 @@ function buildMobilyActivation(opts) {
   const meCount = opts.me || 0;
   const custType = opts.customerType || 'Regular-Customer';
   const payType = opts.paymentType || 'Postpaid';
-  const meSuffix = meCount > 0 ? `With-${meCount}-ME` : 'No-ME';
-  const createFile = `02-New-Activation/01-Create-Order-TMF622/Mobily/${custType}/${payType}/FTTH-${payType}-${meSuffix}.bru`;
+  const createFile = mobilyCreateOrderPath(custType, payType, meCount);
 
   const networkCategory = resolveNetworkCategory(opts);
   const customerCategory = customerCategoryFor(networkCategory);
@@ -118,7 +113,7 @@ function buildMobilyActivation(opts) {
 
     { step: 11, type: 'waitForState', state: 'In Progress|Pending UAT' },
 
-    { step: 12, type: 'notify', file: 'Shared-Workflows/Step-09-CPE-Completed.bru', delay: 5000 },
+    { step: 12, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: 5000 },
     ...(meCount > 0
       ? [
           {
@@ -185,7 +180,7 @@ function buildMobilyFieldWork(createFile, opts) {
       delay: 5000,
     },
     { step: 11, type: 'waitForState', state: 'In Progress|Pending UAT' },
-    { step: 12, type: 'notify', file: 'Shared-Workflows/Step-09-CPE-Completed.bru', delay: 5000 },
+    { step: 12, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: 5000 },
     ...(meCount > 0
       ? [
           {

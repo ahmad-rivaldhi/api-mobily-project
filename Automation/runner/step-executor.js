@@ -38,14 +38,14 @@ function logCandidateExternalIdsForNotify(step, vars) {
     if (vars[key]) candidates.push(`${key}=${vars[key]}`);
   };
 
-  if (file.includes('/STC/Service-Qualification-Notifications/')) push('stcSqId');
-  if (file.includes('/STC/Activation-Service-Installation/')) push('stcInstallationId');
-  if (file.includes('/ITC/Activation-Service-Installation/')) push('itcInstallationId');
-  if (file.includes('/ACES/Activation-Service-Installation/')) push('acesInstallationId');
-  if (file.includes('/DAWIYAT/Activation-Service-Installation/')) push('dawiyatInstallationId');
+  if (file.includes('/STC/Service Qualification - Notification/')) push('stcSqId');
+  if (file.includes('/STC/OA ONT Installation - Notification/')) push('stcInstallationId');
+  if (file.includes('/ITC/OA ONT Installation - Notification/')) push('itcInstallationId');
+  if (file.includes('/ACES/OA ONT Installation - Notification/')) push('acesInstallationId');
+  if (file.includes('/DOWIYAT/OA ONT Installation - Notification/')) push('dawiyatInstallationId');
   if (file.includes('/Order-Completion/') || file.includes('/Custom-Notifications/')) push('svActionId');
   if (file.includes('/TMF641-Notifications/')) push('serviceOrderId');
-  if (file.includes('/WFM-CPE-Workflow/')) push('workOrderIdCpe');
+  if (file.includes('/WFM CPE Installation - Notification/Steps 01-08 - Field Work/')) push('workOrderIdCpe');
   if (file.includes('/WFM-ME-Workflow/')) push('workOrderIdMe');
   if (file.includes('/ODB-Patch-Notification')) push('odbPatchActionId');
 
