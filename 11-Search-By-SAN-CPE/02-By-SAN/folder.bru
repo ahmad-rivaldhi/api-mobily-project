@@ -1,4 +1,4 @@
-meta {
+﻿meta {
   name: 02-By-SAN
   seq: 2
 }
@@ -10,19 +10,19 @@ docs {
   Output: list sales/customer orders + inventory record terkait.
 
   SAN value tersimpan sebagai nested Characteristic (`ID: "san"`, `Value: "23532557"`).
-  Tidak ada param filter langsung di swagger → dua strategi:
+  Tidak ada param filter langsung di swagger â†’ dua strategi:
 
-  ## Strategy A (fast) — Free-text `q` ke order endpoints
-    01 - Search Sales Orders by q (SAN)       → salesorders?q=23532557
-    02 - Search Customer Orders by q (SAN)    → customerorders?q=23532557
+  ## Strategy A (fast) â€” Free-text `q` ke order endpoints
+    01 - Search Sales Orders by q (SAN)       â†’ salesorders?q=23532557
+    02 - Search Customer Orders by q (SAN)    â†’ customerorders?q=23532557
     Kalau hasil > 0 di salah satu, search index sudah cover
-    characteristic value → langsung dapat list order.
+    characteristic value â†’ langsung dapat list order.
 
-  ## Strategy B (reliable) — via Inventory
-    03 - Search Inventory by SAN              → capture inventoryId
-    04 - Get Inventory Detail                 → verify SAN characteristic ada
-    05 - Get Inventory Relationships          → list related BusinessInteractions
-    06 - List Customer Orders by inventoryId  → direct filter by inventory
+  ## Strategy B (reliable) â€” via Inventory
+    03 - Search Inventory by SAN              â†’ capture inventoryId
+    04 - Get Inventory Detail                 â†’ verify SAN characteristic ada
+    05 - Get Inventory Relationships          â†’ list related BusinessInteractions
+    06 - List Customer Orders by inventoryId  â†’ direct filter by inventory
 
   Biasanya SAN melekat pada inventory entity tipe "Service" / "SubscriberAccount"
   / "Customer Account". Step 03 akan menemukan satu entity; relasinya
@@ -35,3 +35,4 @@ docs {
   - Kalau step 03 kosong, coba juga `specificationName=Service` atau
     hapus filter `type=` lalu cek hasil.
 }
+

@@ -1,0 +1,28 @@
+﻿meta {
+  name: TMF641-Notifications
+  seq: 1
+}
+
+docs {
+  # TMF641 - Service Order State Change Notifications (NFO Simulation)
+
+  These notifications simulate Nokia FlowOne (NFO) responses for service order lifecycle transitions.
+  
+  **API Endpoint:** `POST /tmf-api/serviceOrderingManagement/v1/notification/`
+  
+  ## Available Notifications:
+  1. **Service-Order-Acknowledged** â€” NFO acknowledges the service order
+  2. **Service-Order-InProgress** â€” NFO starts processing the service order
+  3. **Service-Order-Completed** â€” NFO completes the service order
+  4. **Service-Order-Error-1000-OK** â€” Error code 1000 OK response
+  5. **641 Cease - Termination** â€” Cease/Deactivate notification (used for Termination journey)
+
+  ## Used By Journeys:
+  - New Activation, Relocation, Device Swap, Upgrade/Downgrade, Rewiring, Termination
+}
+
+
+
+
+
+

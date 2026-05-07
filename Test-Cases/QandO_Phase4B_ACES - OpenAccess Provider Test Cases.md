@@ -1,70 +1,70 @@
-# Phase 4B — ACES Open Access Provider — Test Plan
+﻿# Phase 4B â€” ACES Open Access Provider â€” Test Plan
 
 > **Style Reference:** Valen Style (per `Test-Cases/QandO_AWS_Phase_4A_*.csv`)
 > **Area Path:** `New Stack Impl\Solution\CSG\CSG QandO`
-> **Provider:** `ACES` (Open Access — added in Phase 4B)
+> **Provider:** `ACES` (Open Access â€” added in Phase 4B)
 > **Endpoint under test:** `POST {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/`
 > **funcId (failure flow):** `ACES_ORDER_UPDATE`
 > **Reason-code series:** `R-OM-xxx` (Telflow Order-Management series)
 
 ---
 
-## Coverage Analysis — What Must Be Covered
+## Coverage Analysis â€” What Must Be Covered
 
-Below is the analysis of all the test scenarios that must be covered for ACES based on the Bruno collection (`02-OpenAccess-Provider-Workflow/ACES/...`) and the `Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ACES - Installation Failure Notification/` folder.
+Below is the analysis of all the test scenarios that must be covered for ACES based on the Bruno collection (`02-OpenAccess-Provider-Workflow/ACES/...`) and the `13-Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ACES - Installation Failure Notification/` folder.
 
-### A. Order Creation (TMF 622) — `infraProvider = ACES`
-1. FTTH ACES Postpaid — No ME (Regular)
-2. FTTH ACES Postpaid — With 1 ME
-3. FTTH ACES Postpaid — With 2 ME
-4. FTTH ACES Postpaid — With 3 ME
-5. FTTH ACES Postpaid — Royal customer (override `customerCategory`)
-6. Negative — Invalid `infraProvider` / missing characteristic
+### A. Order Creation (TMF 622) â€” `infraProvider = ACES`
+1. FTTH ACES Postpaid â€” No ME (Regular)
+2. FTTH ACES Postpaid â€” With 1 ME
+3. FTTH ACES Postpaid â€” With 2 ME
+4. FTTH ACES Postpaid â€” With 3 ME
+5. FTTH ACES Postpaid â€” Royal customer (override `customerCategory`)
+6. Negative â€” Invalid `infraProvider` / missing characteristic
 
-### B. Activation — Service Installation Notification flow (Accepted → In Progress → Serial Number → Completed)
+### B. Activation â€” Service Installation Notification flow (Accepted â†’ In Progress â†’ Serial Number â†’ Completed)
 7. End-to-end happy path (4 statuses)
-8. Each individual notification (Accepted, In Progress, Serial Number, Completed) — payload mapping
-9. Out-of-sequence notification (e.g. Completed received before In Progress) — negative
-10. Idempotency — duplicate `eventId` for the same status
+8. Each individual notification (Accepted, In Progress, Serial Number, Completed) â€” payload mapping
+9. Out-of-sequence notification (e.g. Completed received before In Progress) â€” negative
+10. Idempotency â€” duplicate `eventId` for the same status
 
-### C. Cancellation — Service Installation flow (Received → Accepted → In Progress → Cancelled)
+### C. Cancellation â€” Service Installation flow (Received â†’ Accepted â†’ In Progress â†’ Cancelled)
 11. End-to-end happy path (4 statuses)
-12. Each individual cancellation step — payload mapping
+12. Each individual cancellation step â€” payload mapping
 
-### D. Modification — Service Installation Notification (Completed only)
-13. Modification Completed — successful UPDATE_ORDER
-14. Modification Completed — `serviceAccNum` & `orderTransactionNo` mapping
+### D. Modification â€” Service Installation Notification (Completed only)
+13. Modification Completed â€” successful UPDATE_ORDER
+14. Modification Completed â€” `serviceAccNum` & `orderTransactionNo` mapping
 
-### E. Device Swap — Service Installation flow (Accepted → In Progress → Serial Number → Completed)
+### E. Device Swap â€” Service Installation flow (Accepted â†’ In Progress â†’ Serial Number â†’ Completed)
 15. End-to-end happy path
 16. Serial Number notification updates inventory (`devices[].newSerialNumber`)
 
-### F. Relocation — Service Installation flow (Accepted → In Progress → Completed)
+### F. Relocation â€” Service Installation flow (Accepted â†’ In Progress â†’ Completed)
 17. End-to-end happy path
 
-### G. Rewiring — Service Installation flow (Accepted → In Progress → Completed)
+### G. Rewiring â€” Service Installation flow (Accepted â†’ In Progress â†’ Completed)
 18. End-to-end happy path
 
 ### H. Suspend / Resume / Termination (single Completed notification each)
-19. Suspend Completed — payload + state transition
-20. Resume Completed — payload + state transition
-21. Termination Completed — payload + state transition
+19. Suspend Completed â€” payload + state transition
+20. Resume Completed â€” payload + state transition
+21. Termination Completed â€” payload + state transition
 
 ### I. Trouble Ticket Notifications
-22. TT — Resolved (e.g. ODB Port Clean)
-23. TT — Rejected (e.g. ODB Port Clean not successful)
+22. TT â€” Resolved (e.g. ODB Port Clean)
+23. TT â€” Rejected (e.g. ODB Port Clean not successful)
 
-### J. Installation Failure — Standard Treatments (T1–T4)
-24. T1 — `R-OM-001` SYSTEMATIC REJECTION
-25. T2 — `R-OM-002` CUSTOMER REJECTION
-26. T3 — `R-OM-003` PROVIDER REJECTION
-27. T4 — `R-OM-005` UNKNOWN REJECTION
+### J. Installation Failure â€” Standard Treatments (T1â€“T4)
+24. T1 â€” `R-OM-001` SYSTEMATIC REJECTION
+25. T2 â€” `R-OM-002` CUSTOMER REJECTION
+26. T3 â€” `R-OM-003` PROVIDER REJECTION
+27. T4 â€” `R-OM-005` UNKNOWN REJECTION
 
-### K. Installation Failure — Dynamic-Value Treatments (D1–D4)
-28. D1 — `R-OM-006` Product Relationship Conflict (`[prodInstId]` × 2)
-29. D2 — `R-OM-007` Product Not Orderable (`[prodSpecCode]`)
-30. D3 — `R-OM-010` Product Cannot Be Deleted (`[prodSpecCode]` + `[prodInstaId]`)
-31. D4 — `R-OM-012` Address Not Found (`[addressId]`)
+### K. Installation Failure â€” Dynamic-Value Treatments (D1â€“D4)
+28. D1 â€” `R-OM-006` Product Relationship Conflict (`[prodInstId]` Ã— 2)
+29. D2 â€” `R-OM-007` Product Not Orderable (`[prodSpecCode]`)
+30. D3 â€” `R-OM-010` Product Cannot Be Deleted (`[prodSpecCode]` + `[prodInstaId]`)
+31. D4 â€” `R-OM-012` Address Not Found (`[addressId]`)
 
 ### L. Auto-Cancellation in ACES (mirrors Phase 4B pattern from STC / ITC / DAWIYAT)
 32. Auto-cancel during Activation Order
@@ -73,20 +73,20 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 35. Auto-cancel during Rewiring Order
 
 ### M. Cross-cutting / Non-functional
-36. End-to-end positive flow — Order created → In Progress → Completed (Telflow Portal final state)
-37. Order Detail synchronization — Telflow Details tab reflects ACES `serviceAccNum`, CPE `serialNumber`, `providerStatus`
-38. Authentication — bearer token validation
-39. Negative — missing `externalId` / unknown `acesInstallationId`
+36. End-to-end positive flow â€” Order created â†’ In Progress â†’ Completed (Telflow Portal final state)
+37. Order Detail synchronization â€” Telflow Details tab reflects ACES `serviceAccNum`, CPE `serialNumber`, `providerStatus`
+38. Authentication â€” bearer token validation
+39. Negative â€” missing `externalId` / unknown `acesInstallationId`
 
 ---
 
-## Test Cases (Valen Style — ADO ready)
+## Test Cases (Valen Style â€” ADO ready)
 
-> **Format per case:** `Title` · `Test Objective` · `Pre Conditions` · `Expected Result` · `Test Steps` (each with **Step Action** and **Step Expected**).
+> **Format per case:** `Title` Â· `Test Objective` Â· `Pre Conditions` Â· `Expected Result` Â· `Test Steps` (each with **Step Action** and **Step Expected**).
 
 ---
 
-### TC-01 — Phase4B.Dev3.OpenAccess.ACES — Verify TMF 622 to create FTTH — ACES — Regular customer — Postpaid (No ME)
+### TC-01 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify TMF 622 to create FTTH â€” ACES â€” Regular customer â€” Postpaid (No ME)
 
 **Test Objective:** Ensure that a Product Order with `infraProvider = ACES`, customer category `Regular`, payment type `Postpaid`, and no Mesh Extender is successfully created in Telflow via TMF 622.
 
@@ -100,13 +100,13 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 | Step | Step Action | Step Expected |
 |------|-------------|---------------|
 | 1 | Send the TMF 622 request `FTTH-ACES-Postpaid-No-ME.bru` via Bruno. | Response is `201 Created` and the `state` in the response is `acknowledged`. |
-| 2 | Open the Telflow Portal (NSP) and search the order by the returned `id`. | The corresponding FTTH (ACES — Regular — Postpaid) order is created and visible in Telflow Portal. |
+| 2 | Open the Telflow Portal (NSP) and search the order by the returned `id`. | The corresponding FTTH (ACES â€” Regular â€” Postpaid) order is created and visible in Telflow Portal. |
 | 3 | Open Telflow Order Details and verify mapped characteristics. | `infraProvider = ACES`, `customerCategory = Regular`, `serviceType = Fiber 300 Postpaid`, ODB / CPE / appointment / customer attributes are all mapped per the request payload. |
 | 4 | Verify the BPMN process initiated. | The `OpenAccess Fulfillment` process is triggered with the `ACES` provider branch (no Mobily Infra branch). |
 
 ---
 
-### TC-02 — Phase4B.Dev3.OpenAccess.ACES — Verify TMF 622 to create FTTH with 1 Mesh Extender — ACES — Regular — Postpaid
+### TC-02 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify TMF 622 to create FTTH with 1 Mesh Extender â€” ACES â€” Regular â€” Postpaid
 
 **Test Objective:** Ensure that a Product Order for ACES with **1 Mesh Extender** is created in Telflow and the ME line item is processed alongside the FTTH parent.
 
@@ -124,7 +124,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-03 — Phase4B.Dev3.OpenAccess.ACES — Verify TMF 622 to create FTTH with 2 Mesh Extenders — ACES — Regular — Postpaid
+### TC-03 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify TMF 622 to create FTTH with 2 Mesh Extenders â€” ACES â€” Regular â€” Postpaid
 
 **Test Objective:** Ensure ACES order with 2 ME items is accepted and reflected.
 
@@ -140,7 +140,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-04 — Phase4B.Dev3.OpenAccess.ACES — Verify TMF 622 to create FTTH with 3 Mesh Extenders — ACES — Regular — Postpaid
+### TC-04 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify TMF 622 to create FTTH with 3 Mesh Extenders â€” ACES â€” Regular â€” Postpaid
 
 **Test Objective:** Ensure ACES order with the maximum 3 ME items is accepted and reflected.
 
@@ -156,7 +156,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-05 — Phase4B.Dev3.OpenAccess.ACES — Verify TMF 622 to create FTTH — ACES — Royal customer
+### TC-05 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify TMF 622 to create FTTH â€” ACES â€” Royal customer
 
 **Test Objective:** Ensure `customerCategory = Royal` is honoured for the ACES path and the `Royal` branch is taken in the BPMN.
 
@@ -174,7 +174,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-06 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Activation — End-to-End (Accepted → In Progress → Serial Number → Completed)
+### TC-06 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Activation â€” End-to-End (Accepted â†’ In Progress â†’ Serial Number â†’ Completed)
 
 **Test Objective:** Ensure the full ACES Activation Service Installation notification flow is processed end-to-end and the order reaches `Completed` in Telflow.
 
@@ -188,13 +188,13 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 |------|-------------|---------------|
 | 1 | Trigger `Step-01-ACES-Accepted.bru`. | Response is `200 OK`. CPE Installation Work Order Notification for `Accepted` is generated in Telflow System tab. Order state is updated to `In Progress / Accepted`. |
 | 2 | Trigger `Step-02-ACES-InProgress.bru`. | Response `200 OK`. Notification for `In Progress` appears in System tab. Order state = `In Progress / In Progress`. |
-| 3 | Trigger `Step-03-ACES-Serial-Number-Notification.bru` with `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber`. | Response `200 OK`. Notification with `devices[].newSerialNumber` is logged. Inventory is updated — CPE/ONT serial number is persisted on Telflow Inventory; `serviceAccNum` is stored on Order Details. |
+| 3 | Trigger `Step-03-ACES-Serial-Number-Notification.bru` with `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber`. | Response `200 OK`. Notification with `devices[].newSerialNumber` is logged. Inventory is updated â€” CPE/ONT serial number is persisted on Telflow Inventory; `serviceAccNum` is stored on Order Details. |
 | 4 | Trigger `Step-04-ACES-Completed.bru`. | Response `200 OK`. `providerStatus = Completed` is logged. The OpenAccess Fulfillment process moves to `Mobily Infra` (CPE Install) phase or to the next post-OA node per BPMN. |
 | 5 | Verify final order state in Telflow Portal. | The OA-side processing for ACES is `Completed`; the parent order continues per the FTTH activation BPMN until reaching `Completed`. |
 
 ---
 
-### TC-07 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Activation Notification — `Accepted` payload mapping
+### TC-07 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Activation Notification â€” `Accepted` payload mapping
 
 **Test Objective:** Ensure the Accepted notification payload is fully mapped onto Telflow CPE Work Order Details.
 
@@ -211,7 +211,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-08 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Activation Notification — `In Progress` payload mapping
+### TC-08 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Activation Notification â€” `In Progress` payload mapping
 
 **Test Objective:** Ensure In Progress notification updates Telflow Order state.
 
@@ -227,7 +227,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-09 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Activation `Serial Number` Notification — Inventory & Service Account update
+### TC-09 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Activation `Serial Number` Notification â€” Inventory & Service Account update
 
 **Test Objective:** Ensure the `Serial Number Notification` updates the CPE inventory with the new serial number, and `serviceAccNum` is captured on the order.
 
@@ -244,7 +244,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-10 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Activation `Completed` Notification — Final state on OA side
+### TC-10 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Activation `Completed` Notification â€” Final state on OA side
 
 **Test Objective:** Ensure the `Completed` notification finalises the OA-side workflow and signals downstream nodes.
 
@@ -260,7 +260,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-11 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Cancellation flow — End-to-End (Received → Accepted → In Progress → Cancelled)
+### TC-11 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Cancellation flow â€” End-to-End (Received â†’ Accepted â†’ In Progress â†’ Cancelled)
 
 **Test Objective:** Ensure the full ACES Cancellation Service Installation notification chain is accepted and order is set to `Cancelled`.
 
@@ -279,7 +279,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-12 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Modification — Service Installation Completed
+### TC-12 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Modification â€” Service Installation Completed
 
 **Test Objective:** Ensure Modification Completed notification updates the order with the new service account number and order transaction number.
 
@@ -296,7 +296,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-13 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Device Swap — End-to-End (Accepted → In Progress → Serial Number → Completed)
+### TC-13 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Device Swap â€” End-to-End (Accepted â†’ In Progress â†’ Serial Number â†’ Completed)
 
 **Test Objective:** Ensure the ACES Device Swap flow processes all 4 notifications, swaps the CPE serial number on inventory, and finishes with `Completed`.
 
@@ -314,7 +314,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-14 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Relocation — End-to-End (Accepted → In Progress → Completed)
+### TC-14 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Relocation â€” End-to-End (Accepted â†’ In Progress â†’ Completed)
 
 **Test Objective:** Ensure the ACES Relocation Service Installation notifications transition the order through to Completion.
 
@@ -331,7 +331,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-15 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Rewiring — End-to-End (Accepted → In Progress → Completed)
+### TC-15 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Rewiring â€” End-to-End (Accepted â†’ In Progress â†’ Completed)
 
 **Test Objective:** Ensure the ACES Rewiring Service Installation notifications transition the order through to Completion.
 
@@ -348,7 +348,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-16 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Suspend — Service Installation Completed
+### TC-16 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Suspend â€” Service Installation Completed
 
 **Test Objective:** Ensure `Suspend Completed` notification suspends the ACES service.
 
@@ -364,7 +364,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-17 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Resume — Service Installation Completed
+### TC-17 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Resume â€” Service Installation Completed
 
 **Test Objective:** Ensure `Resume Completed` notification reactivates the ACES service.
 
@@ -380,7 +380,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-18 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Termination — Service Installation Completed
+### TC-18 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Termination â€” Service Installation Completed
 
 **Test Objective:** Ensure `Termination Completed` notification terminates the ACES service.
 
@@ -396,7 +396,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-19 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Trouble Ticket — Resolved
+### TC-19 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Trouble Ticket â€” Resolved
 
 **Test Objective:** Ensure ACES TT-Resolved notification is processed and the corresponding TT in Telflow is closed.
 
@@ -412,7 +412,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-20 — Phase4B.Dev3.OpenAccess.ACES — Verify ACES Trouble Ticket — Rejected
+### TC-20 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify ACES Trouble Ticket â€” Rejected
 
 **Test Objective:** Ensure ACES TT-Rejected notification is processed and the parent order goes to the failure / treatment branch.
 
@@ -428,7 +428,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-21 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (T1) — `R-OM-001` Systematic Rejection
+### TC-21 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (T1) â€” `R-OM-001` Systematic Rejection
 
 **Test Objective:** Ensure ACES installation-failure notification with reasonCode `R-OM-001` triggers the **Systematic Rejection** treatment in Telflow.
 
@@ -448,7 +448,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-22 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (T2) — `R-OM-002` Customer Rejection
+### TC-22 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (T2) â€” `R-OM-002` Customer Rejection
 
 **Test Objective:** Ensure `R-OM-002` triggers the **Customer Rejection** treatment.
 
@@ -460,11 +460,11 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 |------|-------------|---------------|
 | 1 | Verify and trigger `(T2) ACES - R-OM-002 - CUSTOMER REJECTION.bru`. | `200 OK`. Body has `reasonCode = R-OM-002`, `reasonText = "CANNOT CONTACT THE END-CUSTOMER"`. |
 | 2 | Verify Telflow System tab. | Failure notification with `reasonCode = R-OM-002` logged. |
-| 3 | Verify treatment routing. | OA Handle Installation Failure → Customer Rejection treatment branch is taken; SV `Installation Failure Action` is created with `treatmentCategory` mapped to Customer Rejection. |
+| 3 | Verify treatment routing. | OA Handle Installation Failure â†’ Customer Rejection treatment branch is taken; SV `Installation Failure Action` is created with `treatmentCategory` mapped to Customer Rejection. |
 
 ---
 
-### TC-23 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (T3) — `R-OM-003` Provider Rejection
+### TC-23 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (T3) â€” `R-OM-003` Provider Rejection
 
 **Test Objective:** Ensure `R-OM-003` triggers the **Provider Rejection** treatment (capacity / no idle resource).
 
@@ -480,7 +480,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-24 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (T4) — `R-OM-005` Unknown Rejection
+### TC-24 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (T4) â€” `R-OM-005` Unknown Rejection
 
 **Test Objective:** Ensure `R-OM-005` falls into the **Unknown Rejection** treatment fallback path.
 
@@ -496,7 +496,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-25 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (D1) — `R-OM-006` Product Relationship Conflict (dynamic)
+### TC-25 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (D1) â€” `R-OM-006` Product Relationship Conflict (dynamic)
 
 **Test Objective:** Ensure `R-OM-006` with two dynamic `[prodInstId]` placeholders is parsed and routed correctly, and both IDs are surfaced in Telflow.
 
@@ -514,7 +514,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-26 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (D2) — `R-OM-007` Product Not Orderable (dynamic)
+### TC-26 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (D2) â€” `R-OM-007` Product Not Orderable (dynamic)
 
 **Test Objective:** Ensure `R-OM-007` dynamic `[prodSpecCode]` is parsed and the failure routed correctly.
 
@@ -530,7 +530,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-27 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (D3) — `R-OM-010` Product Cannot Be Deleted (dynamic)
+### TC-27 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (D3) â€” `R-OM-010` Product Cannot Be Deleted (dynamic)
 
 **Test Objective:** Ensure `R-OM-010` with both `[prodSpecCode]` and `[prodInstaId]` is parsed and routed.
 
@@ -546,7 +546,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-28 — Phase4B.Dev3.OpenAccess.ACES — Verify Installation Failure (D4) — `R-OM-012` Address Not Found (dynamic)
+### TC-28 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Installation Failure (D4) â€” `R-OM-012` Address Not Found (dynamic)
 
 **Test Objective:** Ensure `R-OM-012` with dynamic 8-digit `[addressId]` is parsed and routed.
 
@@ -562,7 +562,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-29 — Phase4B.Dev3.OpenAccess.ACES — Verify Auto-Cancellation in Open Access (ACES) FTTH During Activation Order
+### TC-29 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Auto-Cancellation in Open Access (ACES) FTTH During Activation Order
 
 **Test Objective:** Ensure that when ACES emits an installation-failure during Activation, Telflow auto-cancels the order and rolls back to ACES.
 
@@ -583,7 +583,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-30 — Phase4B.Dev3.OpenAccess.ACES — Verify Auto-Cancellation in Open Access (ACES) FTTH During Device Swap Order
+### TC-30 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Auto-Cancellation in Open Access (ACES) FTTH During Device Swap Order
 
 **Test Objective:** Same as TC-29 but for a Device Swap order on ACES.
 
@@ -595,14 +595,14 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 |------|-------------|---------------|
 | 1 | Simulate ACES Installation Failure on the Device Swap order via `(T2) ACES - R-OM-002`. | `200 OK`. Failure logged. |
 | 2 | Verify Treatment process and SV Action. | Telflow sends the mapped Action API request to SingleView. |
-| 3 | Monitor Order state. | Order transitions to `Assessing Cancellation` → `Pending Cancellation`. |
+| 3 | Monitor Order state. | Order transitions to `Assessing Cancellation` â†’ `Pending Cancellation`. |
 | 4 | Verify Rollback to ACES. | Cancel Service Installation Request sent to ACES. |
 | 5 | Send `Step-04-ACES-Cancelled.bru`. | Cancellation completion accepted. |
 | 6 | Verify final state and TMF 622 outbound. | Order = `CANCELLED`. TMF 622 with `state = cancelled` sent to SV. |
 
 ---
 
-### TC-31 — Phase4B.Dev3.OpenAccess.ACES — Verify Auto-Cancellation in Open Access (ACES) FTTH During Relocation Order
+### TC-31 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Auto-Cancellation in Open Access (ACES) FTTH During Relocation Order
 
 **Test Objective:** Same as TC-29 but for a Relocation order on ACES.
 
@@ -614,14 +614,14 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 |------|-------------|---------------|
 | 1 | Simulate ACES Installation Failure during Relocation via `(T3) ACES - R-OM-003`. | `200 OK`. Failure logged. |
 | 2 | Verify Treatment + SV Action. | Mapped Action API request sent to SV. |
-| 3 | Monitor Order state. | Transitions to `Assessing Cancellation` → `Pending Cancellation`. |
+| 3 | Monitor Order state. | Transitions to `Assessing Cancellation` â†’ `Pending Cancellation`. |
 | 4 | Verify Rollback to ACES. | Cancel Service Installation Request sent to ACES. |
 | 5 | Send `Step-04-ACES-Cancelled.bru`. | Cancellation completion accepted. |
 | 6 | Verify final state. | Order = `CANCELLED`. TMF 622 cancelled-state notification sent to SV. |
 
 ---
 
-### TC-32 — Phase4B.Dev3.OpenAccess.ACES — Verify Auto-Cancellation in Open Access (ACES) FTTH During Rewiring Order
+### TC-32 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Auto-Cancellation in Open Access (ACES) FTTH During Rewiring Order
 
 **Test Objective:** Same as TC-29 but for a Rewiring order on ACES.
 
@@ -633,14 +633,14 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 |------|-------------|---------------|
 | 1 | Simulate ACES Installation Failure during Rewiring via `(T4) ACES - R-OM-005`. | `200 OK`. Failure logged. |
 | 2 | Verify Treatment + SV Action. | SV Action request generated. |
-| 3 | Monitor Order state. | `Assessing Cancellation` → `Pending Cancellation`. |
+| 3 | Monitor Order state. | `Assessing Cancellation` â†’ `Pending Cancellation`. |
 | 4 | Verify Rollback to ACES. | Cancel Service Installation Request sent. |
 | 5 | Send `Step-04-ACES-Cancelled.bru`. | Cancellation accepted. |
 | 6 | Verify final state. | Order = `CANCELLED`, TMF 622 cancelled notification sent to SV. |
 
 ---
 
-### TC-33 — Phase4B.Dev3.OpenAccess.ACES — Verify duplicate `eventId` is handled idempotently
+### TC-33 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify duplicate `eventId` is handled idempotently
 
 **Test Objective:** Ensure Telflow does not double-process when the same `eventId` is received twice for the same ACES status.
 
@@ -656,7 +656,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-34 — Phase4B.Dev3.OpenAccess.ACES — Verify out-of-sequence notification (Completed before In Progress) is rejected / handled
+### TC-34 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify out-of-sequence notification (Completed before In Progress) is rejected / handled
 
 **Test Objective:** Ensure that if `Completed` arrives before `In Progress`, Telflow rejects the out-of-order event or queues it according to BPMN rules.
 
@@ -672,7 +672,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-35 — Phase4B.Dev3.OpenAccess.ACES — Verify request rejected when bearer token is missing/invalid
+### TC-35 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify request rejected when bearer token is missing/invalid
 
 **Test Objective:** Ensure unauthorised requests to `/serviceInstallationManagement/v1/notification/` are rejected.
 
@@ -687,7 +687,7 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 ---
 
-### TC-36 — Phase4B.Dev3.OpenAccess.ACES — Verify notification rejected when `externalId` is unknown / not provisioned
+### TC-36 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify notification rejected when `externalId` is unknown / not provisioned
 
 **Test Objective:** Ensure that ACES notifications referencing an unknown `acesInstallationId` are rejected with a clear error.
 
@@ -697,26 +697,26 @@ Below is the analysis of all the test scenarios that must be covered for ACES ba
 
 | Step | Step Action | Step Expected |
 |------|-------------|---------------|
-| 1 | Override `acesInstallationId` to a non-existent value in Bruno. | — |
+| 1 | Override `acesInstallationId` to a non-existent value in Bruno. | â€” |
 | 2 | Trigger `Step-01-ACES-Accepted.bru`. | Response is an error (`404` Not Found or `400` Bad Request) per the API contract. |
 | 3 | Verify Telflow logs. | An error / not-found entry is logged; no order state is updated. |
 
 ---
 
-### TC-37 — Phase4B.Dev3.OpenAccess.ACES — Verify Order Details synchronisation for ACES end-to-end activation
+### TC-37 â€” Phase4B.Dev3.OpenAccess.ACES â€” Verify Order Details synchronisation for ACES end-to-end activation
 
 **Test Objective:** Ensure all attributes from TMF 622 + ACES notifications are reflected on Telflow Order Details / Service section / Inventory.
 
 **Pre Conditions:** ACES order is in `Completed` after running TC-06 end-to-end.
 
-**Expected Result:** Order Details show ACES infraProvider, customer details, ODB, CPE, appointment, serviceAccNum, CPE serial number — all consistent with the original payloads.
+**Expected Result:** Order Details show ACES infraProvider, customer details, ODB, CPE, appointment, serviceAccNum, CPE serial number â€” all consistent with the original payloads.
 
 | Step | Step Action | Step Expected |
 |------|-------------|---------------|
-| 1 | Open Telflow Portal → search by Order ID. | Order found, state = `Completed`. |
-| 2 | Verify Order Details — Infrastructure section. | `infraProvider = ACES`, ODB id, region and geo coordinates from TMF 622 are reflected. |
-| 3 | Verify Order Details — Customer section. | SAN, CAN, customerName, surname, contacts, address all match TMF 622. |
-| 4 | Verify Order Details — Service section. | `serviceAccNum = {{acesServiceAccNum}}` from the Serial Number Notification. |
+| 1 | Open Telflow Portal â†’ search by Order ID. | Order found, state = `Completed`. |
+| 2 | Verify Order Details â€” Infrastructure section. | `infraProvider = ACES`, ODB id, region and geo coordinates from TMF 622 are reflected. |
+| 3 | Verify Order Details â€” Customer section. | SAN, CAN, customerName, surname, contacts, address all match TMF 622. |
+| 4 | Verify Order Details â€” Service section. | `serviceAccNum = {{acesServiceAccNum}}` from the Serial Number Notification. |
 | 5 | Verify Inventory record by `integrationId`. | CPE/ONT inventory record carries the `acesCpeSerialNumber`. |
 | 6 | Verify TMF 622 outbound to SingleView. | Final TMF 622 notification with `state = completed` is sent to SV. |
 
@@ -729,16 +729,16 @@ When you upload these test cases into Azure DevOps, the columns map as follows (
 | ADO Column | Source from this MD |
 |------------|---------------------|
 | Work Item Type | `Test Case` |
-| Title | The `### TC-xx — ...` heading |
+| Title | The `### TC-xx â€” ...` heading |
 | Description | `Test Objective` + `Pre Conditions` + `Expected Result` blocks |
-| Test Step | Row number (1, 2, …) |
+| Test Step | Row number (1, 2, â€¦) |
 | Step Action | Left column "Step Action" of the table |
 | Step Expected | Right column "Step Expected" of the table |
 | Area Path | `New Stack Impl\Solution\CSG\CSG QandO` |
 
 ---
 
-## Quick Coverage Matrix (use cases × test case IDs)
+## Quick Coverage Matrix (use cases Ã— test case IDs)
 
 | Use Case Group                        | TC IDs |
 |---------------------------------------|--------|
@@ -751,9 +751,10 @@ When you upload these test cases into Azure DevOps, the columns map as follows (
 | Rewiring                              | TC-15 |
 | Suspend / Resume / Termination        | TC-16, TC-17, TC-18 |
 | Trouble Ticket                        | TC-19, TC-20 |
-| Installation Failure (Standard T1–T4) | TC-21, TC-22, TC-23, TC-24 |
-| Installation Failure (Dynamic D1–D4)  | TC-25, TC-26, TC-27, TC-28 |
+| Installation Failure (Standard T1â€“T4) | TC-21, TC-22, TC-23, TC-24 |
+| Installation Failure (Dynamic D1â€“D4)  | TC-25, TC-26, TC-27, TC-28 |
 | Auto-Cancellation                     | TC-29, TC-30, TC-31, TC-32 |
 | Idempotency / Out-of-order            | TC-33, TC-34 |
-| Negative — auth / unknown order       | TC-35, TC-36 |
+| Negative â€” auth / unknown order       | TC-35, TC-36 |
 | Order Details synchronisation         | TC-37 |
+

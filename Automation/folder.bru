@@ -1,6 +1,6 @@
-meta {
+﻿meta {
   name: Automation
-  seq: 13
+  seq: 16
 }
 
 docs {
@@ -12,58 +12,60 @@ docs {
      `runner/`) that drives end-to-end automation from the CLI runner and
      the FTTH-Mobily-Toolkit web UI.
   
-  ## Bruno Helpers — Usage Flow
-  1. Create an order (TMF622) → orderId is auto-captured
+  ## Bruno Helpers â€” Usage Flow
+  1. Create an order (TMF622) â†’ orderId is auto-captured
   2. Wait ~60-90 seconds for system processing
   3. Run "Extract Integration IDs" to fetch serviceOrderId + svActionId
   4. Continue with TMF641 notifications, WFM steps, and SingleView calls
   
   ## Variables Set
-  - `serviceOrderId` → Used in TMF641 notification body (serviceOrder.id)
-  - `svActionId` → Used in SingleView 622 notifications (salesOrder.externalId)
-  - `workOrderIdCpe` → Auto-generated if not set (WFM CPE Step-01)
-  - `workOrderIdMe` → Auto-generated if not set (WFM ME Step-01)
+  - `serviceOrderId` â†’ Used in TMF641 notification body (serviceOrder.id)
+  - `svActionId` â†’ Used in SingleView 622 notifications (salesOrder.externalId)
+  - `workOrderIdCpe` â†’ Auto-generated if not set (WFM CPE Step-01)
+  - `workOrderIdMe` â†’ Auto-generated if not set (WFM ME Step-01)
   
   ## Journey Engine Module Layout (SOLID)
   
   `core.js` is now a thin facade that re-exports from focused modules:
   
-  - `lib/runtime.js`         — init / log / delay / cancellation
-  - `lib/env-bru.js`         — parse `environments/*.bru` and Bruno files
-  - `lib/json-utils.js`      — `subVars`, `cleanJsonBody`, deep-find
-  - `lib/url-builder.js`     — portal API URL builders
-  - `lib/http.js`            — `httpRequest`, `runBruRequest` + audit logs
-  - `lib/auth.js`            — OAuth per environment
-  - `lib/b2b.js`             — B2B message helpers (action matching, payload parsing)
-  - `lib/state.js`           — order state extraction + `doWaitForOrderState`
-  - `lib/extractors.js`      — polling-based ID extractors
-  - `lib/notifications.js`   — `doNotification`, `doCreateOrder`, SV trigger
-  - `lib/tasks.js`           — Telflow task list/complete
+  - `lib/runtime.js`         â€” init / log / delay / cancellation
+  - `lib/env-bru.js`         â€” parse `environments/*.bru` and Bruno files
+  - `lib/json-utils.js`      â€” `subVars`, `cleanJsonBody`, deep-find
+  - `lib/url-builder.js`     â€” portal API URL builders
+  - `lib/http.js`            â€” `httpRequest`, `runBruRequest` + audit logs
+  - `lib/auth.js`            â€” OAuth per environment
+  - `lib/b2b.js`             â€” B2B message helpers (action matching, payload parsing)
+  - `lib/state.js`           â€” order state extraction + `doWaitForOrderState`
+  - `lib/extractors.js`      â€” polling-based ID extractors
+  - `lib/notifications.js`   â€” `doNotification`, `doCreateOrder`, SV trigger
+  - `lib/tasks.js`           â€” Telflow task list/complete
   
-  - `providers/network-category.js` — FTTH CONSUMER vs FTTH RCY routing
-  - `providers/mobily.js`           — Mobily activation + field-work builders
-  - `providers/openaccess.js`       — OA notifications, ID specs, OA builder
+  - `providers/network-category.js` â€” FTTH CONSUMER vs FTTH RCY routing
+  - `providers/mobily.js`           â€” Mobily activation + field-work builders
+  - `providers/openaccess.js`       â€” OA notifications, ID specs, OA builder
   
-  - `journeys/builders.js`   — generic journey patterns (simple, suspend, …)
-  - `journeys/labels.js`     — step labels + state maps + failure code lists
-  - `journeys/registry.js`   — `JOURNEY_REGISTRY` (every provider × type)
+  - `journeys/builders.js`   â€” generic journey patterns (simple, suspend, â€¦)
+  - `journeys/labels.js`     â€” step labels + state maps + failure code lists
+  - `journeys/registry.js`   â€” `JOURNEY_REGISTRY` (every provider Ã— type)
   
-  - `runner/state-detector.js`  — `detectOrderPosition`
-  - `runner/extract-all-ids.js` — toolkit one-shot ID snapshot
-  - `runner/resume.js`          — resume-from logic
-  - `runner/step-executor.js`   — `step.type` dispatcher (with externalId log)
-  - `runner/runner.js`          — top-level `runJourney`
+  - `runner/state-detector.js`  â€” `detectOrderPosition`
+  - `runner/extract-all-ids.js` â€” toolkit one-shot ID snapshot
+  - `runner/resume.js`          â€” resume-from logic
+  - `runner/step-executor.js`   â€” `step.type` dispatcher (with externalId log)
+  - `runner/runner.js`          â€” top-level `runJourney`
   
   ## ODB Patch Routing (Phase 4B)
   
   The runner picks ODB-patch behaviour from `networkCategory` (not customer
   type as before):
   
-    FTTH CONSUMER → ODB patch is required (Regular customers)
-    FTTH RCY      → ODB patch is skipped  (Royal customers)
+    FTTH CONSUMER â†’ ODB patch is required (Regular customers)
+    FTTH RCY      â†’ ODB patch is skipped  (Royal customers)
   
   See `providers/network-category.js`. The Mobily activation builder also
   injects `customerCategory` + `networkCategory` into `vars` on the create
   step so the TMF622 payload always carries the Phase 4B characteristics
   regardless of what's in the env file.
 }
+
+

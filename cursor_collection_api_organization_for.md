@@ -1,4 +1,4 @@
-# Collection API organization for mobile project
+﻿# Collection API organization for mobile project
 _Exported on 3/4/2026 at 03:18:54 GMT+7 from Cursor (2.2.36)_
 
 ---
@@ -33,19 +33,19 @@ Excellent! Now I have a very thorough understanding of the entire project. Let m
 
 ---
 
-## 📊 Analisis Lengkap & Rencana Reorganisasi
+## ðŸ“Š Analisis Lengkap & Rencana Reorganisasi
 
 Setelah mempelajari seluruh **struktur project**, **API patterns**, dan **konteks dokumentasi** (TMF 622, TMF 641, SingleView Action API, Notification Event API, HLD FTTH), berikut temuan dan rencana saya:
 
 ---
 
-### 🔍 **Masalah yang Ditemukan pada Struktur Saat Ini**
+### ðŸ” **Masalah yang Ditemukan pada Struktur Saat Ini**
 
 | # | Masalah | Detail |
 |---|---------|--------|
-| 1 | **Duplikasi OpenAccess Workflows** | Folder `OpenAccess-Provider-Workflows` terduplikasi di dalam `Product-Order-Management-TMF622/Create-Order/Mobily/Royal-Customer/Postpaid/` — jelas salah tempat |
+| 1 | **Duplikasi OpenAccess Workflows** | Folder `OpenAccess-Provider-Workflows` terduplikasi di dalam `Product-Order-Management-TMF622/Create-Order/Mobily/Royal-Customer/Postpaid/` â€” jelas salah tempat |
 | 2 | **Penamaan Tidak Konsisten** | Campuran hyphen-case (`Product-Order-Management-TMF622`), spasi (`Suspends & Resume Order`), dan campur aduk |
-| 3 | **Flat root tanpa grouping** | 15 folder di root level tanpa hierarki yang jelas — Device Swap, Maintenance, Relocation, Rewiring, Termination, Upgrade/Downgrade semuanya di root padahal **semua pakai TMF622 API endpoint yang sama** (`/tmf-api/productOrderingManagement/v4/productOrder/`) |
+| 3 | **Flat root tanpa grouping** | 15 folder di root level tanpa hierarki yang jelas â€” Device Swap, Maintenance, Relocation, Rewiring, Termination, Upgrade/Downgrade semuanya di root padahal **semua pakai TMF622 API endpoint yang sama** (`/tmf-api/productOrderingManagement/v4/productOrder/`) |
 | 4 | **Sequence number tidak logis** | `Authentication` dan `OpenAccess-Provider-Workflows` sama-sama seq:2, urutan tidak mengikuti workflow flow |
 | 5 | **File salah tempat** | `Step-09-CPE-UAT-Completed.bru` ada di luar folder `CPE-Installation-Workflow/` |
 | 6 | **Maintenance Order flat** | 11 file tanpa sub-folder (Create, Close, ReOpen mixed) |
@@ -53,7 +53,7 @@ Setelah mempelajari seluruh **struktur project**, **API patterns**, dan **kontek
 
 ---
 
-### 🏗️ **Rencana Reorganisasi — Grouped by API Interface + Business Process**
+### ðŸ—ï¸ **Rencana Reorganisasi â€” Grouped by API Interface + Business Process**
 
 Prinsip organisasi:
 1. **Layer 1:** Grouped by API Standard/Interface (TMF622, TMF641, WFM, OpenAccess, SingleView)
@@ -63,145 +63,145 @@ Prinsip organisasi:
 
 ```
 FTTH - Mobily - Project/
-├── environments/
-├── Documentation/
-│
-├── 01-Authentication/
-│   ├── Auth-Dev-1.bru
-│   ├── Auth-Dev-2.bru
-│   └── Auth-Dev-On-Prem.bru
-│
-├── 02-Product-Order-Management-TMF622/
-│   │
-│   ├── 01-Activation/                          ← New Connection (action: add)
-│   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/
-│   │   │   │   ├── Postpaid/  (No ME, 1-3 ME)
-│   │   │   │   └── Prepaid/   (No ME, 1-3 ME)
-│   │   │   └── Royal-Customer/
-│   │   │       └── Postpaid/  (No ME, 1-3 ME)
-│   │   └── OpenAccess/
-│   │       ├── DAWIYAT/
-│   │       ├── ITC/
-│   │       └── STC/
-│   │
-│   ├── 02-Modification/                        ← (action: modify)
-│   │   ├── Upgrade/
-│   │   │   └── Upgrade-Bandwidth-Only-Mobily.bru
-│   │   ├── Downgrade/
-│   │   │   └── Downgrade-Bandwidth-Only-Mobily.bru
-│   │   ├── Relocation/
-│   │   │   ├── Relocation-Mobily.bru
-│   │   │   ├── Relocation-Dowiyat.bru
-│   │   │   ├── Relocation-ITC.bru
-│   │   │   └── Relocation-STC.bru
-│   │   ├── Rewiring/
-│   │   │   ├── Rewiring-Mobily.bru
-│   │   │   └── Rewiring-Dowiyat.bru
-│   │   ├── Device-Swap/
-│   │   │   ├── CPE-Swap-Mobily.bru
-│   │   │   ├── HAG-Swap-Mobily.bru
-│   │   │   ├── ONT-Swap-DOWIYAT.bru
-│   │   │   ├── ONT-Swap-ITC.bru
-│   │   │   └── ONT-Swap-STC.bru
-│   │   └── Request-Update/
-│   │       ├── Get-Order.bru
-│   │       ├── Request-Update-Mobily.bru
-│   │       ├── Request-Update-DOWIYAT.bru
-│   │       └── Request-Update-ITC.bru
-│   │
-│   ├── 03-Suspend-Resume/                     ← (action: modify, suspend/resume)
-│   │   ├── Mobily/
-│   │   │   └── Suspend-Mobily.bru
-│   │   ├── DOWIYAT/
-│   │   │   ├── Suspend-Dowiyat.bru
-│   │   │   └── Resume-Dowiyat.bru
-│   │   ├── ITC/
-│   │   │   ├── Suspend-ITC.bru
-│   │   │   └── Resume-ITC.bru
-│   │   └── STC/
-│   │       ├── Suspend-STC.bru
-│   │       └── Resume-STC.bru
-│   │
-│   ├── 04-Termination/                        ← (action: delete)
-│   │   ├── Termination-Mobily.bru
-│   │   ├── Termination-DOWIYAT.bru
-│   │   ├── Termination-ITC.bru
-│   │   └── Termination-STC.bru
-│   │
-│   ├── 05-Maintenance-Order/                  ← (Maintenance WO spec)
-│   │   ├── Create/
-│   │   │   ├── Maintenance-Order-Mobily.bru
-│   │   │   ├── Maintenance-Order-DOWIYAT.bru
-│   │   │   ├── Maintenance-Order-ITC.bru
-│   │   │   └── Maintenance-Order-STC.bru
-│   │   ├── Close/
-│   │   │   ├── Close-Maintenance-DOWIYAT.bru
-│   │   │   ├── Close-Maintenance-ITC.bru
-│   │   │   └── Close-Maintenance-STC.bru
-│   │   └── ReOpen/
-│   │       ├── ReOpen-Maintenance-DOWIYAT.bru
-│   │       ├── ReOpen-Maintenance-ITC.bru
-│   │       └── ReOpen-Maintenance-STC.bru
-│   │
-│   └── 06-Get-Order/
-│       └── Get-Order.bru
-│
-├── 03-Service-Order-Notifications-TMF641/
-│   ├── Activation/
-│   │   ├── Service-Order-Acknowledged.bru
-│   │   ├── Service-Order-InProgress.bru
-│   │   ├── Service-Order-Completed.bru
-│   │   └── Service-Order-Error-1000-OK.bru
-│   └── Termination/
-│       └── 641-Cease-Termination.bru
-│
-├── 04-Workforce-Management-WFM/
-│   ├── CPE-Installation-Workflow/             ← Step 01-09 (semua di dalam!)
-│   │   ├── Step-01-CPE-1000-OK.bru
-│   │   ├── ... (Step 02-08)
-│   │   └── Step-09-CPE-UAT-Completed.bru     ← FIX: pindah ke dalam folder
-│   ├── Mesh-Extender-Installation-Workflow/   ← Step 01-09
-│   └── Installation-Failure-Scenarios/
-│       ├── Mobily/
-│       ├── Mobily-Maintenance/
-│       └── OpenAccess/
-│
-├── 05-OpenAccess-Provider-Workflows/
-│   ├── DAWIYAT/
-│   │   ├── Activation-Service-Installation/   ← Step 01-07
-│   │   └── Modification-Service-Installation/
-│   ├── ITC/
-│   │   ├── Activation-Service-Installation/   ← Step 01-06
-│   │   └── Modification-Service-Installation/
-│   ├── STC/
-│   │   ├── Activation-Service-Installation/   ← Step 01-06
-│   │   ├── Modification-Service-Installation/
-│   │   ├── Service-Qualification-Notifications/
-│   │   └── STC-SQ-INFEASIBLE/
-│   └── Open-Service-Request-Maintenance/
-│
-├── 06-SingleView-Integration/
-│   ├── Appointment-Management/
-│   ├── Order-Cancellation/
-│   ├── Order-Completion/
-│   ├── Installation-Failure-Actions/
-│   └── Custom-Notifications/
-│
-└── 07-Create-Service-Order-OpenAccess/        ← Separate API: serviceInstallationManagement
-    ├── Create-Service-Order-OA-Dowiyat.bru
-    ├── Create-Service-Order-OA-ITC.bru
-    └── Create-Service-Order-OA-STC.bru
+â”œâ”€â”€ environments/
+â”œâ”€â”€ Documentation/
+â”‚
+â”œâ”€â”€ 01-01-Authentication/
+â”‚   â”œâ”€â”€ Auth-Dev-1.bru
+â”‚   â”œâ”€â”€ Auth-Dev-2.bru
+â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
+â”‚
+â”œâ”€â”€ 02-Product-Order-Management-TMF622/
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 01-Activation/                          â† New Connection (action: add)
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Regular-Customer/
+â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ Postpaid/  (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â”‚   â””â”€â”€ Prepaid/   (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â””â”€â”€ Royal-Customer/
+â”‚   â”‚   â”‚       â””â”€â”€ Postpaid/  (No ME, 1-3 ME)
+â”‚   â”‚   â””â”€â”€ OpenAccess/
+â”‚   â”‚       â”œâ”€â”€ DAWIYAT/
+â”‚   â”‚       â”œâ”€â”€ ITC/
+â”‚   â”‚       â””â”€â”€ STC/
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 02-Modification/                        â† (action: modify)
+â”‚   â”‚   â”œâ”€â”€ Upgrade/
+â”‚   â”‚   â”‚   â””â”€â”€ Upgrade-Bandwidth-Only-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Downgrade/
+â”‚   â”‚   â”‚   â””â”€â”€ Downgrade-Bandwidth-Only-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Relocation/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Relocation-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Relocation-Dowiyat.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Relocation-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Relocation-STC.bru
+â”‚   â”‚   â”œâ”€â”€ Rewiring/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Rewiring-Mobily.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Rewiring-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Device-Swap/
+â”‚   â”‚   â”‚   â”œâ”€â”€ CPE-Swap-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ HAG-Swap-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ ONT-Swap-DOWIYAT.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ ONT-Swap-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ ONT-Swap-STC.bru
+â”‚   â”‚   â””â”€â”€ Request-Update/
+â”‚   â”‚       â”œâ”€â”€ Get-Order.bru
+â”‚   â”‚       â”œâ”€â”€ Request-Update-Mobily.bru
+â”‚   â”‚       â”œâ”€â”€ Request-Update-DOWIYAT.bru
+â”‚   â”‚       â””â”€â”€ Request-Update-ITC.bru
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 03-Suspend-Resume/                     â† (action: modify, suspend/resume)
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â””â”€â”€ Suspend-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ DOWIYAT/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Suspend-Dowiyat.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Resume-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ ITC/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Suspend-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Resume-ITC.bru
+â”‚   â”‚   â””â”€â”€ STC/
+â”‚   â”‚       â”œâ”€â”€ Suspend-STC.bru
+â”‚   â”‚       â””â”€â”€ Resume-STC.bru
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 04-Termination/                        â† (action: delete)
+â”‚   â”‚   â”œâ”€â”€ Termination-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-ITC.bru
+â”‚   â”‚   â””â”€â”€ Termination-STC.bru
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 05-Maintenance-Order/                  â† (Maintenance WO spec)
+â”‚   â”‚   â”œâ”€â”€ Create/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-DOWIYAT.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Maintenance-Order-STC.bru
+â”‚   â”‚   â”œâ”€â”€ Close/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-DOWIYAT.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Close-Maintenance-STC.bru
+â”‚   â”‚   â””â”€â”€ ReOpen/
+â”‚   â”‚       â”œâ”€â”€ ReOpen-Maintenance-DOWIYAT.bru
+â”‚   â”‚       â”œâ”€â”€ ReOpen-Maintenance-ITC.bru
+â”‚   â”‚       â””â”€â”€ ReOpen-Maintenance-STC.bru
+â”‚   â”‚
+â”‚   â””â”€â”€ 06-Get-Order/
+â”‚       â””â”€â”€ Get-Order.bru
+â”‚
+â”œâ”€â”€ 03-Service-Order-Notifications-TMF641/
+â”‚   â”œâ”€â”€ Activation/
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Acknowledged.bru
+â”‚   â”‚   â”œâ”€â”€ Service-Order-InProgress.bru
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Completed.bru
+â”‚   â”‚   â””â”€â”€ Service-Order-Error-1000-OK.bru
+â”‚   â””â”€â”€ Termination/
+â”‚       â””â”€â”€ 641-Cease-Termination.bru
+â”‚
+â”œâ”€â”€ 04-Workforce-Management-WFM/
+â”‚   â”œâ”€â”€ CPE-Installation-Workflow/             â† Step 01-09 (semua di dalam!)
+â”‚   â”‚   â”œâ”€â”€ Step-01-CPE-1000-OK.bru
+â”‚   â”‚   â”œâ”€â”€ ... (Step 02-08)
+â”‚   â”‚   â””â”€â”€ Step-09-CPE-UAT-Completed.bru     â† FIX: pindah ke dalam folder
+â”‚   â”œâ”€â”€ Mesh-Extender-Installation-Workflow/   â† Step 01-09
+â”‚   â””â”€â”€ Installation-Failure-Scenarios/
+â”‚       â”œâ”€â”€ Mobily/
+â”‚       â”œâ”€â”€ Mobily-Maintenance/
+â”‚       â””â”€â”€ OpenAccess/
+â”‚
+â”œâ”€â”€ 05-OpenAccess-Provider-Workflows/
+â”‚   â”œâ”€â”€ DAWIYAT/
+â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/   â† Step 01-07
+â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”œâ”€â”€ ITC/
+â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/   â† Step 01-06
+â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”œâ”€â”€ STC/
+â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/   â† Step 01-06
+â”‚   â”‚   â”œâ”€â”€ Modification-Service-Installation/
+â”‚   â”‚   â”œâ”€â”€ Service-Qualification-Notifications/
+â”‚   â”‚   â””â”€â”€ STC-SQ-INFEASIBLE/
+â”‚   â””â”€â”€ Open-Service-Request-Maintenance/
+â”‚
+â”œâ”€â”€ 06-SingleView-Integration/
+â”‚   â”œâ”€â”€ Appointment-Management/
+â”‚   â”œâ”€â”€ Order-Cancellation/
+â”‚   â”œâ”€â”€ Order-Completion/
+â”‚   â”œâ”€â”€ Installation-Failure-Actions/
+â”‚   â””â”€â”€ Custom-Notifications/
+â”‚
+â””â”€â”€ 07-Create-Service-Order-OpenAccess/        â† Separate API: serviceInstallationManagement
+    â”œâ”€â”€ Create-Service-Order-OA-Dowiyat.bru
+    â”œâ”€â”€ Create-Service-Order-OA-ITC.bru
+    â””â”€â”€ Create-Service-Order-OA-STC.bru
 ```
 
 ---
 
-### 📋 **Ringkasan Perubahan**
+### ðŸ“‹ **Ringkasan Perubahan**
 
 | # | Perubahan | Alasan |
 |---|-----------|--------|
-| 1 | **Merge 10 root folders ke dalam `02-Product-Order-Management-TMF622/`** | Device Swap, Termination, Relocation, Rewiring, Upgrade/Downgrade, Suspend/Resume, Maintenance, Request Update — semuanya menggunakan TMF622 endpoint yang sama |
-| 2 | **Numbered prefix (01-07)** | Mengikuti alur workflow eksekusi dari Authentication → Order → Notification → WFM → Provider → SingleView |
+| 1 | **Merge 10 root folders ke dalam `02-Product-Order-Management-TMF622/`** | Device Swap, Termination, Relocation, Rewiring, Upgrade/Downgrade, Suspend/Resume, Maintenance, Request Update â€” semuanya menggunakan TMF622 endpoint yang sama |
+| 2 | **Numbered prefix (01-07)** | Mengikuti alur workflow eksekusi dari Authentication â†’ Order â†’ Notification â†’ WFM â†’ Provider â†’ SingleView |
 | 3 | **Fix misplaced files** | `Step-09-CPE-UAT-Completed.bru` masuk ke dalam `CPE-Installation-Workflow/` |
 | 4 | **Remove duplikat OpenAccess Workflows** | Hapus nested copy dari dalam `Royal-Customer/Postpaid/` |
 | 5 | **Maintenance Order di-sub-folder-kan** | Pisah `Create/`, `Close/`, `ReOpen/` |
@@ -210,13 +210,13 @@ FTTH - Mobily - Project/
 
 ---
 
-### 🎯 **Keuntungan Struktur Baru**
+### ðŸŽ¯ **Keuntungan Struktur Baru**
 
-1. **Scalable** — Ketika ada order type baru (misal Migration), tinggal tambah subfolder di `02-Modification/`
-2. **Self-documenting** — Numbered prefix menunjukkan urutan workflow
-3. **TMF-aligned** — Grouped by API standard (622, 641) sesuai dokumentasi
-4. **Provider-friendly** — Tiap order type punya sub per provider
-5. **Reduced root clutter** — Dari 15 folder ke 7 folder utama + environments + Documentation
+1. **Scalable** â€” Ketika ada order type baru (misal Migration), tinggal tambah subfolder di `02-Modification/`
+2. **Self-documenting** â€” Numbered prefix menunjukkan urutan workflow
+3. **TMF-aligned** â€” Grouped by API standard (622, 641) sesuai dokumentasi
+4. **Provider-friendly** â€” Tiap order type punya sub per provider
+5. **Reduced root clutter** â€” Dari 15 folder ke 7 folder utama + environments + Documentation
 
 ---
 
@@ -229,135 +229,135 @@ Beberapa pertanyaan opsional:
 
 ```plaintext
 FTTH - Mobily - Project/
-├── environments/
-├── Documentation/
-│
-├── 01-Authentication/
-│   ├── Auth-Dev-1.bru
-│   ├── Auth-Dev-2.bru
-│   └── Auth-Dev-On-Prem.bru
-│
-├── 02-Product-Order-Management-TMF622/
-│   │
-│   ├── 01-Activation/                          ← New Connection (action: add)
-│   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/
-│   │   │   │   ├── Postpaid/  (No ME, 1-3 ME)
-│   │   │   │   └── Prepaid/   (No ME, 1-3 ME)
-│   │   │   └── Royal-Customer/
-│   │   │       └── Postpaid/  (No ME, 1-3 ME)
-│   │   └── OpenAccess/
-│   │       ├── DAWIYAT/
-│   │       ├── ITC/
-│   │       └── STC/
-│   │
-│   ├── 02-Modification/                        ← (action: modify)
-│   │   ├── Upgrade/
-│   │   │   └── Upgrade-Bandwidth-Only-Mobily.bru
-│   │   ├── Downgrade/
-│   │   │   └── Downgrade-Bandwidth-Only-Mobily.bru
-│   │   ├── Relocation/
-│   │   │   ├── Relocation-Mobily.bru
-│   │   │   ├── Relocation-Dowiyat.bru
-│   │   │   ├── Relocation-ITC.bru
-│   │   │   └── Relocation-STC.bru
-│   │   ├── Rewiring/
-│   │   │   ├── Rewiring-Mobily.bru
-│   │   │   └── Rewiring-Dowiyat.bru
-│   │   ├── Device-Swap/
-│   │   │   ├── CPE-Swap-Mobily.bru
-│   │   │   ├── HAG-Swap-Mobily.bru
-│   │   │   ├── ONT-Swap-DOWIYAT.bru
-│   │   │   ├── ONT-Swap-ITC.bru
-│   │   │   └── ONT-Swap-STC.bru
-│   │   └── Request-Update/
-│   │       ├── Get-Order.bru
-│   │       ├── Request-Update-Mobily.bru
-│   │       ├── Request-Update-DOWIYAT.bru
-│   │       └── Request-Update-ITC.bru
-│   │
-│   ├── 03-Suspend-Resume/                     ← (action: modify, suspend/resume)
-│   │   ├── Mobily/
-│   │   │   └── Suspend-Mobily.bru
-│   │   ├── DOWIYAT/
-│   │   │   ├── Suspend-Dowiyat.bru
-│   │   │   └── Resume-Dowiyat.bru
-│   │   ├── ITC/
-│   │   │   ├── Suspend-ITC.bru
-│   │   │   └── Resume-ITC.bru
-│   │   └── STC/
-│   │       ├── Suspend-STC.bru
-│   │       └── Resume-STC.bru
-│   │
-│   ├── 04-Termination/                        ← (action: delete)
-│   │   ├── Termination-Mobily.bru
-│   │   ├── Termination-DOWIYAT.bru
-│   │   ├── Termination-ITC.bru
-│   │   └── Termination-STC.bru
-│   │
-│   ├── 05-Maintenance-Order/                  ← (Maintenance WO spec)
-│   │   ├── Create/
-│   │   │   ├── Maintenance-Order-Mobily.bru
-│   │   │   ├── Maintenance-Order-DOWIYAT.bru
-│   │   │   ├── Maintenance-Order-ITC.bru
-│   │   │   └── Maintenance-Order-STC.bru
-│   │   ├── Close/
-│   │   │   ├── Close-Maintenance-DOWIYAT.bru
-│   │   │   ├── Close-Maintenance-ITC.bru
-│   │   │   └── Close-Maintenance-STC.bru
-│   │   └── ReOpen/
-│   │       ├── ReOpen-Maintenance-DOWIYAT.bru
-│   │       ├── ReOpen-Maintenance-ITC.bru
-│   │       └── ReOpen-Maintenance-STC.bru
-│   │
-│   └── 06-Get-Order/
-│       └── Get-Order.bru
-│
-├── 03-Service-Order-Notifications-TMF641/
-│   ├── Activation/
-│   │   ├── Service-Order-Acknowledged.bru
-│   │   ├── Service-Order-InProgress.bru
-│   │   ├── Service-Order-Completed.bru
-│   │   └── Service-Order-Error-1000-OK.bru
-│   └── Termination/
-│       └── 641-Cease-Termination.bru
-│
-├── 04-Workforce-Management-WFM/
-│   ├── CPE-Installation-Workflow/             ← Step 01-09 (semua di dalam!)
-│   │   ├── Step-01-CPE-1000-OK.bru
-│   │   ├── ... (Step 02-08)
-│   │   └── Step-09-CPE-UAT-Completed.bru     ← FIX: pindah ke dalam folder
-│   ├── Mesh-Extender-Installation-Workflow/   ← Step 01-09
-│   └── Installation-Failure-Scenarios/
-│       ├── Mobily/
-│       ├── Mobily-Maintenance/
-│       └── OpenAccess/
-│
-├── 05-OpenAccess-Provider-Workflows/
-│   ├── DAWIYAT/
-│   │   ├── Activation-Service-Installation/   ← Step 01-07
-│   │   └── Modification-Service-Installation/
-│   ├── ITC/
-│   │   ├── Activation-Service-Installation/   ← Step 01-06
-│   │   └── Modification-Service-Installation/
-│   ├── STC/
-│   │   ├── Activation-Service-Installation/   ← Step 01-06
-│   │   ├── Modification-Service-Installation/
-│   │   ├── Service-Qualification-Notifications/
-│   │   └── STC-SQ-INFEASIBLE/
-│   └── Open-Service-Request-Maintenance/
-│
-├── 06-SingleView-Integration/
-│   ├── Appointment-Management/
-│   ├── Order-Cancellation/
-│   ├── Order-Completion/
-│   ├── Installation-Failure-Actions/
-│   └── Custom-Notifications/
-│
-└── 07-Create-Service-Order-OpenAccess/        ← Separate API: serviceInstallationManagement
-    ├── Create-Service-Order-OA-Dowiyat.bru
-    ├── Create-Service-Order-OA-ITC.bru
-    └── Create-Service-Order-OA-STC.bru
+â”œâ”€â”€ environments/
+â”œâ”€â”€ Documentation/
+â”‚
+â”œâ”€â”€ 01-01-Authentication/
+â”‚   â”œâ”€â”€ Auth-Dev-1.bru
+â”‚   â”œâ”€â”€ Auth-Dev-2.bru
+â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
+â”‚
+â”œâ”€â”€ 02-Product-Order-Management-TMF622/
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 01-Activation/                          â† New Connection (action: add)
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Regular-Customer/
+â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ Postpaid/  (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â”‚   â””â”€â”€ Prepaid/   (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â””â”€â”€ Royal-Customer/
+â”‚   â”‚   â”‚       â””â”€â”€ Postpaid/  (No ME, 1-3 ME)
+â”‚   â”‚   â””â”€â”€ OpenAccess/
+â”‚   â”‚       â”œâ”€â”€ DAWIYAT/
+â”‚   â”‚       â”œâ”€â”€ ITC/
+â”‚   â”‚       â””â”€â”€ STC/
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 02-Modification/                        â† (action: modify)
+â”‚   â”‚   â”œâ”€â”€ Upgrade/
+â”‚   â”‚   â”‚   â””â”€â”€ Upgrade-Bandwidth-Only-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Downgrade/
+â”‚   â”‚   â”‚   â””â”€â”€ Downgrade-Bandwidth-Only-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Relocation/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Relocation-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Relocation-Dowiyat.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Relocation-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Relocation-STC.bru
+â”‚   â”‚   â”œâ”€â”€ Rewiring/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Rewiring-Mobily.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Rewiring-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Device-Swap/
+â”‚   â”‚   â”‚   â”œâ”€â”€ CPE-Swap-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ HAG-Swap-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ ONT-Swap-DOWIYAT.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ ONT-Swap-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ ONT-Swap-STC.bru
+â”‚   â”‚   â””â”€â”€ Request-Update/
+â”‚   â”‚       â”œâ”€â”€ Get-Order.bru
+â”‚   â”‚       â”œâ”€â”€ Request-Update-Mobily.bru
+â”‚   â”‚       â”œâ”€â”€ Request-Update-DOWIYAT.bru
+â”‚   â”‚       â””â”€â”€ Request-Update-ITC.bru
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 03-Suspend-Resume/                     â† (action: modify, suspend/resume)
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â””â”€â”€ Suspend-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ DOWIYAT/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Suspend-Dowiyat.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Resume-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ ITC/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Suspend-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Resume-ITC.bru
+â”‚   â”‚   â””â”€â”€ STC/
+â”‚   â”‚       â”œâ”€â”€ Suspend-STC.bru
+â”‚   â”‚       â””â”€â”€ Resume-STC.bru
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 04-Termination/                        â† (action: delete)
+â”‚   â”‚   â”œâ”€â”€ Termination-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-ITC.bru
+â”‚   â”‚   â””â”€â”€ Termination-STC.bru
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 05-Maintenance-Order/                  â† (Maintenance WO spec)
+â”‚   â”‚   â”œâ”€â”€ Create/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-Mobily.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-DOWIYAT.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Maintenance-Order-STC.bru
+â”‚   â”‚   â”œâ”€â”€ Close/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-DOWIYAT.bru
+â”‚   â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-ITC.bru
+â”‚   â”‚   â”‚   â””â”€â”€ Close-Maintenance-STC.bru
+â”‚   â”‚   â””â”€â”€ ReOpen/
+â”‚   â”‚       â”œâ”€â”€ ReOpen-Maintenance-DOWIYAT.bru
+â”‚   â”‚       â”œâ”€â”€ ReOpen-Maintenance-ITC.bru
+â”‚   â”‚       â””â”€â”€ ReOpen-Maintenance-STC.bru
+â”‚   â”‚
+â”‚   â””â”€â”€ 06-Get-Order/
+â”‚       â””â”€â”€ Get-Order.bru
+â”‚
+â”œâ”€â”€ 03-Service-Order-Notifications-TMF641/
+â”‚   â”œâ”€â”€ Activation/
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Acknowledged.bru
+â”‚   â”‚   â”œâ”€â”€ Service-Order-InProgress.bru
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Completed.bru
+â”‚   â”‚   â””â”€â”€ Service-Order-Error-1000-OK.bru
+â”‚   â””â”€â”€ Termination/
+â”‚       â””â”€â”€ 641-Cease-Termination.bru
+â”‚
+â”œâ”€â”€ 04-Workforce-Management-WFM/
+â”‚   â”œâ”€â”€ CPE-Installation-Workflow/             â† Step 01-09 (semua di dalam!)
+â”‚   â”‚   â”œâ”€â”€ Step-01-CPE-1000-OK.bru
+â”‚   â”‚   â”œâ”€â”€ ... (Step 02-08)
+â”‚   â”‚   â””â”€â”€ Step-09-CPE-UAT-Completed.bru     â† FIX: pindah ke dalam folder
+â”‚   â”œâ”€â”€ Mesh-Extender-Installation-Workflow/   â† Step 01-09
+â”‚   â””â”€â”€ Installation-Failure-Scenarios/
+â”‚       â”œâ”€â”€ Mobily/
+â”‚       â”œâ”€â”€ Mobily-Maintenance/
+â”‚       â””â”€â”€ OpenAccess/
+â”‚
+â”œâ”€â”€ 05-OpenAccess-Provider-Workflows/
+â”‚   â”œâ”€â”€ DAWIYAT/
+â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/   â† Step 01-07
+â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”œâ”€â”€ ITC/
+â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/   â† Step 01-06
+â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”œâ”€â”€ STC/
+â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/   â† Step 01-06
+â”‚   â”‚   â”œâ”€â”€ Modification-Service-Installation/
+â”‚   â”‚   â”œâ”€â”€ Service-Qualification-Notifications/
+â”‚   â”‚   â””â”€â”€ STC-SQ-INFEASIBLE/
+â”‚   â””â”€â”€ Open-Service-Request-Maintenance/
+â”‚
+â”œâ”€â”€ 06-SingleView-Integration/
+â”‚   â”œâ”€â”€ Appointment-Management/
+â”‚   â”œâ”€â”€ Order-Cancellation/
+â”‚   â”œâ”€â”€ Order-Completion/
+â”‚   â”œâ”€â”€ Installation-Failure-Actions/
+â”‚   â””â”€â”€ Custom-Notifications/
+â”‚
+â””â”€â”€ 07-Create-Service-Order-OpenAccess/        â† Separate API: serviceInstallationManagement
+    â”œâ”€â”€ Create-Service-Order-OA-Dowiyat.bru
+    â”œâ”€â”€ Create-Service-Order-OA-ITC.bru
+    â””â”€â”€ Create-Service-Order-OA-STC.bru
 ```
 
 ---
@@ -372,175 +372,175 @@ okee menurutku bagus, jika aku lihat kamu mengggabungkan semua request payload y
 
 Sangat bagus poinnya! Itu memang pain point yang krusial. Jadi masalahnya bukan cuma soal grouping, tapi juga tentang:
 
-1. **Payload contextual** — WFM notification saat Relocation harus punya comment/content yang berbeda dari Installation
-2. **Journey completeness** — Setiap use case harus jelas API apa saja yang harus di-trigger dan urutannya
+1. **Payload contextual** â€” WFM notification saat Relocation harus punya comment/content yang berbeda dari Installation
+2. **Journey completeness** â€” Setiap use case harus jelas API apa saja yang harus di-trigger dan urutannya
 
 Ini mengubah pendekatan saya. Mari saya revisi strategi:
 
 ---
 
-## 🔄 Revisi Pendekatan: **Journey-Centric Organization**
+## ðŸ”„ Revisi Pendekatan: **Journey-Centric Organization**
 
 Alih-alih grouping by API type (TMF622/TMF641/WFM), kita organize **by Journey/Use Case** dimana setiap journey folder berisi **SEMUA API steps yang diperlukan** dengan **payload yang kontekstual**.
 
 ```
 FTTH - Mobily - Project/
-├── environments/
-├── Documentation/
-│
-├── 01-Authentication/
-│   ├── Auth-Dev-1.bru
-│   ├── Auth-Dev-2.bru
-│   └── Auth-Dev-On-Prem.bru
-│
-│── ──────────────────────────────────────────
-│   📌 JOURNEYS - Setiap folder = 1 complete use case
-│── ──────────────────────────────────────────
-│
-├── 02-New-Activation/                         ← Journey: Aktivasi Baru
-│   ├── _workflow.md                           ← 📖 "Step 1: Create Order → Step 2: TMF641 Ack → ..."
-│   ├── 01-Create-Order-TMF622/
-│   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/
-│   │   │   │   ├── Postpaid/ (No ME, 1-3 ME)
-│   │   │   │   └── Prepaid/ (No ME, 1-3 ME)
-│   │   │   └── Royal-Customer/
-│   │   │       └── Postpaid/ (No ME, 1-3 ME)
-│   │   └── OpenAccess/
-│   │       ├── DAWIYAT/ (No ME, 1-3 ME)
-│   │       ├── ITC/ (No ME, 1-3 ME)
-│   │       └── STC/ (No ME, 1-3 ME)
-│   ├── 02-TMF641-Notifications/
-│   │   ├── Service-Order-Acknowledged.bru      ← Activation context
-│   │   ├── Service-Order-InProgress.bru
-│   │   ├── Service-Order-Completed.bru
-│   │   └── Service-Order-Error-1000-OK.bru
-│   ├── 03-WFM-CPE-Installation/
-│   │   ├── Step-01 → Step-09                   ← Activation-specific comments
-│   ├── 04-WFM-ME-Installation/
-│   │   ├── Step-01 → Step-09
-│   ├── 05-OpenAccess-Provider-Workflow/
-│   │   ├── DAWIYAT/
-│   │   │   ├── Activation-Service-Installation/ (Step 01-07)
-│   │   │   └── Modification-Service-Installation/
-│   │   ├── ITC/
-│   │   │   ├── Activation-Service-Installation/ (Step 01-06)
-│   │   │   └── Modification-Service-Installation/
-│   │   └── STC/
-│   │       ├── Activation-Service-Installation/ (Step 01-06)
-│   │       ├── Modification-Service-Installation/
-│   │       ├── Service-Qualification-Notifications/
-│   │       └── STC-SQ-INFEASIBLE/
-│   ├── 06-SingleView-Integration/
-│   │   ├── Appointment-Management/
-│   │   ├── Order-Cancellation/
-│   │   ├── Order-Completion/
-│   │   └── Custom-Notifications/
-│   └── 07-Installation-Failure-Scenarios/
-│       ├── Mobily/
-│       ├── Mobily-Maintenance/
-│       └── OpenAccess/
-│
-├── 03-Relocation/                              ← Journey: Relocation
-│   ├── _workflow.md                            ← 📖 "1. Create TMF622 Relocation → 2. TMF641 Ack → 
-│   │                                              3. WFM CPE (relocation context) → 4. Completed"
-│   ├── 01-Create-Relocation-Order-TMF622/
-│   │   ├── Relocation-Mobily.bru
-│   │   ├── Relocation-Dowiyat.bru
-│   │   ├── Relocation-ITC.bru
-│   │   └── Relocation-STC.bru
-│   ├── 02-TMF641-Notifications/
-│   │   ├── Service-Order-Acknowledged.bru      ← Relocation context payload
-│   │   ├── Service-Order-InProgress.bru
-│   │   └── Service-Order-Completed.bru
-│   └── 03-WFM-CPE-Relocation/                 ← 🔑 WFM with RELOCATION-specific comments!
-│       ├── Step-01-CPE-1000-OK.bru
-│       ├── ...                                 ← Comments: "Relocation work order dispatched"
-│       └── Step-09-CPE-Completed.bru           ← Comments: "Relocation completed successfully"
-│
-├── 04-Device-Swap/                             ← Journey: Device Swap
-│   ├── _workflow.md                            ← 📖 "1. Create Swap Order → 2. TMF641 → 3. WFM CPE Swap"
-│   ├── 01-Create-Swap-Order-TMF622/
-│   │   ├── CPE-Swap-Mobily.bru
-│   │   ├── HAG-Swap-Mobily.bru
-│   │   ├── ONT-Swap-DOWIYAT.bru
-│   │   ├── ONT-Swap-ITC.bru
-│   │   └── ONT-Swap-STC.bru
-│   ├── 02-TMF641-Notifications/                ← Device Swap context
-│   └── 03-WFM-CPE-Device-Swap/                 ← 🔑 WFM with SWAP-specific comments!
-│
-├── 05-Upgrade-Downgrade/                       ← Journey: Upgrade & Downgrade
-│   ├── _workflow.md
-│   ├── 01-Upgrade-Order-TMF622/
-│   │   └── Upgrade-Bandwidth-Only-Mobily.bru
-│   ├── 02-Downgrade-Order-TMF622/
-│   │   └── Downgrade-Bandwidth-Only-Mobily.bru
-│   └── 03-TMF641-Notifications/                ← Upgrade/Downgrade context
-│
-├── 06-Suspend-Resume/                          ← Journey: Suspend & Resume
-│   ├── _workflow.md                            ← 📖 "1. Suspend TMF622 → 2. OA Service Order → 3. Resume"
-│   ├── 01-Suspend-Order-TMF622/
-│   │   ├── Suspend-Mobily.bru
-│   │   ├── Suspend-Dowiyat.bru
-│   │   ├── Suspend-ITC.bru
-│   │   └── Suspend-STC.bru
-│   ├── 02-Create-Service-Order-OA/             ← serviceInstallationManagement API
-│   │   ├── Create-Service-Order-OA-Dowiyat.bru
-│   │   ├── Create-Service-Order-OA-ITC.bru
-│   │   └── Create-Service-Order-OA-STC.bru
-│   └── 03-Resume-Order-TMF622/
-│       ├── Resume-Dowiyat.bru
-│       ├── Resume-ITC.bru
-│       └── Resume-STC.bru
-│
-├── 07-Termination/                             ← Journey: Termination
-│   ├── _workflow.md                            ← 📖 "1. Termination TMF622 → 2. TMF641 Cease → 3. OA Deactivation"
-│   ├── 01-Termination-Order-TMF622/
-│   │   ├── Termination-Mobily.bru
-│   │   ├── Termination-DOWIYAT.bru
-│   │   ├── Termination-ITC.bru
-│   │   └── Termination-STC.bru
-│   ├── 02-TMF641-Cease-Notification/
-│   │   └── 641-Cease-Termination.bru
-│   └── 03-Create-Service-Order-OA/             ← OA deactivation if needed
-│
-├── 08-Rewiring/                                ← Journey: Rewiring
-│   ├── _workflow.md
-│   ├── 01-Create-Rewiring-Order-TMF622/
-│   │   ├── Rewiring-Mobily.bru
-│   │   └── Rewiring-Dowiyat.bru
-│   ├── 02-TMF641-Notifications/
-│   └── 03-WFM-CPE-Rewiring/                    ← Rewiring-specific WFM payloads
-│
-├── 09-Maintenance/                             ← Journey: Maintenance
-│   ├── _workflow.md                            ← 📖 "1. Create MO → 2. WFM → 3. Close/ReOpen"
-│   ├── 01-Create-Maintenance-Order-TMF622/
-│   │   ├── Maintenance-Order-Mobily.bru
-│   │   ├── Maintenance-Order-DOWIYAT.bru
-│   │   ├── Maintenance-Order-ITC.bru
-│   │   └── Maintenance-Order-STC.bru
-│   ├── 02-WFM-Maintenance-Notifications/       ← Maintenance-specific WFM payloads
-│   ├── 03-Close-Maintenance-Order/
-│   │   ├── Close-Maintenance-DOWIYAT.bru
-│   │   ├── Close-Maintenance-ITC.bru
-│   │   └── Close-Maintenance-STC.bru
-│   ├── 04-ReOpen-Maintenance-Order/
-│   └── 05-Open-Service-Request-OA/
-│       ├── Closed.bru
-│       ├── Rejected.bru
-│       └── Resolved.bru
-│
-└── 10-Request-Update/                          ← Journey: Request Update
-    ├── _workflow.md
-    ├── Get-Order.bru
-    ├── Request-Update-Mobily.bru
-    ├── Request-Update-DOWIYAT.bru
-    └── Request-Update-ITC.bru
+â”œâ”€â”€ environments/
+â”œâ”€â”€ Documentation/
+â”‚
+â”œâ”€â”€ 01-01-Authentication/
+â”‚   â”œâ”€â”€ Auth-Dev-1.bru
+â”‚   â”œâ”€â”€ Auth-Dev-2.bru
+â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
+â”‚
+â”‚â”€â”€ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+â”‚   ðŸ“Œ JOURNEYS - Setiap folder = 1 complete use case
+â”‚â”€â”€ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+â”‚
+â”œâ”€â”€ 02-New-Activation/                         â† Journey: Aktivasi Baru
+â”‚   â”œâ”€â”€ _workflow.md                           â† ðŸ“– "Step 1: Create Order â†’ Step 2: TMF641 Ack â†’ ..."
+â”‚   â”œâ”€â”€ 01-Create-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Regular-Customer/
+â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ Postpaid/ (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â”‚   â””â”€â”€ Prepaid/ (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â””â”€â”€ Royal-Customer/
+â”‚   â”‚   â”‚       â””â”€â”€ Postpaid/ (No ME, 1-3 ME)
+â”‚   â”‚   â””â”€â”€ OpenAccess/
+â”‚   â”‚       â”œâ”€â”€ DAWIYAT/ (No ME, 1-3 ME)
+â”‚   â”‚       â”œâ”€â”€ ITC/ (No ME, 1-3 ME)
+â”‚   â”‚       â””â”€â”€ STC/ (No ME, 1-3 ME)
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Acknowledged.bru      â† Activation context
+â”‚   â”‚   â”œâ”€â”€ Service-Order-InProgress.bru
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Completed.bru
+â”‚   â”‚   â””â”€â”€ Service-Order-Error-1000-OK.bru
+â”‚   â”œâ”€â”€ 03-WFM-CPE-Installation/
+â”‚   â”‚   â”œâ”€â”€ Step-01 â†’ Step-09                   â† Activation-specific comments
+â”‚   â”œâ”€â”€ 04-WFM-ME-Installation/
+â”‚   â”‚   â”œâ”€â”€ Step-01 â†’ Step-09
+â”‚   â”œâ”€â”€ 05-OpenAccess-Provider-Workflow/
+â”‚   â”‚   â”œâ”€â”€ DAWIYAT/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/ (Step 01-07)
+â”‚   â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”‚   â”œâ”€â”€ ITC/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/ (Step 01-06)
+â”‚   â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”‚   â””â”€â”€ STC/
+â”‚   â”‚       â”œâ”€â”€ Activation-Service-Installation/ (Step 01-06)
+â”‚   â”‚       â”œâ”€â”€ Modification-Service-Installation/
+â”‚   â”‚       â”œâ”€â”€ Service-Qualification-Notifications/
+â”‚   â”‚       â””â”€â”€ STC-SQ-INFEASIBLE/
+â”‚   â”œâ”€â”€ 06-SingleView-Integration/
+â”‚   â”‚   â”œâ”€â”€ Appointment-Management/
+â”‚   â”‚   â”œâ”€â”€ Order-Cancellation/
+â”‚   â”‚   â”œâ”€â”€ Order-Completion/
+â”‚   â”‚   â””â”€â”€ Custom-Notifications/
+â”‚   â””â”€â”€ 07-Installation-Failure-Scenarios/
+â”‚       â”œâ”€â”€ Mobily/
+â”‚       â”œâ”€â”€ Mobily-Maintenance/
+â”‚       â””â”€â”€ OpenAccess/
+â”‚
+â”œâ”€â”€ 03-Relocation/                              â† Journey: Relocation
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Create TMF622 Relocation â†’ 2. TMF641 Ack â†’ 
+â”‚   â”‚                                              3. WFM CPE (relocation context) â†’ 4. Completed"
+â”‚   â”œâ”€â”€ 01-Create-Relocation-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Relocation-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Relocation-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Relocation-ITC.bru
+â”‚   â”‚   â””â”€â”€ Relocation-STC.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Acknowledged.bru      â† Relocation context payload
+â”‚   â”‚   â”œâ”€â”€ Service-Order-InProgress.bru
+â”‚   â”‚   â””â”€â”€ Service-Order-Completed.bru
+â”‚   â””â”€â”€ 03-WFM-CPE-Relocation/                 â† ðŸ”‘ WFM with RELOCATION-specific comments!
+â”‚       â”œâ”€â”€ Step-01-CPE-1000-OK.bru
+â”‚       â”œâ”€â”€ ...                                 â† Comments: "Relocation work order dispatched"
+â”‚       â””â”€â”€ Step-09-CPE-Completed.bru           â† Comments: "Relocation completed successfully"
+â”‚
+â”œâ”€â”€ 04-Device-Swap/                             â† Journey: Device Swap
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Create Swap Order â†’ 2. TMF641 â†’ 3. WFM CPE Swap"
+â”‚   â”œâ”€â”€ 01-Create-Swap-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ CPE-Swap-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ HAG-Swap-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ ONT-Swap-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ ONT-Swap-ITC.bru
+â”‚   â”‚   â””â”€â”€ ONT-Swap-STC.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/                â† Device Swap context
+â”‚   â””â”€â”€ 03-WFM-CPE-Device-Swap/                 â† ðŸ”‘ WFM with SWAP-specific comments!
+â”‚
+â”œâ”€â”€ 05-Upgrade-Downgrade/                       â† Journey: Upgrade & Downgrade
+â”‚   â”œâ”€â”€ _workflow.md
+â”‚   â”œâ”€â”€ 01-Upgrade-Order-TMF622/
+â”‚   â”‚   â””â”€â”€ Upgrade-Bandwidth-Only-Mobily.bru
+â”‚   â”œâ”€â”€ 02-Downgrade-Order-TMF622/
+â”‚   â”‚   â””â”€â”€ Downgrade-Bandwidth-Only-Mobily.bru
+â”‚   â””â”€â”€ 03-TMF641-Notifications/                â† Upgrade/Downgrade context
+â”‚
+â”œâ”€â”€ 06-Suspend-Resume/                          â† Journey: Suspend & Resume
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Suspend TMF622 â†’ 2. OA Service Order â†’ 3. Resume"
+â”‚   â”œâ”€â”€ 01-Suspend-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Suspend-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Suspend-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Suspend-ITC.bru
+â”‚   â”‚   â””â”€â”€ Suspend-STC.bru
+â”‚   â”œâ”€â”€ 02-Create-Service-Order-OA/             â† serviceInstallationManagement API
+â”‚   â”‚   â”œâ”€â”€ Create-Service-Order-OA-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Create-Service-Order-OA-ITC.bru
+â”‚   â”‚   â””â”€â”€ Create-Service-Order-OA-STC.bru
+â”‚   â””â”€â”€ 03-Resume-Order-TMF622/
+â”‚       â”œâ”€â”€ Resume-Dowiyat.bru
+â”‚       â”œâ”€â”€ Resume-ITC.bru
+â”‚       â””â”€â”€ Resume-STC.bru
+â”‚
+â”œâ”€â”€ 07-Termination/                             â† Journey: Termination
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Termination TMF622 â†’ 2. TMF641 Cease â†’ 3. OA Deactivation"
+â”‚   â”œâ”€â”€ 01-Termination-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Termination-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-ITC.bru
+â”‚   â”‚   â””â”€â”€ Termination-STC.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Cease-Notification/
+â”‚   â”‚   â””â”€â”€ 641-Cease-Termination.bru
+â”‚   â””â”€â”€ 03-Create-Service-Order-OA/             â† OA deactivation if needed
+â”‚
+â”œâ”€â”€ 08-Rewiring/                                â† Journey: Rewiring
+â”‚   â”œâ”€â”€ _workflow.md
+â”‚   â”œâ”€â”€ 01-Create-Rewiring-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Rewiring-Mobily.bru
+â”‚   â”‚   â””â”€â”€ Rewiring-Dowiyat.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â””â”€â”€ 03-WFM-CPE-Rewiring/                    â† Rewiring-specific WFM payloads
+â”‚
+â”œâ”€â”€ 09-Maintenance/                             â† Journey: Maintenance
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Create MO â†’ 2. WFM â†’ 3. Close/ReOpen"
+â”‚   â”œâ”€â”€ 01-Create-Maintenance-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-ITC.bru
+â”‚   â”‚   â””â”€â”€ Maintenance-Order-STC.bru
+â”‚   â”œâ”€â”€ 02-WFM-Maintenance-Notifications/       â† Maintenance-specific WFM payloads
+â”‚   â”œâ”€â”€ 03-Close-Maintenance-Order/
+â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-ITC.bru
+â”‚   â”‚   â””â”€â”€ Close-Maintenance-STC.bru
+â”‚   â”œâ”€â”€ 04-ReOpen-Maintenance-Order/
+â”‚   â””â”€â”€ 05-Open-Service-Request-OA/
+â”‚       â”œâ”€â”€ Closed.bru
+â”‚       â”œâ”€â”€ Rejected.bru
+â”‚       â””â”€â”€ Resolved.bru
+â”‚
+â””â”€â”€ 10-Request-Update/                          â† Journey: Request Update
+    â”œâ”€â”€ _workflow.md
+    â”œâ”€â”€ Get-Order.bru
+    â”œâ”€â”€ Request-Update-Mobily.bru
+    â”œâ”€â”€ Request-Update-DOWIYAT.bru
+    â””â”€â”€ Request-Update-ITC.bru
 ```
 
 ---
 
-### 🔑 Perbedaan Kunci dari Rencana Sebelumnya
+### ðŸ”‘ Perbedaan Kunci dari Rencana Sebelumnya
 
 | Aspek | Rencana 1 (API-type) | Rencana 2 (Journey-centric) |
 |-------|---------------------|---------------------------|
@@ -548,10 +548,10 @@ FTTH - Mobily - Project/
 | **WFM payloads** | 1 set generic | Setiap journey punya WFM payloads sendiri dengan context yang benar |
 | **TMF641 payloads** | 1 set generic | Setiap journey punya TMF641 payloads dengan context yang benar |
 | **Testing flow** | Harus jump antar folder | Semua steps ada di 1 folder, tinggal execute dari atas ke bawah |
-| **Documentation** | 1 README global | `_workflow.md` per journey → jelas step-by-step |
+| **Documentation** | 1 README global | `_workflow.md` per journey â†’ jelas step-by-step |
 | **Trade-off** | Less duplication, more confusion | Some duplication, tapi **zero confusion** |
 
-### 📖 Contoh `_workflow.md` untuk Relocation:
+### ðŸ“– Contoh `_workflow.md` untuk Relocation:
 
 ```markdown
 # Relocation Journey - Workflow
@@ -564,7 +564,7 @@ FTTH - Mobily - Project/
 | Step | Folder | API | Description |
 |------|--------|-----|-------------|
 | 1 | `01-Create-Relocation-Order-TMF622/` | POST TMF622 | Create relocation order (pilih provider) |
-| 2 | `02-TMF641-Notifications/` | POST TMF641 | Trigger Acknowledged → InProgress → Completed |
+| 2 | `02-TMF641-Notifications/` | POST TMF641 | Trigger Acknowledged â†’ InProgress â†’ Completed |
 | 3 | `03-WFM-CPE-Relocation/` | POST WFM | Execute CPE workflow Step 01-09 |
 
 ## Notes
@@ -583,157 +583,157 @@ Pertanyaan:
 
 ```plaintext
 FTTH - Mobily - Project/
-├── environments/
-├── Documentation/
-│
-├── 01-Authentication/
-│   ├── Auth-Dev-1.bru
-│   ├── Auth-Dev-2.bru
-│   └── Auth-Dev-On-Prem.bru
-│
-│── ──────────────────────────────────────────
-│   📌 JOURNEYS - Setiap folder = 1 complete use case
-│── ──────────────────────────────────────────
-│
-├── 02-New-Activation/                         ← Journey: Aktivasi Baru
-│   ├── _workflow.md                           ← 📖 "Step 1: Create Order → Step 2: TMF641 Ack → ..."
-│   ├── 01-Create-Order-TMF622/
-│   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/
-│   │   │   │   ├── Postpaid/ (No ME, 1-3 ME)
-│   │   │   │   └── Prepaid/ (No ME, 1-3 ME)
-│   │   │   └── Royal-Customer/
-│   │   │       └── Postpaid/ (No ME, 1-3 ME)
-│   │   └── OpenAccess/
-│   │       ├── DAWIYAT/ (No ME, 1-3 ME)
-│   │       ├── ITC/ (No ME, 1-3 ME)
-│   │       └── STC/ (No ME, 1-3 ME)
-│   ├── 02-TMF641-Notifications/
-│   │   ├── Service-Order-Acknowledged.bru      ← Activation context
-│   │   ├── Service-Order-InProgress.bru
-│   │   ├── Service-Order-Completed.bru
-│   │   └── Service-Order-Error-1000-OK.bru
-│   ├── 03-WFM-CPE-Installation/
-│   │   ├── Step-01 → Step-09                   ← Activation-specific comments
-│   ├── 04-WFM-ME-Installation/
-│   │   ├── Step-01 → Step-09
-│   ├── 05-OpenAccess-Provider-Workflow/
-│   │   ├── DAWIYAT/
-│   │   │   ├── Activation-Service-Installation/ (Step 01-07)
-│   │   │   └── Modification-Service-Installation/
-│   │   ├── ITC/
-│   │   │   ├── Activation-Service-Installation/ (Step 01-06)
-│   │   │   └── Modification-Service-Installation/
-│   │   └── STC/
-│   │       ├── Activation-Service-Installation/ (Step 01-06)
-│   │       ├── Modification-Service-Installation/
-│   │       ├── Service-Qualification-Notifications/
-│   │       └── STC-SQ-INFEASIBLE/
-│   ├── 06-SingleView-Integration/
-│   │   ├── Appointment-Management/
-│   │   ├── Order-Cancellation/
-│   │   ├── Order-Completion/
-│   │   └── Custom-Notifications/
-│   └── 07-Installation-Failure-Scenarios/
-│       ├── Mobily/
-│       ├── Mobily-Maintenance/
-│       └── OpenAccess/
-│
-├── 03-Relocation/                              ← Journey: Relocation
-│   ├── _workflow.md                            ← 📖 "1. Create TMF622 Relocation → 2. TMF641 Ack → 
-│   │                                              3. WFM CPE (relocation context) → 4. Completed"
-│   ├── 01-Create-Relocation-Order-TMF622/
-│   │   ├── Relocation-Mobily.bru
-│   │   ├── Relocation-Dowiyat.bru
-│   │   ├── Relocation-ITC.bru
-│   │   └── Relocation-STC.bru
-│   ├── 02-TMF641-Notifications/
-│   │   ├── Service-Order-Acknowledged.bru      ← Relocation context payload
-│   │   ├── Service-Order-InProgress.bru
-│   │   └── Service-Order-Completed.bru
-│   └── 03-WFM-CPE-Relocation/                 ← 🔑 WFM with RELOCATION-specific comments!
-│       ├── Step-01-CPE-1000-OK.bru
-│       ├── ...                                 ← Comments: "Relocation work order dispatched"
-│       └── Step-09-CPE-Completed.bru           ← Comments: "Relocation completed successfully"
-│
-├── 04-Device-Swap/                             ← Journey: Device Swap
-│   ├── _workflow.md                            ← 📖 "1. Create Swap Order → 2. TMF641 → 3. WFM CPE Swap"
-│   ├── 01-Create-Swap-Order-TMF622/
-│   │   ├── CPE-Swap-Mobily.bru
-│   │   ├── HAG-Swap-Mobily.bru
-│   │   ├── ONT-Swap-DOWIYAT.bru
-│   │   ├── ONT-Swap-ITC.bru
-│   │   └── ONT-Swap-STC.bru
-│   ├── 02-TMF641-Notifications/                ← Device Swap context
-│   └── 03-WFM-CPE-Device-Swap/                 ← 🔑 WFM with SWAP-specific comments!
-│
-├── 05-Upgrade-Downgrade/                       ← Journey: Upgrade & Downgrade
-│   ├── _workflow.md
-│   ├── 01-Upgrade-Order-TMF622/
-│   │   └── Upgrade-Bandwidth-Only-Mobily.bru
-│   ├── 02-Downgrade-Order-TMF622/
-│   │   └── Downgrade-Bandwidth-Only-Mobily.bru
-│   └── 03-TMF641-Notifications/                ← Upgrade/Downgrade context
-│
-├── 06-Suspend-Resume/                          ← Journey: Suspend & Resume
-│   ├── _workflow.md                            ← 📖 "1. Suspend TMF622 → 2. OA Service Order → 3. Resume"
-│   ├── 01-Suspend-Order-TMF622/
-│   │   ├── Suspend-Mobily.bru
-│   │   ├── Suspend-Dowiyat.bru
-│   │   ├── Suspend-ITC.bru
-│   │   └── Suspend-STC.bru
-│   ├── 02-Create-Service-Order-OA/             ← serviceInstallationManagement API
-│   │   ├── Create-Service-Order-OA-Dowiyat.bru
-│   │   ├── Create-Service-Order-OA-ITC.bru
-│   │   └── Create-Service-Order-OA-STC.bru
-│   └── 03-Resume-Order-TMF622/
-│       ├── Resume-Dowiyat.bru
-│       ├── Resume-ITC.bru
-│       └── Resume-STC.bru
-│
-├── 07-Termination/                             ← Journey: Termination
-│   ├── _workflow.md                            ← 📖 "1. Termination TMF622 → 2. TMF641 Cease → 3. OA Deactivation"
-│   ├── 01-Termination-Order-TMF622/
-│   │   ├── Termination-Mobily.bru
-│   │   ├── Termination-DOWIYAT.bru
-│   │   ├── Termination-ITC.bru
-│   │   └── Termination-STC.bru
-│   ├── 02-TMF641-Cease-Notification/
-│   │   └── 641-Cease-Termination.bru
-│   └── 03-Create-Service-Order-OA/             ← OA deactivation if needed
-│
-├── 08-Rewiring/                                ← Journey: Rewiring
-│   ├── _workflow.md
-│   ├── 01-Create-Rewiring-Order-TMF622/
-│   │   ├── Rewiring-Mobily.bru
-│   │   └── Rewiring-Dowiyat.bru
-│   ├── 02-TMF641-Notifications/
-│   └── 03-WFM-CPE-Rewiring/                    ← Rewiring-specific WFM payloads
-│
-├── 09-Maintenance/                             ← Journey: Maintenance
-│   ├── _workflow.md                            ← 📖 "1. Create MO → 2. WFM → 3. Close/ReOpen"
-│   ├── 01-Create-Maintenance-Order-TMF622/
-│   │   ├── Maintenance-Order-Mobily.bru
-│   │   ├── Maintenance-Order-DOWIYAT.bru
-│   │   ├── Maintenance-Order-ITC.bru
-│   │   └── Maintenance-Order-STC.bru
-│   ├── 02-WFM-Maintenance-Notifications/       ← Maintenance-specific WFM payloads
-│   ├── 03-Close-Maintenance-Order/
-│   │   ├── Close-Maintenance-DOWIYAT.bru
-│   │   ├── Close-Maintenance-ITC.bru
-│   │   └── Close-Maintenance-STC.bru
-│   ├── 04-ReOpen-Maintenance-Order/
-│   └── 05-Open-Service-Request-OA/
-│       ├── Closed.bru
-│       ├── Rejected.bru
-│       └── Resolved.bru
-│
-└── 10-Request-Update/                          ← Journey: Request Update
-    ├── _workflow.md
-    ├── Get-Order.bru
-    ├── Request-Update-Mobily.bru
-    ├── Request-Update-DOWIYAT.bru
-    └── Request-Update-ITC.bru
+â”œâ”€â”€ environments/
+â”œâ”€â”€ Documentation/
+â”‚
+â”œâ”€â”€ 01-01-Authentication/
+â”‚   â”œâ”€â”€ Auth-Dev-1.bru
+â”‚   â”œâ”€â”€ Auth-Dev-2.bru
+â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
+â”‚
+â”‚â”€â”€ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+â”‚   ðŸ“Œ JOURNEYS - Setiap folder = 1 complete use case
+â”‚â”€â”€ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+â”‚
+â”œâ”€â”€ 02-New-Activation/                         â† Journey: Aktivasi Baru
+â”‚   â”œâ”€â”€ _workflow.md                           â† ðŸ“– "Step 1: Create Order â†’ Step 2: TMF641 Ack â†’ ..."
+â”‚   â”œâ”€â”€ 01-Create-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Regular-Customer/
+â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ Postpaid/ (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â”‚   â””â”€â”€ Prepaid/ (No ME, 1-3 ME)
+â”‚   â”‚   â”‚   â””â”€â”€ Royal-Customer/
+â”‚   â”‚   â”‚       â””â”€â”€ Postpaid/ (No ME, 1-3 ME)
+â”‚   â”‚   â””â”€â”€ OpenAccess/
+â”‚   â”‚       â”œâ”€â”€ DAWIYAT/ (No ME, 1-3 ME)
+â”‚   â”‚       â”œâ”€â”€ ITC/ (No ME, 1-3 ME)
+â”‚   â”‚       â””â”€â”€ STC/ (No ME, 1-3 ME)
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Acknowledged.bru      â† Activation context
+â”‚   â”‚   â”œâ”€â”€ Service-Order-InProgress.bru
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Completed.bru
+â”‚   â”‚   â””â”€â”€ Service-Order-Error-1000-OK.bru
+â”‚   â”œâ”€â”€ 03-WFM-CPE-Installation/
+â”‚   â”‚   â”œâ”€â”€ Step-01 â†’ Step-09                   â† Activation-specific comments
+â”‚   â”œâ”€â”€ 04-WFM-ME-Installation/
+â”‚   â”‚   â”œâ”€â”€ Step-01 â†’ Step-09
+â”‚   â”œâ”€â”€ 05-OpenAccess-Provider-Workflow/
+â”‚   â”‚   â”œâ”€â”€ DAWIYAT/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/ (Step 01-07)
+â”‚   â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”‚   â”œâ”€â”€ ITC/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Activation-Service-Installation/ (Step 01-06)
+â”‚   â”‚   â”‚   â””â”€â”€ Modification-Service-Installation/
+â”‚   â”‚   â””â”€â”€ STC/
+â”‚   â”‚       â”œâ”€â”€ Activation-Service-Installation/ (Step 01-06)
+â”‚   â”‚       â”œâ”€â”€ Modification-Service-Installation/
+â”‚   â”‚       â”œâ”€â”€ Service-Qualification-Notifications/
+â”‚   â”‚       â””â”€â”€ STC-SQ-INFEASIBLE/
+â”‚   â”œâ”€â”€ 06-SingleView-Integration/
+â”‚   â”‚   â”œâ”€â”€ Appointment-Management/
+â”‚   â”‚   â”œâ”€â”€ Order-Cancellation/
+â”‚   â”‚   â”œâ”€â”€ Order-Completion/
+â”‚   â”‚   â””â”€â”€ Custom-Notifications/
+â”‚   â””â”€â”€ 07-Installation-Failure-Scenarios/
+â”‚       â”œâ”€â”€ Mobily/
+â”‚       â”œâ”€â”€ Mobily-Maintenance/
+â”‚       â””â”€â”€ OpenAccess/
+â”‚
+â”œâ”€â”€ 03-Relocation/                              â† Journey: Relocation
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Create TMF622 Relocation â†’ 2. TMF641 Ack â†’ 
+â”‚   â”‚                                              3. WFM CPE (relocation context) â†’ 4. Completed"
+â”‚   â”œâ”€â”€ 01-Create-Relocation-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Relocation-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Relocation-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Relocation-ITC.bru
+â”‚   â”‚   â””â”€â”€ Relocation-STC.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â”‚   â”œâ”€â”€ Service-Order-Acknowledged.bru      â† Relocation context payload
+â”‚   â”‚   â”œâ”€â”€ Service-Order-InProgress.bru
+â”‚   â”‚   â””â”€â”€ Service-Order-Completed.bru
+â”‚   â””â”€â”€ 03-WFM-CPE-Relocation/                 â† ðŸ”‘ WFM with RELOCATION-specific comments!
+â”‚       â”œâ”€â”€ Step-01-CPE-1000-OK.bru
+â”‚       â”œâ”€â”€ ...                                 â† Comments: "Relocation work order dispatched"
+â”‚       â””â”€â”€ Step-09-CPE-Completed.bru           â† Comments: "Relocation completed successfully"
+â”‚
+â”œâ”€â”€ 04-Device-Swap/                             â† Journey: Device Swap
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Create Swap Order â†’ 2. TMF641 â†’ 3. WFM CPE Swap"
+â”‚   â”œâ”€â”€ 01-Create-Swap-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ CPE-Swap-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ HAG-Swap-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ ONT-Swap-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ ONT-Swap-ITC.bru
+â”‚   â”‚   â””â”€â”€ ONT-Swap-STC.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/                â† Device Swap context
+â”‚   â””â”€â”€ 03-WFM-CPE-Device-Swap/                 â† ðŸ”‘ WFM with SWAP-specific comments!
+â”‚
+â”œâ”€â”€ 05-Upgrade-Downgrade/                       â† Journey: Upgrade & Downgrade
+â”‚   â”œâ”€â”€ _workflow.md
+â”‚   â”œâ”€â”€ 01-Upgrade-Order-TMF622/
+â”‚   â”‚   â””â”€â”€ Upgrade-Bandwidth-Only-Mobily.bru
+â”‚   â”œâ”€â”€ 02-Downgrade-Order-TMF622/
+â”‚   â”‚   â””â”€â”€ Downgrade-Bandwidth-Only-Mobily.bru
+â”‚   â””â”€â”€ 03-TMF641-Notifications/                â† Upgrade/Downgrade context
+â”‚
+â”œâ”€â”€ 06-Suspend-Resume/                          â† Journey: Suspend & Resume
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Suspend TMF622 â†’ 2. OA Service Order â†’ 3. Resume"
+â”‚   â”œâ”€â”€ 01-Suspend-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Suspend-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Suspend-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Suspend-ITC.bru
+â”‚   â”‚   â””â”€â”€ Suspend-STC.bru
+â”‚   â”œâ”€â”€ 02-Create-Service-Order-OA/             â† serviceInstallationManagement API
+â”‚   â”‚   â”œâ”€â”€ Create-Service-Order-OA-Dowiyat.bru
+â”‚   â”‚   â”œâ”€â”€ Create-Service-Order-OA-ITC.bru
+â”‚   â”‚   â””â”€â”€ Create-Service-Order-OA-STC.bru
+â”‚   â””â”€â”€ 03-Resume-Order-TMF622/
+â”‚       â”œâ”€â”€ Resume-Dowiyat.bru
+â”‚       â”œâ”€â”€ Resume-ITC.bru
+â”‚       â””â”€â”€ Resume-STC.bru
+â”‚
+â”œâ”€â”€ 07-Termination/                             â† Journey: Termination
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Termination TMF622 â†’ 2. TMF641 Cease â†’ 3. OA Deactivation"
+â”‚   â”œâ”€â”€ 01-Termination-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Termination-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Termination-ITC.bru
+â”‚   â”‚   â””â”€â”€ Termination-STC.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Cease-Notification/
+â”‚   â”‚   â””â”€â”€ 641-Cease-Termination.bru
+â”‚   â””â”€â”€ 03-Create-Service-Order-OA/             â† OA deactivation if needed
+â”‚
+â”œâ”€â”€ 08-Rewiring/                                â† Journey: Rewiring
+â”‚   â”œâ”€â”€ _workflow.md
+â”‚   â”œâ”€â”€ 01-Create-Rewiring-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Rewiring-Mobily.bru
+â”‚   â”‚   â””â”€â”€ Rewiring-Dowiyat.bru
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â””â”€â”€ 03-WFM-CPE-Rewiring/                    â† Rewiring-specific WFM payloads
+â”‚
+â”œâ”€â”€ 09-Maintenance/                             â† Journey: Maintenance
+â”‚   â”œâ”€â”€ _workflow.md                            â† ðŸ“– "1. Create MO â†’ 2. WFM â†’ 3. Close/ReOpen"
+â”‚   â”œâ”€â”€ 01-Create-Maintenance-Order-TMF622/
+â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-Mobily.bru
+â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Maintenance-Order-ITC.bru
+â”‚   â”‚   â””â”€â”€ Maintenance-Order-STC.bru
+â”‚   â”œâ”€â”€ 02-WFM-Maintenance-Notifications/       â† Maintenance-specific WFM payloads
+â”‚   â”œâ”€â”€ 03-Close-Maintenance-Order/
+â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-DOWIYAT.bru
+â”‚   â”‚   â”œâ”€â”€ Close-Maintenance-ITC.bru
+â”‚   â”‚   â””â”€â”€ Close-Maintenance-STC.bru
+â”‚   â”œâ”€â”€ 04-ReOpen-Maintenance-Order/
+â”‚   â””â”€â”€ 05-Open-Service-Request-OA/
+â”‚       â”œâ”€â”€ Closed.bru
+â”‚       â”œâ”€â”€ Rejected.bru
+â”‚       â””â”€â”€ Resolved.bru
+â”‚
+â””â”€â”€ 10-Request-Update/                          â† Journey: Request Update
+    â”œâ”€â”€ _workflow.md
+    â”œâ”€â”€ Get-Order.bru
+    â”œâ”€â”€ Request-Update-Mobily.bru
+    â”œâ”€â”€ Request-Update-DOWIYAT.bru
+    â””â”€â”€ Request-Update-ITC.bru
 ```
 
 ```markdown
@@ -747,7 +747,7 @@ FTTH - Mobily - Project/
 | Step | Folder | API | Description |
 |------|--------|-----|-------------|
 | 1 | `01-Create-Relocation-Order-TMF622/` | POST TMF622 | Create relocation order (pilih provider) |
-| 2 | `02-TMF641-Notifications/` | POST TMF641 | Trigger Acknowledged → InProgress → Completed |
+| 2 | `02-TMF641-Notifications/` | POST TMF641 | Trigger Acknowledged â†’ InProgress â†’ Completed |
 | 3 | `03-WFM-CPE-Relocation/` | POST WFM | Execute CPE workflow Step 01-09 |
 
 ## Notes
@@ -767,7 +767,7 @@ masalahnya begini, apa workflow md itu bisa dibuka di bruno app? karena kan kita
 
 Poin bagus! Benar, file `.md` **tidak akan muncul** di Bruno app karena Bruno hanya membaca file `.bru`. Jadi `_workflow.md` akan sia-sia.
 
-Tapi ada solusinya — Bruno mendukung **`docs` block** di dalam file `folder.bru`! Ini akan tampil sebagai dokumentasi langsung di Bruno app saat kamu klik folder tersebut.
+Tapi ada solusinya â€” Bruno mendukung **`docs` block** di dalam file `folder.bru`! Ini akan tampil sebagai dokumentasi langsung di Bruno app saat kamu klik folder tersebut.
 
 Contoh:
 
@@ -778,13 +778,13 @@ meta {
 }
 
 docs {
-  # 🔄 Relocation Journey
+  # ðŸ”„ Relocation Journey
 
   ## Workflow Steps
   | Step | Folder | Description |
   |------|--------|-------------|
   | 1 | `01-Create-Relocation-Order-TMF622/` | Create relocation order (pilih provider) |
-  | 2 | `02-TMF641-Notifications/` | Trigger: Acknowledged → InProgress → Completed |
+  | 2 | `02-TMF641-Notifications/` | Trigger: Acknowledged â†’ InProgress â†’ Completed |
   | 3 | `03-WFM-CPE-Relocation/` | Execute CPE workflow Step 01-09 (Relocation context) |
 
   ## Notes
@@ -821,7 +821,7 @@ post {
 
 ---
 
-### ✅ Revisi Final: Ganti `_workflow.md` → `docs` di `folder.bru`
+### âœ… Revisi Final: Ganti `_workflow.md` â†’ `docs` di `folder.bru`
 
 Jadi plannya tetap **Journey-Centric**, tapi semua dokumentasi masuk ke `folder.bru` via `docs` block, bukan file `.md` terpisah. Ini akan **100% visible di Bruno app**.
 
@@ -839,13 +839,13 @@ meta {
 }
 
 docs {
-  # 🔄 Relocation Journey
+  # ðŸ”„ Relocation Journey
 
   ## Workflow Steps
   | Step | Folder | Description |
   |------|--------|-------------|
   | 1 | `01-Create-Relocation-Order-TMF622/` | Create relocation order (pilih provider) |
-  | 2 | `02-TMF641-Notifications/` | Trigger: Acknowledged → InProgress → Completed |
+  | 2 | `02-TMF641-Notifications/` | Trigger: Acknowledged â†’ InProgress â†’ Completed |
   | 3 | `03-WFM-CPE-Relocation/` | Execute CPE workflow Step 01-09 (Relocation context) |
 
   ## Notes
@@ -915,7 +915,7 @@ Sekarang update README.md.
 
 ---
 
-## 📋 **Table of Contents**
+## ðŸ“‹ **Table of Contents**
 
 1. [Overview](#overview)
 2. [Project Structure](#project-structure)
@@ -925,81 +925,81 @@ Sekarang update README.md.
 
 ---
 
-## 🎯 **Overview**
+## ðŸŽ¯ **Overview**
 
 This Bruno API collection contains a comprehensive, journey-centric set of APIs for the FTTH (Fiber To The Home) solution implementation for Mobily. 
 
-**Key Design Principle:** Each journey/use case contains ALL the API requests needed (TMF622, TMF641, WFM, SingleView, etc.) with **contextual payloads** specific to that journey. This eliminates confusion when testing — you don't need to remember to change comments or payload context between different use cases.
+**Key Design Principle:** Each journey/use case contains ALL the API requests needed (TMF622, TMF641, WFM, SingleView, etc.) with **contextual payloads** specific to that journey. This eliminates confusion when testing â€” you don't need to remember to change comments or payload context between different use cases.
 
 **Total APIs:** ~100+ endpoints organized across 9 business journeys
 
 ---
 
-## 📁 **Project Structure**
+## ðŸ“ **Project Structure**
 
 ```
 FTTH - Mobily - Project/
-├── environments/                     # Environment configs (AWS Dev & On-Prem Dev)
-├── Authentication/                   # Auth APIs (Dev 1, Dev 2, On-Prem)
-│
-├── 02-New-Activation/                # 🟢 New FTTH Installation
-│   ├── 01-Create-Order-TMF622/       # Product orders (Mobily/OpenAccess)
-│   │   ├── Mobily/
-│   │   │   ├── Regular-Customer/     # Postpaid & Prepaid
-│   │   │   └── Royal-Customer/       # Postpaid
-│   │   └── OpenAccess/               # DAWIYAT, ITC, STC
-│   ├── 02-TMF641-Notifications/      # Service order notifications
-│   ├── 03-WFM-CPE-Installation/      # CPE installation workflow (9 steps)
-│   ├── 04-WFM-ME-Installation/       # Mesh Extender installation
-│   ├── 05-OpenAccess-Provider-Workflow/  # DAWIYAT/ITC/STC workflows
-│   ├── 06-SingleView-Integration/    # Appointments, Completion, Cancellation
-│   └── 07-Installation-Failure-Scenarios/ # Failure codes & recovery
-│
-├── 03-Relocation/                    # 🔄 Service Relocation
-│   ├── 01-Create-Relocation-Order-TMF622/
-│   ├── 02-TMF641-Notifications/
-│   └── 03-WFM-CPE-Relocation/       # WFM with RELOCATION context
-│
-├── 04-Device-Swap/                   # 🔧 CPE/HAG/ONT Replacement
-│   ├── 01-Create-Swap-Order-TMF622/
-│   ├── 02-TMF641-Notifications/
-│   ├── 03-WFM-CPE-Device-Swap/      # WFM with DEVICE SWAP context
-│   └── 04-Installation-Failure-Scenarios/
-│
-├── 05-Upgrade-Downgrade/             # ⬆️ Bandwidth Changes
-│   ├── 01-Upgrade-Order-TMF622/
-│   ├── 02-Downgrade-Order-TMF622/
-│   └── 03-TMF641-Notifications/
-│
-├── 06-Suspend-Resume/                # ⏸️ Service Suspend & Resume
-│   ├── 01-Suspend-Order-TMF622/
-│   ├── 02-Create-Service-Order-OA/
-│   └── 03-Resume-Order-TMF622/
-│
-├── 07-Termination/                   # ❌ Service Deactivation
-│   ├── 01-Termination-Order-TMF622/
-│   └── 02-TMF641-Cease-Notification/
-│
-├── 08-Rewiring/                      # 🔌 Cable Rewiring
-│   ├── 01-Create-Rewiring-Order-TMF622/
-│   ├── 02-TMF641-Notifications/
-│   └── 03-WFM-CPE-Rewiring/         # WFM with REWIRING context
-│
-├── 09-Maintenance/                   # 🛠️ Service Maintenance/Repair
-│   ├── 01-Create-Maintenance-Order-TMF622/
-│   ├── 02-WFM-Maintenance-Notifications/ # WFM with MAINTENANCE context
-│   ├── 03-Close-Maintenance-Order/
-│   ├── 04-ReOpen-Maintenance-Order/
-│   └── 05-Open-Service-Request-OA/
-│
-├── 10-Request-Update/                # 📋 Order Status Updates
-│
-└── Documentation/                    # 📄 Reference documents (PDFs)
+â”œâ”€â”€ environments/                     # Environment configs (AWS Dev & On-Prem Dev)
+â”œâ”€â”€ 01-Authentication/                   # Auth APIs (Dev 1, Dev 2, On-Prem)
+â”‚
+â”œâ”€â”€ 02-New-Activation/                # ðŸŸ¢ New FTTH Installation
+â”‚   â”œâ”€â”€ 01-Create-Order-TMF622/       # Product orders (Mobily/OpenAccess)
+â”‚   â”‚   â”œâ”€â”€ Mobily/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Regular-Customer/     # Postpaid & Prepaid
+â”‚   â”‚   â”‚   â””â”€â”€ Royal-Customer/       # Postpaid
+â”‚   â”‚   â””â”€â”€ OpenAccess/               # DAWIYAT, ITC, STC
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/      # Service order notifications
+â”‚   â”œâ”€â”€ 03-WFM-CPE-Installation/      # CPE installation workflow (9 steps)
+â”‚   â”œâ”€â”€ 04-WFM-ME-Installation/       # Mesh Extender installation
+â”‚   â”œâ”€â”€ 05-OpenAccess-Provider-Workflow/  # DAWIYAT/ITC/STC workflows
+â”‚   â”œâ”€â”€ 06-SingleView-Integration/    # Appointments, Completion, Cancellation
+â”‚   â””â”€â”€ 07-Installation-Failure-Scenarios/ # Failure codes & recovery
+â”‚
+â”œâ”€â”€ 03-Relocation/                    # ðŸ”„ Service Relocation
+â”‚   â”œâ”€â”€ 01-Create-Relocation-Order-TMF622/
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â””â”€â”€ 03-WFM-CPE-Relocation/       # WFM with RELOCATION context
+â”‚
+â”œâ”€â”€ 04-Device-Swap/                   # ðŸ”§ CPE/HAG/ONT Replacement
+â”‚   â”œâ”€â”€ 01-Create-Swap-Order-TMF622/
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â”œâ”€â”€ 03-WFM-CPE-Device-Swap/      # WFM with DEVICE SWAP context
+â”‚   â””â”€â”€ 04-Installation-Failure-Scenarios/
+â”‚
+â”œâ”€â”€ 05-Upgrade-Downgrade/             # â¬†ï¸ Bandwidth Changes
+â”‚   â”œâ”€â”€ 01-Upgrade-Order-TMF622/
+â”‚   â”œâ”€â”€ 02-Downgrade-Order-TMF622/
+â”‚   â””â”€â”€ 03-TMF641-Notifications/
+â”‚
+â”œâ”€â”€ 06-Suspend-Resume/                # â¸ï¸ Service Suspend & Resume
+â”‚   â”œâ”€â”€ 01-Suspend-Order-TMF622/
+â”‚   â”œâ”€â”€ 02-Create-Service-Order-OA/
+â”‚   â””â”€â”€ 03-Resume-Order-TMF622/
+â”‚
+â”œâ”€â”€ 07-Termination/                   # âŒ Service Deactivation
+â”‚   â”œâ”€â”€ 01-Termination-Order-TMF622/
+â”‚   â””â”€â”€ 02-TMF641-Cease-Notification/
+â”‚
+â”œâ”€â”€ 08-Rewiring/                      # ðŸ”Œ Cable Rewiring
+â”‚   â”œâ”€â”€ 01-Create-Rewiring-Order-TMF622/
+â”‚   â”œâ”€â”€ 02-TMF641-Notifications/
+â”‚   â””â”€â”€ 03-WFM-CPE-Rewiring/         # WFM with REWIRING context
+â”‚
+â”œâ”€â”€ 09-Maintenance/                   # ðŸ› ï¸ Service Maintenance/Repair
+â”‚   â”œâ”€â”€ 01-Create-Maintenance-Order-TMF622/
+â”‚   â”œâ”€â”€ 02-WFM-Maintenance-Notifications/ # WFM with MAINTENANCE context
+â”‚   â”œâ”€â”€ 03-Close-Maintenance-Order/
+â”‚   â”œâ”€â”€ 04-ReOpen-Maintenance-Order/
+â”‚   â””â”€â”€ 05-Open-Service-Request-OA/
+â”‚
+â”œâ”€â”€ 10-Request-Update/                # ðŸ“‹ Order Status Updates
+â”‚
+â””â”€â”€ Documentation/                    # ðŸ“„ Reference documents (PDFs)
 ```
 
 ---
 
-## 🌍 **Environments**
+## ðŸŒ **Environments**
 
 ### **awsDev** (AWS Development)
 - **Base URL:** `https://mobily-dev.live.demo-in.telflow.com`
@@ -1020,15 +1020,15 @@ FTTH - Mobily - Project/
 
 ---
 
-## 📚 **Journey Guide**
+## ðŸ“š **Journey Guide**
 
-### **02 - New Activation** 🟢
+### **02 - New Activation** ðŸŸ¢
 > New FTTH service installation from scratch
 
 | Step | Folder | API Type | Description |
 |------|--------|----------|-------------|
 | 1 | `01-Create-Order-TMF622` | TMF622 POST | Create product order (select provider/customer/ME variant) |
-| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged â†’ InProgress â†’ Completed |
 | 3 | `03-WFM-CPE-Installation` | WFM | 9-step CPE installation workflow |
 | 4 | `04-WFM-ME-Installation` | WFM | Mesh Extender installation (if applicable) |
 | 5 | `05-OpenAccess-Provider-Workflow` | OA | DAWIYAT/ITC/STC activation (if OpenAccess) |
@@ -1037,45 +1037,45 @@ FTTH - Mobily - Project/
 
 ---
 
-### **03 - Relocation** 🔄
+### **03 - Relocation** ðŸ”„
 > Move existing FTTH service to a new location
 
 | Step | Folder | API Type | Description |
 |------|--------|----------|-------------|
 | 1 | `01-Create-Relocation-Order-TMF622` | TMF622 POST | action: modify, ftthSubAction: Relocation |
-| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged â†’ InProgress â†’ Completed |
 | 3 | `03-WFM-CPE-Relocation` | WFM | CPE steps with **RELOCATION** context comments |
 
-⚠️ **Key Difference:** WFM comments must reference relocation, NOT installation.
+âš ï¸ **Key Difference:** WFM comments must reference relocation, NOT installation.
 
 ---
 
-### **04 - Device Swap** 🔧
+### **04 - Device Swap** ðŸ”§
 > Replace CPE, HAG, or ONT device
 
 | Step | Folder | API Type | Description |
 |------|--------|----------|-------------|
 | 1 | `01-Create-Swap-Order-TMF622` | TMF622 POST | action: modify, ftthSubAction: CPESwap |
-| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged â†’ InProgress â†’ Completed |
 | 3 | `03-WFM-CPE-Device-Swap` | WFM | CPE steps with **DEVICE SWAP** context comments |
 | 4 | `04-Installation-Failure-Scenarios` | WFM | Device swap failure handling |
 
-⚠️ **Key Difference:** Payload includes `oldCpeSerialNumber`. WFM comments reference device replacement.
+âš ï¸ **Key Difference:** Payload includes `oldCpeSerialNumber`. WFM comments reference device replacement.
 
 ---
 
-### **05 - Upgrade/Downgrade** ⬆️
+### **05 - Upgrade/Downgrade** â¬†ï¸
 > Change bandwidth (no technician visit needed)
 
 | Step | Folder | API Type | Description |
 |------|--------|----------|-------------|
 | 1 | `01-Upgrade-Order-TMF622` | TMF622 POST | Bandwidth upgrade |
 | 2 | `02-Downgrade-Order-TMF622` | TMF622 POST | Bandwidth downgrade |
-| 3 | `03-TMF641-Notifications` | TMF641 | Acknowledged → Completed (no InProgress) |
+| 3 | `03-TMF641-Notifications` | TMF641 | Acknowledged â†’ Completed (no InProgress) |
 
 ---
 
-### **06 - Suspend & Resume** ⏸️
+### **06 - Suspend & Resume** â¸ï¸
 > Temporarily suspend and resume service
 
 | Step | Folder | API Type | Description |
@@ -1086,7 +1086,7 @@ FTTH - Mobily - Project/
 
 ---
 
-### **07 - Termination** ❌
+### **07 - Termination** âŒ
 > Permanently deactivate FTTH service
 
 | Step | Folder | API Type | Description |
@@ -1096,18 +1096,18 @@ FTTH - Mobily - Project/
 
 ---
 
-### **08 - Rewiring** 🔌
+### **08 - Rewiring** ðŸ”Œ
 > Physical cable rewiring
 
 | Step | Folder | API Type | Description |
 |------|--------|----------|-------------|
 | 1 | `01-Create-Rewiring-Order-TMF622` | TMF622 POST | Rewiring order |
-| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged → InProgress → Completed |
+| 2 | `02-TMF641-Notifications` | TMF641 | Acknowledged â†’ InProgress â†’ Completed |
 | 3 | `03-WFM-CPE-Rewiring` | WFM | CPE steps with **REWIRING** context comments |
 
 ---
 
-### **09 - Maintenance** 🛠️
+### **09 - Maintenance** ðŸ› ï¸
 > Service repair and maintenance
 
 | Step | Folder | API Type | Description |
@@ -1120,7 +1120,7 @@ FTTH - Mobily - Project/
 
 ---
 
-### **10 - Request Update** 📋
+### **10 - Request Update** ðŸ“‹
 > Check or update order status
 
 - Get Order status
@@ -1128,7 +1128,7 @@ FTTH - Mobily - Project/
 
 ---
 
-## 🚀 **Getting Started**
+## ðŸš€ **Getting Started**
 
 ### **Prerequisites**
 - Bruno API Client installed
@@ -1141,7 +1141,7 @@ FTTH - Mobily - Project/
    - Choose `awsDev` or `devOnPrem` from environments dropdown
 
 2. **Authenticate**
-   - Run one of the Auth APIs in `Authentication/`
+   - Run one of the Auth APIs in `01-Authentication/`
    - Token is automatically captured via post-response script
 
 3. **Pick Your Journey**
@@ -1151,18 +1151,18 @@ FTTH - Mobily - Project/
 
 4. **Execute APIs in Sequence**
    - Start with `01-` folder, then `02-`, etc.
-   - Within WFM folders, follow Step-01 → Step-02 → ... → Step-09
+   - Within WFM folders, follow Step-01 â†’ Step-02 â†’ ... â†’ Step-09
 
 ### **Tips**
-- 📖 **Read folder docs:** Each journey folder's `folder.bru` contains important context notes
-- 🔢 **Follow numbering:** Sub-folders are numbered to indicate execution order
-- ⚠️ **Context matters:** WFM/notification payloads are different per journey — use the ones inside the specific journey folder
-- 🔄 **ME variants:** When testing with Mesh Extenders, use Step-08 variant matching the number of MEs ordered
-- ❌ **Failure scenarios:** Each journey with WFM has its own failure scenarios folder
+- ðŸ“– **Read folder docs:** Each journey folder's `folder.bru` contains important context notes
+- ðŸ”¢ **Follow numbering:** Sub-folders are numbered to indicate execution order
+- âš ï¸ **Context matters:** WFM/notification payloads are different per journey â€” use the ones inside the specific journey folder
+- ðŸ”„ **ME variants:** When testing with Mesh Extenders, use Step-08 variant matching the number of MEs ordered
+- âŒ **Failure scenarios:** Each journey with WFM has its own failure scenarios folder
 
 ---
 
-## 📝 **Notes**
+## ðŸ“ **Notes**
 
 - All APIs follow TMF (TM Forum) standards for telecom operations
 - **Journey-centric organization** ensures contextual correctness for each use case
@@ -1172,7 +1172,7 @@ FTTH - Mobily - Project/
 
 ---
 
-## 🔗 **Related Documentation**
+## ðŸ”— **Related Documentation**
 
 - TMF622 Product Ordering Management API Specification
 - TMF641 Service Ordering Management API Specification
@@ -1214,4 +1214,5 @@ lanjutkan
 lanjutkan
 
 lanjutkan
+
 

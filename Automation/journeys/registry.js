@@ -1,7 +1,7 @@
-/**
- * Journey registry: every supported provider × journey-type combination.
+﻿/**
+ * Journey registry: every supported provider Ã— journey-type combination.
  *
- * Adding a new provider/journey only requires inserting an entry here — the
+ * Adding a new provider/journey only requires inserting an entry here â€” the
  * runner, step executor, and toolkit all read from this map (Open/Closed
  * principle). `stepLabels` may be either a static array or
  * `(opts) => labels[]` to allow option-driven label sets (e.g. RCY orders
@@ -78,7 +78,7 @@ const JOURNEY_REGISTRY = {
       },
     ],
     build: (opts) =>
-      buildFailureJourney(`Shared-Workflows/Installation-Failure-Scenarios/Mobily/${opts.failureCode}.bru`),
+      buildFailureJourney(`13-Shared-Workflows/Installation-Failure-Scenarios/Mobily/${opts.failureCode}.bru`),
     stepLabels: FAILURE_LABELS,
     stateMap: {},
   },
@@ -89,7 +89,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'relocation',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation Mobily.bru', opts),
+      buildMobilyFieldWork('03-Relocation/Mobily/Request - Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -100,7 +100,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - CPE - Mobily.bru', opts),
+      buildMobilyFieldWork('04-Device-Swap/Mobily/Request - CPE - Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -111,7 +111,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - HAG - Mobily.bru', opts),
+      buildMobilyFieldWork('04-Device-Swap/Mobily/Request - HAG - Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -122,7 +122,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'rewiring',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork('08-Rewiring/01-Create-Rewiring-Order-TMF622/Rewiring Mobily.bru', opts),
+      buildMobilyFieldWork('08-Rewiring/Mobily/Request - Mobily.bru', opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -133,7 +133,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'upgrade',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('05-Upgrade-Downgrade/01-Upgrade-Order-TMF622/Upgrade - Bandwith Only - Mobily.bru', opts),
+      buildSimpleOrder('05-Upgrade-Downgrade/Upgrade/Mobily/Request - Mobily.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -144,7 +144,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'downgrade',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('05-Upgrade-Downgrade/02-Downgrade-Order-TMF622/Downgrade - Bandwith Only - Mobily.bru', opts),
+      buildSimpleOrder('05-Upgrade-Downgrade/Downgrade/Mobily/Request - Mobily.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -154,7 +154,7 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'mobily',
     journeyType: 'suspend',
     options: [],
-    build: (opts) => buildSimpleOrder('06-Suspend-Resume/01-Suspend-Order-TMF622/Suspends Mobily.bru', opts),
+    build: (opts) => buildSimpleOrder('06-Suspend-Resume/Suspend/Mobily/Request - Mobily.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -165,9 +165,9 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('07-Termination/01-Termination-Order-TMF622/Termination - Mobily.bru', {
+      buildSimpleOrder('07-Termination/Mobily/Request - Mobily.bru', {
         ...opts,
-        _tmf641File: 'Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
+        _tmf641File: '13-Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
       }),
     stepLabels: SIMPLE_TMF641_LABELS,
     stateMap: { Completed: 5 },
@@ -210,7 +210,7 @@ const JOURNEY_REGISTRY = {
     ],
     build: (opts) =>
       buildFailureJourney(
-        `Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/DOWIYAT - Installation Failure Notification/${opts.failureCode}.bru`,
+        `13-Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/DOWIYAT - Installation Failure Notification/${opts.failureCode}.bru`,
       ),
     stepLabels: FAILURE_LABELS,
     stateMap: {},
@@ -222,7 +222,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'relocation',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation Dowiyat.bru', opts),
+      buildOAFieldWork('03-Relocation/OpenAccess/Request - DOWIYAT.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -233,7 +233,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - ONT - DOWIYAT.bru', opts),
+      buildOAFieldWork('04-Device-Swap/OpenAccess/Request - DOWIYAT.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -244,7 +244,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'rewiring',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork('08-Rewiring/01-Create-Rewiring-Order-TMF622/Rewiring Dowiyat.bru', opts),
+      buildOAFieldWork('08-Rewiring/OpenAccess/Request - DOWIYAT.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -256,8 +256,8 @@ const JOURNEY_REGISTRY = {
     options: [],
     build: (opts) =>
       buildSuspendOrder(
-        '06-Suspend-Resume/01-Suspend-Order-TMF622/622 - Suspends Dowiyat.bru',
-        '06-Suspend-Resume/02-Create-Service-Order-OA/Create Service Order OA - Dowiyat.bru',
+        '06-Suspend-Resume/Suspend/OpenAccess/Request - DOWIYAT.bru',
+        '13-Shared-Workflows/Create Service Order - OA/Create Service OA - DOWIYAT.bru',
         opts,
       ),
     stepLabels: SUSPEND_OA_LABELS,
@@ -269,7 +269,7 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
-    build: (opts) => buildSimpleOrder('06-Suspend-Resume/03-Resume-Order-TMF622/622 - Resume Dowiyat.bru', opts),
+    build: (opts) => buildSimpleOrder('06-Suspend-Resume/Resume/OpenAccess/Request - DOWIYAT.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -280,9 +280,9 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('07-Termination/01-Termination-Order-TMF622/Termination - DOWIYAT.bru', {
+      buildSimpleOrder('07-Termination/OpenAccess/Request - DOWIYAT.bru', {
         ...opts,
-        _tmf641File: 'Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
+        _tmf641File: '13-Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
       }),
     stepLabels: SIMPLE_TMF641_LABELS,
     stateMap: { Completed: 5 },
@@ -325,7 +325,7 @@ const JOURNEY_REGISTRY = {
     ],
     build: (opts) =>
       buildFailureJourney(
-        `Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/STC - Installation Failure Notification/${opts.failureCode}.bru`,
+        `13-Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/STC - Installation Failure Notification/${opts.failureCode}.bru`,
       ),
     stepLabels: FAILURE_LABELS,
     stateMap: {},
@@ -336,7 +336,7 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'relocation',
     options: [ME_OPTION],
-    build: (opts) => buildOAFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation STC.bru', opts),
+    build: (opts) => buildOAFieldWork('03-Relocation/OpenAccess/Request - STC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -347,7 +347,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - ONT - STC.bru', opts),
+      buildOAFieldWork('04-Device-Swap/OpenAccess/Request - STC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -359,8 +359,8 @@ const JOURNEY_REGISTRY = {
     options: [],
     build: (opts) =>
       buildSuspendOrder(
-        '06-Suspend-Resume/01-Suspend-Order-TMF622/622 - Suspends STC.bru',
-        '06-Suspend-Resume/02-Create-Service-Order-OA/Create Service Order OA - STC.bru',
+        '06-Suspend-Resume/Suspend/OpenAccess/Request - STC.bru',
+        '13-Shared-Workflows/Create Service Order - OA/Create Service OA - STC.bru',
         opts,
       ),
     stepLabels: SUSPEND_OA_LABELS,
@@ -372,7 +372,7 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
-    build: (opts) => buildSimpleOrder('06-Suspend-Resume/03-Resume-Order-TMF622/622 - Resume STC.bru', opts),
+    build: (opts) => buildSimpleOrder('06-Suspend-Resume/Resume/OpenAccess/Request - STC.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -383,9 +383,9 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('07-Termination/01-Termination-Order-TMF622/Termination - STC.bru', {
+      buildSimpleOrder('07-Termination/OpenAccess/Request - STC.bru', {
         ...opts,
-        _tmf641File: 'Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
+        _tmf641File: '13-Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
       }),
     stepLabels: SIMPLE_TMF641_LABELS,
     stateMap: { Completed: 5 },
@@ -428,7 +428,7 @@ const JOURNEY_REGISTRY = {
     ],
     build: (opts) =>
       buildFailureJourney(
-        `Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ITC - Installation Failure Notification/${opts.failureCode}.bru`,
+        `13-Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ITC - Installation Failure Notification/${opts.failureCode}.bru`,
       ),
     stepLabels: FAILURE_LABELS,
     stateMap: {},
@@ -439,7 +439,7 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'relocation',
     options: [ME_OPTION],
-    build: (opts) => buildOAFieldWork('03-Relocation/01-Create-Relocation-Order-TMF622/Relocation ITC.bru', opts),
+    build: (opts) => buildOAFieldWork('03-Relocation/OpenAccess/Request - ITC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -450,7 +450,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork('04-Device-Swap/01-Create-Swap-Order-TMF622/Device Swap - ONT - ITC.bru', opts),
+      buildOAFieldWork('04-Device-Swap/OpenAccess/Request - ITC.bru', opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -462,8 +462,8 @@ const JOURNEY_REGISTRY = {
     options: [],
     build: (opts) =>
       buildSuspendOrder(
-        '06-Suspend-Resume/01-Suspend-Order-TMF622/622 - Suspends ITC.bru',
-        '06-Suspend-Resume/02-Create-Service-Order-OA/Create Service Order OA - ITC.bru',
+        '06-Suspend-Resume/Suspend/OpenAccess/Request - ITC.bru',
+        '13-Shared-Workflows/Create Service Order - OA/Create Service OA - ITC.bru',
         opts,
       ),
     stepLabels: SUSPEND_OA_LABELS,
@@ -475,7 +475,7 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
-    build: (opts) => buildSimpleOrder('06-Suspend-Resume/03-Resume-Order-TMF622/622 - Resume ITC.bru', opts),
+    build: (opts) => buildSimpleOrder('06-Suspend-Resume/Resume/OpenAccess/Request - ITC.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -486,9 +486,9 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('07-Termination/01-Termination-Order-TMF622/Termination - ITC.bru', {
+      buildSimpleOrder('07-Termination/OpenAccess/Request - ITC.bru', {
         ...opts,
-        _tmf641File: 'Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
+        _tmf641File: '13-Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru',
       }),
     stepLabels: SIMPLE_TMF641_LABELS,
     stateMap: { Completed: 5 },
@@ -505,7 +505,7 @@ const JOURNEY_REGISTRY = {
     stateMap: {},
   },
 
-  // ===== ACES (OpenAccess — Phase 4B) ======================================
+  // ===== ACES (OpenAccess â€” Phase 4B) ======================================
   'aces-activation': {
     label: 'New Activation',
     provider: 'ACES',
@@ -525,7 +525,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'downgrade',
     options: [],
     build: (opts) =>
-      buildSimpleOrder('05-Upgrade-Downgrade/02-Downgrade-Order-TMF622/Downgrade - Bandwith Only - OA.bru', opts),
+      buildSimpleOrder('05-Upgrade-Downgrade/Downgrade/OpenAccess/Request - ACES.bru', opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -594,3 +594,6 @@ module.exports = {
   listJourneys,
   listJourneyTree,
 };
+
+
+

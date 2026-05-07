@@ -1,23 +1,19 @@
-meta {
+﻿meta {
   name: 06-Suspend-Resume
-  seq: 7
+  seq: 8
 }
 
 docs {
-  # Suspend & Resume Journey
-  
-  ## Workflow Steps:
-  1. **Suspend Order (TMF622)** → `01-Suspend-Order-TMF622/`
-     - Suspend service for Mobily/OpenAccess
-  2. **Create Service Order OA** → `02-Create-Service-Order-OA/`
-     - OpenAccess suspend notification (DAWIYAT/ITC/STC)
-  3. **Resume Order (TMF622)** → `03-Resume-Order-TMF622/`
-     - Resume suspended service (OpenAccess only)
-  
-  ## Important Notes:
-  - Suspend available for Mobily and all OpenAccess providers
-  - Resume only applies to OpenAccess providers (DAWIYAT/ITC/STC)
-  - No WFM/technician visit required
-  - No TMF641 notifications needed
-  - Service is suspended/resumed remotely
+  # 06-Suspend-Resume
+
+  Structure:
+  - **Suspend/Mobily/**: Request - Mobily
+  - **Suspend/OpenAccess/**: Request - ACES, STC, ITC, DOWIYAT
+  - **Resume/OpenAccess/**: Request - ACES, STC, ITC, DOWIYAT
+
+  Shared OpenAccess service-order notifications are under 13-Shared-Workflows/Create Service Order - OA/.
+}
+
+auth {
+  mode: inherit
 }

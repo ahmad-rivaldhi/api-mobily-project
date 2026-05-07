@@ -1,26 +1,18 @@
-meta {
+﻿meta {
   name: 04-Device-Swap
-  seq: 5
+  seq: 6
 }
 
 docs {
-  # Device Swap Journey (CPE/HAG/ONT Replacement)
-  
-  ## Workflow Steps:
-  1. **Create Swap Order (TMF622)** → `01-Create-Swap-Order-TMF622/`
-     - action: modify, ftthSubAction: CPESwap
-     - CPE Swap (Mobily), HAG Swap (Mobily), ONT Swap (DAWIYAT/ITC/STC)
-  2. **TMF641 Notifications** → `Shared-Workflows/TMF641-Notifications/`
-     - Acknowledged → InProgress → Completed
-  3. **WFM CPE Device Swap** → `Shared-Workflows/WFM-CPE-Workflow/`
-     - Technician workflow for device replacement
-  4. **Installation Failure Scenarios** → `Shared-Workflows/Installation-Failure-Scenarios/`
-     - Device swap specific failures
-  
-  ## IMPORTANT - Contextual Differences:
-  - TMF622 action is "modify" with ftthSubAction: CPESwap
-  - Payload includes oldCpeSerialNumber and new device details
-  - WFM comments MUST reference device swap:
-    * Example: "Replacing CPE device - old S/N: [serial]"
-    * NOT: "New CPE installation"
+  # 04-Device-Swap
+
+  Structure:
+  - **Mobily/**: CPE and HAG swap requests
+  - **OpenAccess/**: ONT swap requests per provider (ACES, STC, ITC, DOWIYAT)
+
+  Shared WFM notification moved to 13-Shared-Workflows/Device Swap - Notification/.
+}
+
+auth {
+  mode: inherit
 }

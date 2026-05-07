@@ -1,18 +1,18 @@
-meta {
+﻿meta {
   name: 01-By-Order-ID
   seq: 1
 }
 
 docs {
-  # Lookup: Dari Order ID → dapatkan SAN, CPE Serial Number, Inventory ID
+  # Lookup: Dari Order ID â†’ dapatkan SAN, CPE Serial Number, Inventory ID
 
   Input : `{{orderId}}` (mis. `ORD000000027977`)
 
   Cara membaca response step 01 (Portal detail):
     - SAN value:
-        cari di response: `"Characteristic": { "ID": "san" }` → ambil `"Value"`
+        cari di response: `"Characteristic": { "ID": "san" }` â†’ ambil `"Value"`
     - CPE Serial Number:
-        cari: `"Characteristic": { "ID": "cpeSerialNumber" }` → `"Value"`
+        cari: `"Characteristic": { "ID": "cpeSerialNumber" }` â†’ `"Value"`
     - Inventory ID (untuk CPE):
         `data.Inventory[]` atau `BusinessInteractionItems[].ItemInvolvesInventoryEntities[].ID`
         (biasanya format `FTTH000000026553`)
@@ -20,3 +20,4 @@ docs {
   Setelah dapat Inventory ID, bisa lanjut ke folder 03 untuk lookup order lain
   yang pakai inventory yang sama.
 }
+

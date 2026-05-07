@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Notification + create-order primitives. Wraps `runBruRequest` with the
  * cross-cutting concerns shared by every step:
  *   - timestamp the payload (`eventTime` / `eventDate`)
@@ -38,7 +38,7 @@ async function doCreateOrder(vars, bruFile) {
   log('CREATE', `Creating order: ${label}`);
   log(
     'VARS',
-    `customerCategory=${vars.customerCategory || '∅'}, networkCategory=${vars.networkCategory || '∅'}`,
+    `customerCategory=${vars.customerCategory || 'âˆ…'}, networkCategory=${vars.networkCategory || 'âˆ…'}`,
   );
 
   const res = await runBruRequest(bruFile, vars);
@@ -56,10 +56,10 @@ async function doCreateOrder(vars, bruFile) {
 
 const SV_NOTIFICATION_BY_TYPE = {
   'provisioning-completed': PROVISIONING_COMPLETED_BRU,
-  'uat-completed': 'Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
-  'pre-completion': 'Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
+  'uat-completed': '13-Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
+  'pre-completion': '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
   'odb-patch':
-    'Shared-Workflows/SingleView-Integration/Custom-Notifications/ODB-Patch-Notification.bru',
+    '13-Shared-Workflows/SingleView-Integration/Custom-Notifications/ODB-Patch-Notification.bru',
 };
 
 async function doTriggerSvNotification(vars, type) {
@@ -78,3 +78,4 @@ module.exports = {
   SV_NOTIFICATION_BY_TYPE,
   doTriggerSvNotification,
 };
+

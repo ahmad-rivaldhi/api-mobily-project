@@ -1,15 +1,15 @@
-/**
+﻿/**
  * OpenAccess provider definitions (DOWIYAT / STC / ITC / ACES).
  *
  * Each provider declares:
  *   - `notifications`  : the Service-Qualification + Service-Installation
- *                        `.bru` files that simulate provider→Telflow events.
+ *                        `.bru` files that simulate providerâ†’Telflow events.
  *   - `idSpec`         : which `externalId` values must be extracted from B2B
  *                        messages to render those notifications, and how to
  *                        recognise the source action.
  *
  * `buildOpenAccessActivation` consumes these to compose the journey steps.
- * Adding a fifth provider only requires declaring a new entry — no change to
+ * Adding a fifth provider only requires declaring a new entry â€” no change to
  * the runner, registry, or extractor needed (Open/Closed principle).
  */
 
@@ -24,7 +24,7 @@ const {
 
 const { openAccessCreateOrderPath } = require('../constants/paths');
 
-const OA_BASE = 'Activation Order/OpenAccess';
+const OA_BASE = '02-Activation Order/OpenAccess';
 
 const OA_PROVIDER_NOTIFICATIONS = {
   STC: {
@@ -204,7 +204,7 @@ async function doExtractOpenAccessProviderIds(
 /**
  * Build the OpenAccess activation step list.
  *
- * Step numbering (no-SQ providers — ITC / ACES / DOWIYAT):
+ * Step numbering (no-SQ providers â€” ITC / ACES / DOWIYAT):
  *   2 create order
  *   3 extract OA installation external ID
  *   5 provider activation notifications
@@ -301,7 +301,7 @@ function buildOpenAccessActivation(provider, opts) {
     {
       step: tmf641Step,
       type: 'notify',
-      file: 'Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
+      file: '13-Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
       delay: 0,
     },
 
@@ -311,7 +311,7 @@ function buildOpenAccessActivation(provider, opts) {
     {
       step: svProvisioningStep,
       type: 'notify',
-      file: 'Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
+      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
       delay: 5000,
     },
 
@@ -320,7 +320,7 @@ function buildOpenAccessActivation(provider, opts) {
     {
       step: svPreCompletionStep,
       type: 'notify',
-      file: 'Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
+      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
       delay: 5000,
     },
 
@@ -336,3 +336,5 @@ module.exports = {
   doExtractOpenAccessProviderIds,
   buildOpenAccessActivation,
 };
+
+

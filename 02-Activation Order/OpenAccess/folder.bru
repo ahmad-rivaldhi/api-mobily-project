@@ -1,0 +1,24 @@
+﻿meta {
+  name: OpenAccess
+  seq: 5
+}
+
+vars:pre-request {
+  customerCategory: Regular
+  networkCategory: FTTH CONSUMER
+}
+
+docs {
+  # Open Access (TMF 622 + OA ONT notifications)
+
+  Per provider:
+  - **TMF-622 Create Sales Order** â€” create-order variants (`without ME` â€¦ `with 3 ME`).
+  - **OA ONT Installation - Notification** â€” activation WO simulation (and related lifecycle folders beside it).
+
+  Default `customerCategory` / `networkCategory` match Phase 4B regular consumer flows; override per request when testing RCY/VIP scenarios.
+}
+
+auth {
+  mode: inherit
+}
+

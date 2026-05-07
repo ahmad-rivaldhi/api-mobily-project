@@ -1,22 +1,16 @@
-meta {
+﻿meta {
   name: 07-Termination
-  seq: 8
+  seq: 9
 }
 
 docs {
-  # Termination Journey (Service Deactivation)
-  
-  ## Workflow Steps:
-  1. **Termination Order (TMF622)** → `01-Termination-Order-TMF622/`
-     - action: delete, ftthSubAction: Deactivate
-     - Available: Mobily, DAWIYAT, ITC, STC
-  2. **TMF641 Cease Notification** → `Shared-Workflows/TMF641-Notifications/641 Cease - Termination.bru`
-     - Cease/Termination notification
-  
-  ## Important Notes:
-  - TMF622 action is "delete" (NOT "add" or "modify")
-  - ftthSubAction is "Deactivate"
-  - No WFM/technician visit required
-  - Service is terminated permanently
-  - Cease notification uses different TMF641 event type (@type: "Cease")
+  # 07-Termination
+
+  Structure:
+  - **Mobily/**: Request - Mobily
+  - **OpenAccess/**: Request - ACES, STC, ITC, DOWIYAT
+}
+
+auth {
+  mode: inherit
 }

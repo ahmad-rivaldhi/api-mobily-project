@@ -1,4 +1,4 @@
-/**
+﻿/**
  * B2B message helpers: parse Telflow's `/portal/api/b2b/message` rows, match
  * provider-specific actions, and pull `externalId`-like values from inside
  * the JSON `Message.Data` payload.
@@ -11,7 +11,7 @@ const { httpRequest } = require('./http');
 const { buildB2bUrl } = require('./url-builder');
 
 const PROVISIONING_COMPLETED_BRU =
-  'Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru';
+  '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru';
 
 function parseB2bMessageData(msg) {
   const raw = msg?.Message?.Data;
@@ -138,3 +138,4 @@ module.exports = {
   getLatestB2BProductOrderState,
   doListB2b,
 };
+

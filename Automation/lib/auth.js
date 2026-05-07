@@ -1,6 +1,6 @@
-/**
+﻿/**
  * Per-environment OAuth-style authentication. Looks up a `.bru` file under
- * `Authentication/` whose name matches the env (or its number suffix), runs
+ * `01-Authentication/` whose name matches the env (or its number suffix), runs
  * it, and stores the bearer token in `vars.authToken`.
  */
 
@@ -22,7 +22,7 @@ function findAuthFile(envName) {
   if (!authFile) {
     throw new Error(`No auth file for env "${envName}". Available: ${authFiles.join(', ')}`);
   }
-  return `Authentication/${authFile}`;
+  return `01-Authentication/${authFile}`;
 }
 
 async function doAuth(vars, envName) {
@@ -50,3 +50,4 @@ async function doAuth(vars, envName) {
 module.exports = {
   doAuth,
 };
+

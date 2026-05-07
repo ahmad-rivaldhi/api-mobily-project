@@ -4,21 +4,21 @@
  */
 
 const AUTH = Object.freeze({
-  dev1: 'Authentication/DEV 1/Auth Dev 1.bru',
-  dev2: 'Authentication/DEV 2/Auth Dev 2.bru',
-  dev3: 'Authentication/DEV 3/Auth Dev 3.bru',
-  devOnPrem: 'Authentication/DEV - On Prem/Auth Dev On Prem.bru',
-  sit: 'Authentication/SIT/Auth SIT.bru',
+  dev1: '01-Authentication/Auth Dev 1.bru',
+  dev2: '01-Authentication/Auth Dev 2.bru',
+  dev3: '01-Authentication/Auth Dev 3.bru',
+  devOnPrem: '01-Authentication/Auth Dev On Prem.bru',
+  sit: '01-Authentication/Auth SIT.bru',
 });
 
 const ACTIVATION = Object.freeze({
-  orderRoot: 'Activation Order',
+  orderRoot: '02-Activation Order',
 
-  wfmcpeSteps018: 'Activation Order/WFM CPE Installation - Notification/Steps 01-08 - Field Work',
-  wfmcpeStep09: 'Activation Order/WFM CPE Installation - Notification/Step 09 - Completed',
+  wfmcpeSteps018: '02-Activation Order/Mobily/WFM CPE Installation - Notification/Phase 1',
+  wfmcpeStep09: '02-Activation Order/Mobily/WFM CPE Installation - Notification/Phase 2',
 
-  mobilyTmf622Root: 'Activation Order/TMF-622 Create Sales Order',
-  openAccessRoot: 'Activation Order/OpenAccess',
+  mobilyTmf622Root: '02-Activation Order/Mobily/TMF-622 Create Sales Order',
+  openAccessRoot: '02-Activation Order/OpenAccess',
 });
 
 function meDirName(meCount) {
@@ -35,7 +35,7 @@ function mobilyCreateOrderPath(customerType, paymentType, meCount) {
   if (customerType === 'Royal-Customer') {
     return `${base}/FTTH RCY/${meFolder}/FTTH-Royal-Postpaid-${suffix}.bru`;
   }
-  return `${base}/FTTH Consumer/${paymentType}/${meFolder}/FTTH-${paymentType}-${suffix}.bru`;
+  return `${base}/FTTH Consumer/${meFolder}/FTTH-${paymentType}-${suffix}.bru`;
 }
 
 function openAccessCreateOrderPath(provider, meCount) {
@@ -80,3 +80,5 @@ module.exports = {
   WFM_STEP_09_CPE_COMPLETED,
   WFM_STEP_09_CPE_UAT_COMPLETED,
 };
+
+

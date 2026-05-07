@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Provider-agnostic journey builders. These compose the generic patterns
  * shared across providers (simple order, suspend, failure, maintenance,
  * OpenAccess field-work).
@@ -13,13 +13,13 @@ const { wfmCpeStepPaths, WFM_STEP_09_CPE_COMPLETED } = require('../constants/pat
 const WFM_CPE_STEPS = wfmCpeStepPaths();
 
 const WFM_ME_BASE = [
-  'Shared-Workflows/WFM-ME-Workflow/Step-01-ME-1000-OK.bru',
-  'Shared-Workflows/WFM-ME-Workflow/Step-02-ME-Ready.bru',
-  'Shared-Workflows/WFM-ME-Workflow/Step-03-ME-Acknowledged.bru',
-  'Shared-Workflows/WFM-ME-Workflow/Step-04-ME-Accepted.bru',
-  'Shared-Workflows/WFM-ME-Workflow/Step-05-ME-Trip-Started.bru',
-  'Shared-Workflows/WFM-ME-Workflow/Step-06-ME-Customer-Premises.bru',
-  'Shared-Workflows/WFM-ME-Workflow/Step-07-ME-In-Work.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-01-ME-1000-OK.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-02-ME-Ready.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-03-ME-Acknowledged.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-04-ME-Accepted.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-05-ME-Trip-Started.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-06-ME-Customer-Premises.bru',
+  '13-Shared-Workflows/WFM-ME-Workflow/Step-07-ME-In-Work.bru',
 ];
 
 function notifyStep(stepNum, file, delay = 5000) {
@@ -31,13 +31,13 @@ function buildWfmCpeAndMe(stepNum, meCount) {
   if (meCount > 0) {
     for (const f of WFM_ME_BASE) out.push(notifyStep(stepNum, f));
     out.push(
-      notifyStep(stepNum, `Shared-Workflows/WFM-ME-Workflow/Step-08-ME-Installation-Completed-${meCount}-ME.bru`),
+      notifyStep(stepNum, `13-Shared-Workflows/WFM-ME-Workflow/Step-08-ME-Installation-Completed-${meCount}-ME.bru`),
     );
   }
   return out;
 }
 
-/** OpenAccess field-work pattern: create → workOrderIds → WFM → service order → TMF641 → completion (no ODB). */
+/** OpenAccess field-work pattern: create â†’ workOrderIds â†’ WFM â†’ service order â†’ TMF641 â†’ completion (no ODB). */
 function buildOAFieldWork(createFile, opts) {
   const meCount = opts.me || 0;
   return [
@@ -49,7 +49,7 @@ function buildOAFieldWork(createFile, opts) {
     {
       step: 6,
       type: 'notify',
-      file: 'Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
+      file: '13-Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
       delay: 0,
     },
     { step: 7, type: 'waitForState', state: 'In Progress|Provisioning Completed' },
@@ -57,7 +57,7 @@ function buildOAFieldWork(createFile, opts) {
     {
       step: 8,
       type: 'notify',
-      file: 'Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
+      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
       delay: 5000,
     },
     { step: 9, type: 'waitForState', state: 'In Progress|Pending UAT' },
@@ -67,7 +67,7 @@ function buildOAFieldWork(createFile, opts) {
           {
             step: 10,
             type: 'notify',
-            file: 'Shared-Workflows/WFM-ME-Workflow/Step-09-ME-UAT-Completed.bru',
+            file: '13-Shared-Workflows/WFM-ME-Workflow/Step-09-ME-UAT-Completed.bru',
             delay: 5000,
           },
         ]
@@ -76,14 +76,14 @@ function buildOAFieldWork(createFile, opts) {
     {
       step: 12,
       type: 'notify',
-      file: 'Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
+      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
       delay: 5000,
     },
     { step: 13, type: 'waitForState', state: 'In Progress|Pre-Completion' },
     {
       step: 14,
       type: 'notify',
-      file: 'Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
+      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
       delay: 5000,
     },
     { step: 15, type: 'waitForState', state: 'Completed' },
@@ -139,3 +139,4 @@ module.exports = {
   buildFailureJourney,
   buildMaintenanceOrder,
 };
+
