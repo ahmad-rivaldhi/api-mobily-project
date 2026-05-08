@@ -1,0 +1,18 @@
+meta {
+  name: Cancel Order Notification - OpenAccess
+  seq: 1
+}
+
+docs {
+  # Cancel Order Notification - OpenAccess
+
+  Provider notification steps for the Cancel Order journey per OA provider.
+
+  - **ACES/** — Received → Accepted → InProgress → Cancelled
+  - **ITC/** — Create Task → Assigned → Accepted → Set Off → Failure
+  - **STC/** — Wait SSN ONT → Test FTTH Link → InProgress → Cancelled → Closed
+}
+
+auth {
+  mode: inherit
+}

@@ -257,7 +257,7 @@ const JOURNEY_REGISTRY = {
     build: (opts) =>
       buildSuspendOrder(
         '06-Suspend-Resume/Suspend/OpenAccess/Request - DOWIYAT.bru',
-        '13-Shared-Workflows/Create Service Order - OA/Create Service OA - DOWIYAT.bru',
+        '13-Shared-Workflows/Create Service Order - OpenAccess/Create Service OA - DOWIYAT.bru',
         opts,
       ),
     stepLabels: SUSPEND_OA_LABELS,
@@ -360,7 +360,7 @@ const JOURNEY_REGISTRY = {
     build: (opts) =>
       buildSuspendOrder(
         '06-Suspend-Resume/Suspend/OpenAccess/Request - STC.bru',
-        '13-Shared-Workflows/Create Service Order - OA/Create Service OA - STC.bru',
+        '13-Shared-Workflows/Create Service Order - OpenAccess/Create Service OA - STC.bru',
         opts,
       ),
     stepLabels: SUSPEND_OA_LABELS,
@@ -463,7 +463,7 @@ const JOURNEY_REGISTRY = {
     build: (opts) =>
       buildSuspendOrder(
         '06-Suspend-Resume/Suspend/OpenAccess/Request - ITC.bru',
-        '13-Shared-Workflows/Create Service Order - OA/Create Service OA - ITC.bru',
+        '13-Shared-Workflows/Create Service Order - OpenAccess/Create Service OA - ITC.bru',
         opts,
       ),
     stepLabels: SUSPEND_OA_LABELS,
@@ -594,6 +594,7 @@ module.exports = {
   listJourneys,
   listJourneyTree,
 };
+
 
 
 

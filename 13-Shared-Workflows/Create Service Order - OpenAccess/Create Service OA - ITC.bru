@@ -1,5 +1,5 @@
-﻿meta {
-  name: Create Service OA - DOWIYAT
+meta {
+  name: Create Service OA - ITC
   type: http
   seq: 2
 }
@@ -22,25 +22,20 @@ body:json {
     "event": {
       "serviceOrder": {
         "funcId": "UPDATE_ORDER",
-        "externalId": "{{dawiyatOrderId}}",
-        "lineItemIdentifier": "", 
-        "lineItemStatus": "", 
-        "description": "Broadband Service Termination",
-        "orderStatus": "Completed",
+        "externalId": "20260219074304",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "Success",
+        "orderStatus": "Success",
         "comments": "",
-        "providerStatus": "Completed",
-        "providerMilestone": "Completed",
-        "providerComments": "Broadband Service Termination",
-        "orderTransactionNo" : "{{dawiyatTransactionNo}}",
-        "serviceAccNum" : "{{serviceAccNum}}"
+        "providerStatus": "Success",
+        "providerMilestone": "",
+        "providerComments": "Success",
+        "orderTransactionNo": "20250823093424",
+        "serviceAccNum": "1001267389365550"
       }
     }
   }
-}
-
-vars:pre-request {
-  dawiyatOrderId: 1-260504061027
-  dawiyatTransactionNo: DAW20260416041113
 }
 
 script:pre-request {

@@ -33,7 +33,7 @@ function mobilyCreateOrderPath(customerType, paymentType, meCount) {
   const meFolder = meDirName(me);
   const base = `${ACTIVATION.mobilyTmf622Root}`;
   if (customerType === 'Royal-Customer') {
-    return `${base}/FTTH RCY/${meFolder}/FTTH-Royal-Postpaid-${suffix}.bru`;
+    return `${base}/FTTH RCY/${paymentType}/${meFolder}/FTTH-Royal-${paymentType}-${suffix}.bru`;
   }
   return `${base}/FTTH Consumer/${meFolder}/FTTH-${paymentType}-${suffix}.bru`;
 }

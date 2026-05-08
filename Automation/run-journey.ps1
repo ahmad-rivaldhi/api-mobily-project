@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     FTTH Mobily Journey Runner (PowerShell)
 
@@ -191,7 +191,7 @@ Do-Auth $vars $Env
 $meSuffix = if ($ME -gt 0) { "With-$ME-ME" } else { "No-ME" }
 $meFolder = if ($ME -le 0) { "without ME" } else { "with $ME ME" }
 if ($CustomerType -eq "Royal-Customer") {
-    $createFile = "02-Activation Order/Mobily/TMF-622 Create Sales Order/FTTH RCY/$meFolder/FTTH-Royal-Postpaid-$meSuffix.bru"
+    $createFile = "02-Activation Order/Mobily/TMF-622 Create Sales Order/FTTH RCY/$PaymentType/$meFolder/FTTH-Royal-$PaymentType-$meSuffix.bru"
 } else {
     $createFile = "02-Activation Order/Mobily/TMF-622 Create Sales Order/FTTH Consumer/$meFolder/FTTH-$PaymentType-$meSuffix.bru"
 }

@@ -59,7 +59,7 @@ FTTH - Mobily - Project/
 Ã¢â€â€š
 Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ 06-Suspend-Resume/                # Ã¢ÂÂ¸Ã¯Â¸Â Service Suspend & Resume
 Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ Suspend/Mobily + Suspend/OpenAccess/
-Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ 13-Shared-Workflows/Create Service Order - OA/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ 13-Shared-Workflows/Create Service Order - OpenAccess/
 Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ Resume/OpenAccess/
 Ã¢â€â€š
 Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ 07-Termination/                   # Ã¢ÂÅ’ Service Deactivation
@@ -265,7 +265,7 @@ Cross-cutting steps (TMF641, appointments, completions, failures) remain in **`S
 | Step | Folder | API Type | Description |
 |------|--------|----------|-------------|
 | 1 | `Suspend/Mobily + Suspend/OpenAccess` | TMF622 POST | Suspend (Mobily + OpenAccess) |
-| 2 | `13-Shared-Workflows/Create Service Order - OA` | OA | Notify OpenAccess providers |
+| 2 | `13-Shared-Workflows/Create Service Order - OpenAccess` | OA | Notify OpenAccess providers |
 | 3 | `Resume/OpenAccess` | TMF622 POST | Resume (OpenAccess only) |
 
 ---
@@ -392,6 +392,7 @@ Chain meng-capture `inventoryId` otomatis lewat `vars:post-response`, jadi tingg
 **Last Updated:** March 2026  
 **Maintained By:** Mobily FTTH Integration Team  
 **Organization:** Journey-Centric (reorganized from API-type grouping)
+
 
 
 
