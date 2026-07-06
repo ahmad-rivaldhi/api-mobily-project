@@ -187,7 +187,7 @@ Write-Log "START" ("=" * 60)
 $vars = Get-BrunoEnv $Env
 Do-Auth $vars $Env
 
-# Step 2: Create order (paths mirror Automation/constants/paths.js Ã¢â‚¬â€ mobilyCreateOrderPath)
+# Step 2: Create order (paths mirror Automation/constants/paths.js — mobilyCreateOrderPath)
 $meSuffix = if ($ME -gt 0) { "With-$ME-ME" } else { "No-ME" }
 $meFolder = if ($ME -le 0) { "without ME" } else { "with $ME ME" }
 if ($CustomerType -eq "Royal-Customer") {

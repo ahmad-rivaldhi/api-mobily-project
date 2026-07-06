@@ -7,7 +7,7 @@
  * journey builders just emit a new `type` value, the runner doesn't change).
  *
  * `executeStep` is also where we surface a structured "VARS" log line for
- * notify steps â€” listing the IDs the runner is about to send so the user
+ * notify steps — listing the IDs the runner is about to send so the user
  * can see exactly which `externalId` / `serviceOrderId` / etc. is on the
  * wire (the request itself is logged by `runBruRequest`).
  */
@@ -29,7 +29,7 @@ const { doExtractOpenAccessProviderIds } = require('../providers/openaccess');
 /**
  * Notify steps reference IDs through `{{var}}` placeholders. When the user
  * triggers an OA installation notification we surface the candidate values
- * so the audit log shows *which* externalId the request will use â€” without
+ * so the audit log shows *which* externalId the request will use — without
  * having to grep the .bru file.
  */
 function logCandidateExternalIdsForNotify(step, vars) {
@@ -52,7 +52,7 @@ function logCandidateExternalIdsForNotify(step, vars) {
   if (file.includes('/ODB-Patch-Notification')) push('odbPatchActionId');
 
   if (candidates.length) {
-    log('VARS', `Will send â†’ ${candidates.join(', ')}`);
+    log('VARS', `Will send → ${candidates.join(', ')}`);
   }
 }
 
@@ -81,7 +81,7 @@ const STEP_HANDLERS = {
     if (!nRes.ok) {
       log(
         'ERROR',
-        `Notify ${path.basename(step.file, '.bru')} FAILED: HTTP ${nRes.status} â€” ${JSON.stringify(nRes.body).slice(0, 300)}`,
+        `Notify ${path.basename(step.file, '.bru')} FAILED: HTTP ${nRes.status} — ${JSON.stringify(nRes.body).slice(0, 300)}`,
       );
     } else {
       log('OK', `Notify ${path.basename(step.file, '.bru')} => HTTP ${nRes.status}`);

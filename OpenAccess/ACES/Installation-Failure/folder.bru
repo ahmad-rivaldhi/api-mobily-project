@@ -13,7 +13,7 @@ vars:pre-request {
 }
 
 docs {
-  # ACES â€” Installation Failure Notifications
+  # ACES — Installation Failure Notifications
   
   **funcId:** `ACES_ORDER_UPDATE`
   **Endpoint:** `POST {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/`
@@ -23,7 +23,7 @@ docs {
   `providerStatus: "Failure"` (or `"Pending"` for cancellations) and a
   reason code/text pair that drives Telflow's downstream treatment.
   
-  ## Test Scenarios â€” Standard Treatments (T1â€“T5)
+  ## Test Scenarios — Standard Treatments (T1–T5)
   
   | # | Reason Code | Reason Text                                          | Treatment                  |
   |---|-------------|------------------------------------------------------|----------------------------|
@@ -33,7 +33,7 @@ docs {
   | T4| `R-OM-004`  | Internal wiring required at the customer premises    | Customer follow-up         |
   | T5| `R-OM-008`  | End-customer require to cancel the product order     | Order cancellation         |
   
-  ## Dynamic-Value Treatments (D1â€“D4)
+  ## Dynamic-Value Treatments (D1–D4)
   
   These reason codes carry **bracketed placeholders** in their `reasonText`
   that must be substituted at runtime with real Telflow IDs. To keep these
@@ -52,8 +52,8 @@ docs {
   Telflow's behaviour against varying IDs without hand-editing the body.
   
   ## Folder-level Variables
-  - `acesInstallationId` â€” provider externalId / installation reference
-  - `acesServiceAccNum`  â€” service account number echoed back by ACES
+  - `acesInstallationId` — provider externalId / installation reference
+  - `acesServiceAccNum`  — service account number echoed back by ACES
   
   Override per-request in the request's own `vars:pre-request` block when
   testing a specific live order.

@@ -1,7 +1,7 @@
 ﻿/**
- * Journey registry: every supported provider Ã— journey-type combination.
+ * Journey registry: every supported provider × journey-type combination.
  *
- * Adding a new provider/journey only requires inserting an entry here â€” the
+ * Adding a new provider/journey only requires inserting an entry here — the
  * runner, step executor, and toolkit all read from this map (Open/Closed
  * principle). `stepLabels` may be either a static array or
  * `(opts) => labels[]` to allow option-driven label sets (e.g. RCY orders
@@ -502,7 +502,7 @@ const JOURNEY_REGISTRY = {
     stateMap: {},
   },
 
-  // ===== ACES (OpenAccess â€” Phase 4B) ======================================
+  // ===== ACES (OpenAccess — Phase 4B) ======================================
   'aces-activation': {
     label: 'New Activation',
     provider: 'ACES',

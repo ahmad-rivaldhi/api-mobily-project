@@ -12,20 +12,20 @@ docs {
   cpeSerialNumber tersimpan sebagai Characteristic (`ID: "cpeSerialNumber"`),
   baik di order body maupun di inventory entry CPE.
 
-  ## Strategy A â€” Free-text `q`
+  ## Strategy A — Free-text `q`
     01 - Search Sales Orders by q
     02 - Search Customer Orders by q
 
-  ## Strategy B â€” via Inventory (PALING RELIABLE untuk CPE)
-    03 - Search Inventory by CPE Serial   â†’ capture inventoryId
+  ## Strategy B — via Inventory (PALING RELIABLE untuk CPE)
+    03 - Search Inventory by CPE Serial   → capture inventoryId
     04 - Get Inventory Detail
-    05 - Get Inventory Relationships      â†’ related business interactions
+    05 - Get Inventory Relationships      → related business interactions
     06 - List Customer Orders by inventoryId
 
   ## Tips:
   - Pastikan `{{cpeSerialNumber}}` di env sudah di-set ke nilai yang dicari
-    (default env contoh ada `48-57-49-...` â€” ganti ke nilai riil).
-  - Serial number bisa juga match tanpa dash â€” coba variant kalau 0 hasil.
+    (default env contoh ada `48-57-49-...` — ganti ke nilai riil).
+  - Serial number bisa juga match tanpa dash — coba variant kalau 0 hasil.
   - Filter tambahan saat search inventory: `type=CPE` atau
     `specificationName=CPE` untuk narrow down.
 }

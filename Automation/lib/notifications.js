@@ -42,7 +42,7 @@ async function doCreateOrder(vars, bruFile) {
   log('CREATE', `Creating order: ${label}`);
   log(
     'VARS',
-    `customerCategory=${vars.customerCategory || 'âˆ…'}, networkCategory=${vars.networkCategory || 'âˆ…'}`,
+    `customerCategory=${vars.customerCategory || '∅'}, networkCategory=${vars.networkCategory || '∅'}`,
   );
 
   const res = await runBruRequest(bruFile, vars);

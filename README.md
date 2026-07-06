@@ -4,7 +4,7 @@
 
 ---
 
-## Ã°Å¸â€œâ€¹ **Table of Contents**
+## 📋 **Table of Contents**
 
 1. [Overview](#overview)
 2. [Project Structure](#project-structure)
@@ -14,7 +14,7 @@
 
 ---
 
-## Ã°Å¸Å½Â¯ **Overview**
+## 🎯 **Overview**
 
 This Bruno API collection covers FTTH order flows for Mobily and OpenAccess providers (STC, ITC, ACES, DOWIYAT).
 
@@ -24,7 +24,7 @@ This Bruno API collection covers FTTH order flows for Mobily and OpenAccess prov
 
 ---
 
-## Ã°Å¸â€œÂ **Project Structure**
+## 📁 **Project Structure**
 
 ```
 FTTH - Mobily - Project/
@@ -48,7 +48,7 @@ FTTH - Mobily - Project/
 
 ---
 
-## Ã°Å¸Å’Â **Environments**
+## 🌍 **Environments**
 
 ### **awsDev** (AWS Development)
 - **Base URL:** `https://mobily-dev.live.demo-in.telflow.com`
@@ -71,7 +71,7 @@ FTTH - Mobily - Project/
 
 ---
 
-## Ã°Å¸â€ â€¢ **What's New (Phase 4B - 18 Apr update)**
+## 🆕 **What's New (Phase 4B - 18 Apr update)**
 
 ### 1. `networkCategory` is now mandatory in all TMF 622 payloads
 
@@ -85,7 +85,7 @@ characteristic on every Create Product Order request:
 | VIP           | `Vip`              | `FTTH Consumer`   |
 
 `networkCategory` is now the **primary differentiator** between Regular and
-RCY customers Ã¢â‚¬â€ replacing the historical practice of relying on separate folders.
+RCY customers — replacing the historical practice of relying on separate folders.
 
 #### How this is wired in the collection (single source of truth)
 
@@ -102,19 +102,19 @@ Every TMF 622 `.bru` references the values via `{{customerCategory}}` and
 Override at the request level (in another `vars:pre-request` block inside the
 `.bru`) only when you need to test an edge case (e.g. an OA Royal scenario).
 
-### 2. New Open Access Provider Ã¢â‚¬â€ **ACES**
+### 2. New Open Access Provider — **ACES**
 
 ACES is a new infrastructure provider added in phase 4B. Notification flows
 are mapped under `OpenAccess/ACES/`.
 
 | Sub-folder | Purpose |
 |------------|---------|
-| OA ONT Installation - Notification     | Accepted Ã¢â€ â€™ In Progress Ã¢â€ â€™ Serial Number Ã¢â€ â€™ Completed |
-| Cancellation-Service-Installation   | Received Ã¢â€ â€™ Accepted Ã¢â€ â€™ In Progress Ã¢â€ â€™ Cancelled |
+| OA ONT Installation - Notification     | Accepted → In Progress → Serial Number → Completed |
+| Cancellation-Service-Installation   | Received → Accepted → In Progress → Cancelled |
 | Modification-Service-Installation   | Completed |
-| DeviceSwap-Service-Installation     | Accepted Ã¢â€ â€™ In Progress Ã¢â€ â€™ Serial Number Ã¢â€ â€™ Completed |
-| Relocation-Service-Installation     | Accepted Ã¢â€ â€™ In Progress Ã¢â€ â€™ Completed |
-| Rewiring-Service-Installation       | Accepted Ã¢â€ â€™ In Progress Ã¢â€ â€™ Completed |
+| DeviceSwap-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
+| Relocation-Service-Installation     | Accepted → In Progress → Completed |
+| Rewiring-Service-Installation       | Accepted → In Progress → Completed |
 | Suspend-Service-Installation        | Completed |
 | Resume-Service-Installation         | Completed |
 | Termination-Service-Installation    | Completed |
@@ -133,17 +133,17 @@ Source samples: `aces/*.json` (collection root).
 
 The journey runner (`Automation/journey-runner.js`) now drives **all four**
 OA providers (STC, ITC, ACES, **DOWIYAT**) through the **provider-side**
-activation flow Ã¢â‚¬â€ the providers' own Service-Installation notification API
+activation flow — the providers' own Service-Installation notification API
 replaces the Mobily WFM-CPE workflow:
 
 | Journey ID         | Provider | Flow |
 |--------------------|----------|------|
-| `stc-activation`     | STC      | Create Order Ã¢â€ â€™ **STC SQ Notifs (Ordered Ã¢â€ â€™ Completed Ã¢â€ â€™ Closed)** Ã¢â€ â€™ STC Activation Notifs (6 steps) Ã¢â€ â€™ TMF641 Completed Ã¢â€ â€™ SV Provisioning-Completed Ã¢â€ â€™ SV Pre-Completion Ã¢â€ â€™ Completed |
-| `itc-activation`     | ITC      | Create Order Ã¢â€ â€™ ITC Activation Notifs (6 steps) Ã¢â€ â€™ TMF641 Completed Ã¢â€ â€™ SV Provisioning-Completed Ã¢â€ â€™ SV Pre-Completion Ã¢â€ â€™ Completed |
-| `aces-activation` Ã°Å¸â€ â€¢ | ACES     | Create Order Ã¢â€ â€™ ACES Activation Notifs (4 steps) Ã¢â€ â€™ TMF641 Completed Ã¢â€ â€™ SV Provisioning-Completed Ã¢â€ â€™ SV Pre-Completion Ã¢â€ â€™ Completed |
-| `dawiyat-activation` | DOWIYAT  | Create Order Ã¢â€ â€™ DOWIYAT OA ONT notifications (7 steps) Ã¢â€ â€™ TMF641 Completed Ã¢â€ â€™ SV Provisioning-Completed Ã¢â€ â€™ SV Pre-Completion Ã¢â€ â€™ Completed |
+| `stc-activation`     | STC      | Create Order → **STC SQ Notifs (Ordered → Completed → Closed)** → STC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `itc-activation`     | ITC      | Create Order → ITC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `aces-activation` 🆕 | ACES     | Create Order → ACES Activation Notifs (4 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
+| `dawiyat-activation` | DOWIYAT  | Create Order → DOWIYAT OA ONT notifications (7 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
 
-> Ã¢Å¡Â Ã¯Â¸Â **Difference from Mobily activation:** OA flows do **NOT** run **Mobily** WFM CPE steps (`Shared-Workflows/WFM-CPE`) and do **NOT** include the SV `UAT-Completed` step. Provider simulations live under **`OpenAccess/<PROVIDER>/Activation/OA ONT Installation - Notification/`**.
+> ⚠️ **Difference from Mobily activation:** OA flows do **NOT** run **Mobily** WFM CPE steps (`Shared-Workflows/WFM-CPE`) and do **NOT** include the SV `UAT-Completed` step. Provider simulations live under **`OpenAccess/<PROVIDER>/Activation/OA ONT Installation - Notification/`**.
 
 **Run examples:**
 
