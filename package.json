@@ -1,0 +1,17 @@
+{
+  "name": "ftth-mobily-automation",
+  "version": "1.0.0",
+  "description": "Automation engine + Bruno collection for FTTH Mobily journey orchestration",
+  "main": "Automation/core.js",
+  "files": [
+    "Automation/",
+    "Authentication/",
+    "Mobily/",
+    "OpenAccess/",
+    "Shared-Workflows/",
+    "Search-By-SAN-CPE/"
+  ],
+  "keywords": ["ftth", "mobily", "telflow", "automation"],
+  "license": "UNLICENSED",
+  "private": true
+}

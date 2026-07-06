@@ -1,11 +1,16 @@
 /**
- * `.bru` and environment file parsers. Reads files relative to the project
- * root configured via `runtime.init(projectRoot)`.
+ * `.bru` and environment file parsers.
+ *
+ * - `parseBruFile` resolves paths against ROOT (the package / repo root),
+ *   i.e. the collection files bundled with the engine.
+ * - `parseEnvFile` / `listEnvironments` resolve against ENVROOT, which is the
+ *   consumer's local environments directory (credential files, never bundled).
+ *   Set via `core.init({ envPath })`.
  */
 
 const fs = require('fs');
 const path = require('path');
-const { getRoot } = require('./runtime');
+const { getRoot, getEnvRoot } = require('./runtime');
 
 /**
  * Parse a Bruno request file into `{ method, url, body, formBody }`.
@@ -65,17 +70,20 @@ function parseBruFile(filePath) {
 }
 
 /**
- * Load `environments/<envName>.bru` and parse the `vars { ... }` block into
- * a flat key→string map.
+ * Load `<envRoot>/<envName>.bru` and parse the `vars { ... }` block into
+ * a flat key→string map.  The environments directory is resolved from
+ * ENVROOT (set via `core.init({ envPath })`), not from the package root.
  */
 function parseEnvFile(envName) {
-  const envFile = path.resolve(getRoot(), 'environments', `${envName}.bru`);
+  const envDir  = getEnvRoot();
+  const envFile = path.resolve(envDir, `${envName}.bru`);
   if (!fs.existsSync(envFile)) {
-    const available = fs
-      .readdirSync(path.resolve(getRoot(), 'environments'))
-      .filter((f) => f.endsWith('.bru'))
-      .map((f) => f.replace('.bru', ''));
-    throw new Error(`Environment "${envName}" not found. Available: ${available.join(', ')}`);
+    const available = fs.existsSync(envDir)
+      ? fs.readdirSync(envDir).filter((f) => f.endsWith('.bru')).map((f) => f.replace('.bru', ''))
+      : [];
+    throw new Error(
+      `Environment "${envName}" not found in ${envDir}. Available: ${available.join(', ') || '(none)'}`,
+    );
   }
   const content = fs.readFileSync(envFile, 'utf-8');
   const vars = {};
@@ -91,7 +99,7 @@ function parseEnvFile(envName) {
 
 /** @returns {string[]} Available environment names (without `.bru` suffix). */
 function listEnvironments() {
-  const envDir = path.resolve(getRoot(), 'environments');
+  const envDir = getEnvRoot();
   if (!fs.existsSync(envDir)) return [];
   return fs
     .readdirSync(envDir)

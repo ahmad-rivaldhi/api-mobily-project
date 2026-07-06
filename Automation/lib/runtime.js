@@ -2,11 +2,20 @@
  * Shared runtime: project root, logger, cancellation-aware delay.
  * Single source of truth so the rest of the codebase never imports `core`
  * directly for these primitives.
+ *
+ * When used as an npm package (installed via `npm install github:…`), ROOT
+ * auto-resolves to the package directory inside node_modules — no manual
+ * `init(projectRoot)` call needed for the collection files.
+ *
+ * ENVROOT is separate: it points to wherever the consumer stores their
+ * `environments/*.bru` credential files, which are never bundled into the
+ * package.  Pass it via `init({ envPath })`.
  */
 
 const path = require('path');
 
-let ROOT = path.resolve(__dirname, '..', '..');
+let ROOT    = path.resolve(__dirname, '..', '..');       // package / repo root
+let ENVROOT = path.join(ROOT, 'environments');            // default: backward-compatible
 let _log = defaultLog;
 let _cancelCheck = null;
 
@@ -16,22 +25,38 @@ function defaultLog(tag, msg) {
 }
 
 /**
- * Initialise the shared runtime. Call once from the entry point (CLI runner /
- * web server) before invoking any journey logic.
+ * Initialise the shared runtime. Two call signatures:
  *
- * @param {string} projectRoot Absolute path to the repo root that contains
- *   `environments/`, `Authentication/`, etc.
- * @param {(tag: string, msg: string) => void} [logger] Optional injectable
- *   logger; defaults to `console.log` with timestamp + tag.
+ *   init(projectRoot, logger)          — legacy, backward-compatible
+ *   init({ envPath, logger })          — new: used when loaded as npm package
+ *
+ * @param {string | { envPath?: string, logger?: Function }} optsOrPath
+ * @param {(tag: string, msg: string) => void} [logger]
  */
-function init(projectRoot, logger) {
-  ROOT = path.resolve(projectRoot);
-  _log = typeof logger === 'function' ? logger : defaultLog;
+function init(optsOrPath, logger) {
+  if (typeof optsOrPath === 'string') {
+    // Legacy: init(projectRoot, logger)
+    ROOT    = path.resolve(optsOrPath);
+    ENVROOT = path.join(ROOT, 'environments');
+    _log    = typeof logger === 'function' ? logger : defaultLog;
+  } else if (optsOrPath && typeof optsOrPath === 'object') {
+    // New: init({ envPath, logger })
+    if (optsOrPath.envPath) ENVROOT = path.resolve(optsOrPath.envPath);
+    const lg = optsOrPath.logger ?? logger;
+    _log = typeof lg === 'function' ? lg : defaultLog;
+  } else {
+    _log = typeof logger === 'function' ? logger : defaultLog;
+  }
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
 
 function getRoot() {
   return ROOT;
+}
+
+/** Returns the directory containing `environments/*.bru` credential files. */
+function getEnvRoot() {
+  return ENVROOT;
 }
 
 function log(tag, msg) {
@@ -66,6 +91,7 @@ module.exports = {
   init,
   log,
   getRoot,
+  getEnvRoot,
   setCancelCheck,
   isCancelled,
   delay,
