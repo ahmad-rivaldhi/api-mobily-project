@@ -5,12 +5,12 @@
  * than the historical Regular/Royal folder split, so the journey runner
  * picks ODB-patch behaviour from this constant.
  *
- *   FTTH CONSUMER  →  ODB patch is required  (Regular customers)
+ *   FTTH Consumer  →  ODB patch is required  (Regular customers)
  *   FTTH RCY       →  ODB patch is skipped   (Royal customers)
  */
 
 const NETWORK_CATEGORY = Object.freeze({
-  CONSUMER: 'FTTH CONSUMER',
+  CONSUMER: 'FTTH Consumer',
   RCY: 'FTTH RCY',
 });
 
@@ -20,7 +20,7 @@ const CUSTOMER_CATEGORY = Object.freeze({
 });
 
 /**
- * Return a canonical `FTTH CONSUMER` / `FTTH RCY` value, accepting any
+ * Return a canonical `FTTH Consumer` / `FTTH RCY` value, accepting any
  * sensible spelling the caller might pass (case-insensitive, hyphen/space
  * tolerant).
  */
@@ -61,7 +61,7 @@ function customerCategoryFor(networkCategory) {
 }
 
 /**
- * `true` for `FTTH CONSUMER` (regular customers). RCY/Royal orders skip the
+ * `true` for `FTTH Consumer` (regular customers). RCY/Royal orders skip the
  * ODB patch action entirely — Telflow handles the patch internally for that
  * network class.
  */

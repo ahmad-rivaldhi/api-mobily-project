@@ -3,13 +3,13 @@
  *
  * Each provider declares:
  *   - `notifications`  : the Service-Qualification + Service-Installation
- *                        `.bru` files that simulate providerâ†’Telflow events.
+ *                        `.bru` files that simulate provider→Telflow events.
  *   - `idSpec`         : which `externalId` values must be extracted from B2B
  *                        messages to render those notifications, and how to
  *                        recognise the source action.
  *
  * `buildOpenAccessActivation` consumes these to compose the journey steps.
- * Adding a fifth provider only requires declaring a new entry â€” no change to
+ * Adding a fifth provider only requires declaring a new entry — no change to
  * the runner, registry, or extractor needed (Open/Closed principle).
  */
 
@@ -22,56 +22,64 @@ const {
   extractExternalIdFromB2bPayload,
 } = require('./../lib/b2b');
 
-const { openAccessCreateOrderPath } = require('../constants/paths');
+const {
+  oaActivationPath,
+  openAccessCreateOrderPath,
+  TMF641,
+  SINGLEVIEW,
+} = require('../constants/paths');
+const { NOTIFY_STEP_DELAY_MS } = require('../constants/timing');
 
-const OA_BASE = '02-Activation Order/OpenAccess';
+function oaAct(provider, ...subpath) {
+  return oaActivationPath(provider, ...subpath);
+}
 
 const OA_PROVIDER_NOTIFICATIONS = {
   STC: {
     sqNotifications: [
-      `${OA_BASE}/STC/Service Qualification - Notification/STC-Ordered.bru`,
-      `${OA_BASE}/STC/Service Qualification - Notification/STC-Completed.bru`,
-      `${OA_BASE}/STC/Service Qualification - Notification/STC-Closed.bru`,
+      oaAct('STC', 'Service Qualification - Notification/STC-Ordered.bru'),
+      oaAct('STC', 'Service Qualification - Notification/STC-Completed.bru'),
+      oaAct('STC', 'Service Qualification - Notification/STC-Closed.bru'),
     ],
     activationNotifications: [
-      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-01-STC-WO-Created-In-WFMS.bru`,
-      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-02-STC-Technician-Assignment.bru`,
-      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-03-STC-Technician-Working.bru`,
-      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-04-STC-TEST-FTTH-LINK.bru`,
-      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-05-STC-Activate-ONT.bru`,
-      `${OA_BASE}/STC/OA ONT Installation - Notification/Step-06-STC-Closed.bru`,
+      oaAct('STC', 'OA ONT Installation - Notification/Step-01-STC-WO-Created-In-WFMS.bru'),
+      oaAct('STC', 'OA ONT Installation - Notification/Step-02-STC-Technician-Assignment.bru'),
+      oaAct('STC', 'OA ONT Installation - Notification/Step-03-STC-Technician-Working.bru'),
+      oaAct('STC', 'OA ONT Installation - Notification/Step-04-STC-TEST-FTTH-LINK.bru'),
+      oaAct('STC', 'OA ONT Installation - Notification/Step-05-STC-Activate-ONT.bru'),
+      oaAct('STC', 'OA ONT Installation - Notification/Step-06-STC-Closed.bru'),
     ],
   },
   ITC: {
     sqNotifications: [],
     activationNotifications: [
-      `${OA_BASE}/ITC/OA ONT Installation - Notification/01-ITC-Create Task.bru`,
-      `${OA_BASE}/ITC/OA ONT Installation - Notification/02-ITC-Accepted.bru`,
-      `${OA_BASE}/ITC/OA ONT Installation - Notification/03-ITC-Assigned.bru`,
-      `${OA_BASE}/ITC/OA ONT Installation - Notification/04-ITC-SetOff.bru`,
-      `${OA_BASE}/ITC/OA ONT Installation - Notification/05-ITC- Installation Completed - Serial Number Notification.bru`,
-      `${OA_BASE}/ITC/OA ONT Installation - Notification/06-ITC-Success.bru`,
+      oaAct('ITC', 'OA ONT Installation - Notification/01-ITC-Create Task.bru'),
+      oaAct('ITC', 'OA ONT Installation - Notification/02-ITC-Accepted.bru'),
+      oaAct('ITC', 'OA ONT Installation - Notification/03-ITC-Assigned.bru'),
+      oaAct('ITC', 'OA ONT Installation - Notification/04-ITC-SetOff.bru'),
+      oaAct('ITC', 'OA ONT Installation - Notification/05-ITC- Installation Completed - Serial Number Notification.bru'),
+      oaAct('ITC', 'OA ONT Installation - Notification/06-ITC-Success.bru'),
     ],
   },
   ACES: {
     sqNotifications: [],
     activationNotifications: [
-      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-01-ACES-Accepted.bru`,
-      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-02-ACES-InProgress.bru`,
-      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-03-ACES-Serial-Number-Notification.bru`,
-      `${OA_BASE}/ACES/OA ONT Installation - Notification/Step-04-ACES-Completed.bru`,
+      oaAct('ACES', 'OA ONT Installation - Notification/Step-01-ACES-Accepted.bru'),
+      oaAct('ACES', 'OA ONT Installation - Notification/Step-02-ACES-InProgress.bru'),
+      oaAct('ACES', 'OA ONT Installation - Notification/Step-03-ACES-Serial-Number-Notification.bru'),
+      oaAct('ACES', 'OA ONT Installation - Notification/Step-04-ACES-Completed.bru'),
     ],
   },
   DOWIYAT: {
     sqNotifications: [],
     activationNotifications: [
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-01-DOWIYAT-Acknowledged.bru`,
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-02-DOWIYAT-InProgress-Dispatch.bru`,
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-03-DOWIYAT-InProgress-Departure.bru`,
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-04-DOWIYAT-InProgress-Arrival.bru`,
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-05-DOWIYAT-InProgress-HAG-Activation.bru`,
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-06-DOWIYAT-Serial-Number-Notification.bru`,
-      `${OA_BASE}/DOWIYAT/OA ONT Installation - Notification/Step-07-DOWIYAT-Completed.bru`,
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-01-DOWIYAT-Acknowledged.bru'),
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-02-DOWIYAT-InProgress-Dispatch.bru'),
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-03-DOWIYAT-InProgress-Departure.bru'),
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-04-DOWIYAT-InProgress-Arrival.bru'),
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-05-DOWIYAT-InProgress-HAG-Activation.bru'),
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-06-DOWIYAT-Serial-Number-Notification.bru'),
+      oaAct('DOWIYAT', 'OA ONT Installation - Notification/Step-07-DOWIYAT-Completed.bru'),
     ],
   },
 };
@@ -203,21 +211,6 @@ async function doExtractOpenAccessProviderIds(
 
 /**
  * Build the OpenAccess activation step list.
- *
- * Step numbering (no-SQ providers â€” ITC / ACES / DOWIYAT):
- *   2 create order
- *   3 extract OA installation external ID
- *   5 provider activation notifications
- *   6 wait + extract serviceOrderId
- *   7 TMF641 Completed
- *   8 wait Provisioning Completed + extract svActionId
- *   9 SV Provisioning-Completed
- *  10 wait Pre-Completion
- *  11 SV Pre-Completion
- *  12 verify Completed
- *
- * STC adds two extra steps in the middle for the Service-Qualification flow,
- * so its numbering is shifted by +1 from step 5 onwards (see labels module).
  */
 function buildOpenAccessActivation(provider, opts) {
   const meCount = opts.me || 0;
@@ -234,7 +227,7 @@ function buildOpenAccessActivation(provider, opts) {
     step: 4,
     type: 'notify',
     file,
-    delay: 5000,
+    delay: NOTIFY_STEP_DELAY_MS,
   }));
 
   const initialExtractStep =
@@ -271,7 +264,7 @@ function buildOpenAccessActivation(provider, opts) {
     step: activationStepNum,
     type: 'notify',
     file,
-    delay: 5000,
+    delay: NOTIFY_STEP_DELAY_MS,
   }));
 
   const postProviderWaitStep = provider === 'STC' ? 7 : 6;
@@ -301,8 +294,8 @@ function buildOpenAccessActivation(provider, opts) {
     {
       step: tmf641Step,
       type: 'notify',
-      file: '13-Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
-      delay: 0,
+      file: TMF641.serviceOrderCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: waitProvisioningStep, type: 'waitForState', state: 'In Progress|Provisioning Completed' },
@@ -311,8 +304,8 @@ function buildOpenAccessActivation(provider, opts) {
     {
       step: svProvisioningStep,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
-      delay: 5000,
+      file: SINGLEVIEW.provisioningCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: waitPreCompletionStep, type: 'waitForState', state: 'In Progress|Pre-Completion' },
@@ -320,8 +313,8 @@ function buildOpenAccessActivation(provider, opts) {
     {
       step: svPreCompletionStep,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
-      delay: 5000,
+      file: SINGLEVIEW.preCompletion,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: waitCompletedStep, type: 'waitForState', state: 'Completed' },
@@ -336,5 +329,3 @@ module.exports = {
   doExtractOpenAccessProviderIds,
   buildOpenAccessActivation,
 };
-
-

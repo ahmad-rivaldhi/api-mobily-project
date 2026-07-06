@@ -9,6 +9,7 @@ const { httpRequest } = require('./http');
 const { buildB2bUrl, buildOrderDetailUrl } = require('./url-builder');
 const {
   PROVISIONING_COMPLETED_BRU,
+  UAT_COMPLETED_BRU,
   getLatestB2BProductOrderState,
 } = require('./b2b');
 const { doNotification } = require('./notifications');
@@ -152,12 +153,26 @@ function needsProvisioningNotifyBeforePendingUat(subState, specificTarget) {
   return s === 'Provisioning Completed' || s.includes('Provisioning Completed');
 }
 
+/**
+ * `true` when we're waiting for Pre-Completion but the portal is still at
+ * UAT Completed — replay `UAT-Completed.bru` once (often sent before the
+ * SingleView CPE Installation Pending UAT action was ready in B2B).
+ */
+function needsUatNotifyBeforePreCompletion(subState, specificTarget) {
+  if (specificTarget !== 'Pre-Completion') return false;
+  if (!subState) return false;
+  const s = String(subState).trim();
+  if (s.includes('Pre-Completion')) return false;
+  return s === 'UAT Completed' || s.includes('UAT Completed');
+}
+
 async function doWaitForOrderState(vars, targetState, maxAttempts = 20, intervalMs = 15000) {
   const targetParts = targetState.split('|').map((s) => s.trim());
   const specificTarget = targetParts[targetParts.length - 1];
   log('STATE', `Waiting for state: ${specificTarget}...`);
 
   let autoProvisioningNotifyAttempted = false;
+  let autoUatNotifyAttempted = false;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     let b2bFound = false;
@@ -222,6 +237,27 @@ async function doWaitForOrderState(vars, targetState, maxAttempts = 20, interval
       continue;
     }
 
+    if (
+      needsUatNotifyBeforePreCompletion(subState, specificTarget) &&
+      !autoUatNotifyAttempted
+    ) {
+      autoUatNotifyAttempted = true;
+      log(
+        'BRIDGE',
+        'Order is still at UAT Completed — replaying SV UAT-Completed (required before Pre-Completion)',
+      );
+      const res = await doNotification(vars, UAT_COMPLETED_BRU);
+      if (!res.ok) {
+        throw new Error(
+          `SV UAT-Completed failed (${res.status}) while waiting for Pre-Completion. ` +
+            `Fix svActionId / auth or send manually. Body: ${JSON.stringify(res.body).slice(0, 300)}`,
+        );
+      }
+      vars._svUatCompletedOk = true;
+      await delay(3000);
+      continue;
+    }
+
     log(
       'STATE',
       `Attempt ${attempt}/${maxAttempts} — detail: "${subState || 'N/A'}", B2B: no match yet, target: ${specificTarget} (${intervalMs / 1000}s)...`,
@@ -272,6 +308,7 @@ module.exports = {
   findSvReferenceInOrderData,
   isNumericDbSvActionId,
   needsProvisioningNotifyBeforePendingUat,
+  needsUatNotifyBeforePreCompletion,
   doWaitForOrderState,
   doCheckState,
 };

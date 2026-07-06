@@ -21,6 +21,8 @@ const {
   doExtractWorkOrderIds,
   doExtractOdbPatchActionId,
 } = require('../lib/extractors');
+const { notifyDelayForFile } = require('../constants/timing');
+const { doWaitForCpeInstallationPendingUat } = require('../lib/b2b');
 const { doWaitForOrderState } = require('../lib/state');
 const { doExtractOpenAccessProviderIds } = require('../providers/openaccess');
 
@@ -45,8 +47,8 @@ function logCandidateExternalIdsForNotify(step, vars) {
   if (file.includes('/DOWIYAT/OA ONT Installation - Notification/')) push('dawiyatInstallationId');
   if (file.includes('/Order-Completion/') || file.includes('/Custom-Notifications/')) push('svActionId');
   if (file.includes('/TMF641-Notifications/')) push('serviceOrderId');
-  if (file.includes('/Mobily/WFM CPE Installation - Notification/Phase 1/')) push('workOrderIdCpe');
-  if (file.includes('/WFM-ME-Workflow/')) push('workOrderIdMe');
+  if (file.includes('/WFM-CPE/')) push('workOrderIdCpe');
+  if (file.includes('/WFM-ME/')) push('workOrderIdMe');
   if (file.includes('/ODB-Patch-Notification')) push('odbPatchActionId');
 
   if (candidates.length) {
@@ -89,7 +91,9 @@ const STEP_HANDLERS = {
         `SV Provisioning-Completed failed (${nRes.status}). Cannot continue. ${JSON.stringify(nRes.body).slice(0, 300)}`,
       );
     }
-    if (step.delay > 0) await delay(step.delay);
+    const notifyDelay = notifyDelayForFile(step.file);
+    log('WAIT', `Pausing ${notifyDelay / 1000}s after notification...`);
+    await delay(notifyDelay);
   },
 
   async wait(step) {
@@ -108,6 +112,10 @@ const STEP_HANDLERS = {
 
   async extractOdbPatchActionId(step, vars) {
     await doExtractOdbPatchActionId(vars);
+  },
+
+  async waitForCpeInstallationPendingUat(step, vars) {
+    await doWaitForCpeInstallationPendingUat(vars);
   },
 
   async waitForState(step, vars) {

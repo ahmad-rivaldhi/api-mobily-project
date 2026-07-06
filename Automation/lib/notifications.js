@@ -14,6 +14,7 @@ const path = require('path');
 const { log } = require('./runtime');
 const { runBruRequest } = require('./http');
 const { PROVISIONING_COMPLETED_BRU } = require('./b2b');
+const { SINGLEVIEW } = require('../constants/paths');
 
 async function doNotification(vars, bruFile) {
   vars.eventTime = new Date().toISOString();
@@ -24,6 +25,9 @@ async function doNotification(vars, bruFile) {
   const res = await runBruRequest(bruFile, vars);
   if (bruFile.includes('Provisioning-Completed.bru') && res.ok) {
     vars._svProvisioningCompletedOk = true;
+  }
+  if (bruFile.includes('UAT-Completed.bru') && res.ok) {
+    vars._svUatCompletedOk = true;
   }
   if (!res.ok) {
     log('WARN', `${label} => ${res.status}: ${JSON.stringify(res.body).slice(0, 200)}`);
@@ -56,10 +60,9 @@ async function doCreateOrder(vars, bruFile) {
 
 const SV_NOTIFICATION_BY_TYPE = {
   'provisioning-completed': PROVISIONING_COMPLETED_BRU,
-  'uat-completed': '13-Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
-  'pre-completion': '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
-  'odb-patch':
-    '13-Shared-Workflows/SingleView-Integration/Custom-Notifications/ODB-Patch-Notification.bru',
+  'uat-completed': SINGLEVIEW.uatCompleted,
+  'pre-completion': SINGLEVIEW.preCompletion,
+  'odb-patch': SINGLEVIEW.odbPatch,
 };
 
 async function doTriggerSvNotification(vars, type) {

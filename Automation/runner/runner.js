@@ -17,11 +17,12 @@ const {
   parseResumeFrom,
   mergePreseedVars,
   stripInvalidSvActionId,
-  stripStaleOAProviderIds,
+  stripStalePerOrderIds,
   shouldSkipStep,
   shouldForceExtractOnResume,
   logResumeFirstExecutableSteps,
   maybeReplayProvisioningNotifyIfSkipped,
+  maybeReplayUatNotifyIfSkipped,
 } = require('./resume');
 const { executeStep } = require('./step-executor');
 
@@ -31,7 +32,7 @@ const { executeStep } = require('./step-executor');
  * @param {object} [opts]
  * @param {number} [opts.me]
  * @param {string} [opts.customerType]    Regular-Customer | Royal-Customer
- * @param {string} [opts.networkCategory] FTTH CONSUMER | FTTH RCY (override)
+ * @param {string} [opts.networkCategory] FTTH Consumer | FTTH RCY (override)
  * @param {string} [opts.paymentType]     Postpaid | Prepaid
  * @param {number} [opts.resumeFrom]      1-based: skip steps below this number
  * @param {string} [opts.authToken]
@@ -58,7 +59,7 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
 
   const vars = parseEnvFile(envName);
   // Order matters: strip stale per-order IDs first so opts win on resume.
-  stripStaleOAProviderIds(vars, opts);
+  stripStalePerOrderIds(vars, opts);
   mergePreseedVars(vars, opts);
   stripInvalidSvActionId(vars);
 
@@ -81,6 +82,7 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
 
   logResumeFirstExecutableSteps(steps, resumeFrom, vars, journeyName);
   await maybeReplayProvisioningNotifyIfSkipped(steps, resumeFrom, vars);
+  await maybeReplayUatNotifyIfSkipped(steps, resumeFrom, vars);
 
   const ctx = { opts, notifyNum: 0, notifyCount };
 

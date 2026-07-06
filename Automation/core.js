@@ -20,7 +20,7 @@
  *   lib/notifications.js    notify / create-order / SV trigger
  *   lib/tasks.js            Telflow task helpers
  *
- *   providers/network-category.js  FTTH CONSUMER vs FTTH RCY routing
+ *   providers/network-category.js  FTTH Consumer vs FTTH RCY routing
  *   providers/mobily.js            Mobily activation + field-work builders
  *   providers/openaccess.js        OA notifications, ID specs, builder
  *

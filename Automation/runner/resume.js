@@ -18,6 +18,7 @@ const {
   extractSubState,
   isNumericDbSvActionId,
   needsProvisioningNotifyBeforePendingUat,
+  needsUatNotifyBeforePreCompletion,
 } = require('../lib/state');
 const { doNotification } = require('../lib/notifications');
 const { doExtractSvActionId } = require('../lib/extractors');
@@ -63,6 +64,27 @@ const PER_ORDER_OA_ID_KEYS = [
   'dawiyatInstallationId',
 ];
 
+/**
+ * Mobily per-order IDs extracted from the order detail / B2B during a run.
+ * Just like the OA IDs, an env file will typically still carry the value
+ * from the *previous* order. If we don't drop it on resume, the extract step
+ * short-circuits (its `!vars.x` guard sees a truthy stale value) and the WFM
+ * / TMF641 notifications fire against a work/service order that belongs to a
+ * different order — the runner appears to "resume the wrong order".
+ *
+ * The user can still resume past extract by passing the ID explicitly via
+ * opts — see `PRESEED_KEYS`.
+ */
+const PER_ORDER_MOBILY_ID_KEYS = [
+  'workOrderIdCpe',
+  'workOrderIdMe',
+  'serviceOrderId',
+  'odbPatchActionId',
+];
+
+/** All per-order IDs that must never survive from a stale env into a resume. */
+const PER_ORDER_STALE_KEYS = [...PER_ORDER_OA_ID_KEYS, ...PER_ORDER_MOBILY_ID_KEYS];
+
 function mergePreseedVars(vars, opts) {
   for (const k of PRESEED_KEYS) {
     if (opts[k] !== undefined && opts[k] !== null && opts[k] !== '') {
@@ -94,22 +116,23 @@ function stripInvalidSvActionId(vars) {
 }
 
 /**
- * Drop OpenAccess per-order external IDs that came from the env file. They
- * were almost certainly written by a previous run and would cause the
- * extract step to short-circuit, sending the notification with a stale ID.
+ * Drop per-order IDs (OpenAccess external IDs + Mobily work/service/ODB IDs)
+ * that came from the env file. They were almost certainly written by a
+ * previous run and would cause the extract step to short-circuit, sending the
+ * notification with a stale ID tied to a different order.
  *
  * The user can override this for resume by explicitly passing the ID via
  * `opts` — those values are preserved.
  */
-function stripStaleOAProviderIds(vars, opts = {}) {
-  for (const k of PER_ORDER_OA_ID_KEYS) {
+function stripStalePerOrderIds(vars, opts = {}) {
+  for (const k of PER_ORDER_STALE_KEYS) {
     const explicitlyProvided =
       opts[k] != null && String(opts[k]).trim() !== '';
     if (explicitlyProvided) continue;
     if (vars[k]) {
       log(
         'WARN',
-        `Dropping stale ${k}="${vars[k]}" from env (per-order ID — will re-extract from B2B for this run)`,
+        `Dropping stale ${k}="${vars[k]}" from env (per-order ID — will re-extract for this run)`,
       );
       delete vars[k];
     }
@@ -160,7 +183,9 @@ function maxResumeStillNeedsExtract(journeyName, stepType) {
   ]);
   if (mobilyFw.has(journeyName)) {
     if (stepType === 'extractOdbPatchActionId') return 5;
-    if (stepType === 'extractWorkOrderIds') return 6;
+    // workOrderIdCpe is used by WFM CPE steps (6) AND WFM Step-09 (12), so a
+    // resume anywhere up to step 12 may still need it re-extracted.
+    if (stepType === 'extractWorkOrderIds') return 12;
     if (stepType === 'extractServiceOrderId') return 8;
     if (stepType === 'extractSvActionId') return 16;
     return null;
@@ -261,16 +286,62 @@ async function maybeReplayProvisioningNotifyIfSkipped(steps, resumeFrom, vars) {
   }
 }
 
+/**
+ * If the user resumed past the SV UAT-Completed notify step but the order is
+ * still at "UAT Completed", replay it once before waiting for Pre-Completion.
+ */
+async function maybeReplayUatNotifyIfSkipped(steps, resumeFrom, vars) {
+  if (resumeFrom <= 1) return;
+  const uat = steps.find(
+    (s) => s.type === 'notify' && s.file && s.file.includes('UAT-Completed.bru'),
+  );
+  if (!uat || uat.step == null) return;
+  if (!shouldSkipStep(uat, resumeFrom)) return;
+  if (vars._svUatCompletedOk) return;
+  if (!vars.orderId) {
+    log('WARN', 'Resume skipped UAT-Completed step but orderId is missing — cannot replay');
+    return;
+  }
+
+  let subState = null;
+  try {
+    const detailRes = await httpRequest('GET', buildOrderDetailUrl(vars), {
+      Authorization: `Bearer ${vars.authToken}`,
+    });
+    const data = detailRes.body?.data || detailRes.body;
+    subState = extractSubState(data);
+  } catch (e) {
+    log('WARN', `Resume UAT replay: could not read order detail: ${e.message}`);
+    return;
+  }
+  if (!needsUatNotifyBeforePreCompletion(subState, 'Pre-Completion')) return;
+
+  log(
+    'BRIDGE',
+    'Resume skipped SV UAT-Completed step but order is still at UAT Completed — sending notify now',
+  );
+  if (!vars.svActionId) await doExtractSvActionId(vars);
+  const res = await doNotification(vars, uat.file);
+  if (!res.ok) {
+    throw new Error(
+      `SV UAT-Completed failed (${res.status}) on resume replay. ${JSON.stringify(res.body).slice(0, 300)}`,
+    );
+  }
+}
+
 module.exports = {
   PRESEED_KEYS,
   PER_ORDER_OA_ID_KEYS,
+  PER_ORDER_MOBILY_ID_KEYS,
+  PER_ORDER_STALE_KEYS,
   mergePreseedVars,
   stripInvalidSvActionId,
-  stripStaleOAProviderIds,
+  stripStalePerOrderIds,
   shouldSkipStep,
   shouldForceExtractOnResume,
   parseResumeFrom,
   logResumeFirstExecutableSteps,
   maybeReplayProvisioningNotifyIfSkipped,
+  maybeReplayUatNotifyIfSkipped,
   maxResumeStillNeedsExtract,
 };

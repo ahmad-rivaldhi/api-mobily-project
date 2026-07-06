@@ -1,0 +1,36 @@
+---
+description: Domain quirks & guardrails for the FTTH Mobily automation (Telflow API, journeys, resume, notification timing)
+alwaysApply: true
+---
+
+# FTTH Mobily — Critical Domain Quirks
+
+Automation engine is in `Automation/` (facade: `Automation/core.js`). The
+toolkit (`FTTH-Mobily-Toolkit/server.js`) drives it. Full guide: `AGENTS.md`.
+
+## Non-negotiable rules (each was a real bug)
+
+- **`networkCategory` is case-sensitive**: only `FTTH CONSUMER` / `FTTH RCY`
+  are valid. Source of truth: `Automation/providers/network-category.js`.
+- **SV notifications are async via B2B**: `UAT-Completed` must wait for the
+  B2B `CPE Installation Action (Pending UAT)` first
+  (`doWaitForCpeInstallationPendingUat` in `lib/b2b.js`), else the order sticks
+  at "UAT Completed".
+- **SV payload casing**: `"status": "completed"` (lowercase) and
+  `"orderState": "In Progress| UAT Completed"` (space after `|`).
+- **Notification delay** lives in `Automation/constants/timing.js`: default 15s,
+  Mesh Extender (`WFM-ME-Workflow`) 20s via `notifyDelayForFile()`. Delay is
+  applied centrally in `runner/step-executor.js` — do not hardcode per-step.
+- **Resume must strip stale per-order IDs** from env (`stripStalePerOrderIds`
+  in `runner/resume.js`): `workOrderIdCpe`, `workOrderIdMe`, `serviceOrderId`,
+  `odbPatchActionId`, OA IDs. Otherwise notifications fire with a previous
+  order's IDs.
+
+## Working rules
+
+- Investigate root cause before editing; verify against the live env (not
+  assumptions). Use the `test-telflow` skill for one-shot checks.
+- Timing/notification changes must span all providers (`providers/mobily.js`,
+  `providers/openaccess.js`, `journeys/builders.js`, `constants/timing.js`)
+  unless scoped explicitly.
+- `environments/*.bru` contain secrets (password/clientsecret) — never commit.

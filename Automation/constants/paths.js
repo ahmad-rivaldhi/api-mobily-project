@@ -1,25 +1,81 @@
 /**
- * Bruno request paths shared by journey builders and tooling.
- * Update here when refactoring collection folders.
+ * Bruno request paths — single source of truth for collection layout.
+ * Provider × Journey + Shared workflows (see project README).
  */
 
+const ROOT = Object.freeze({
+  auth: 'Authentication',
+  mobily: 'Mobily',
+  openAccess: 'OpenAccess',
+  shared: 'Shared-Workflows',
+  search: 'Search-By-SAN-CPE',
+});
+
+const JOURNEY = Object.freeze({
+  activation: 'Activation',
+  relocation: 'Relocation',
+  deviceSwap: 'Device-Swap',
+  upgrade: 'Upgrade',
+  downgrade: 'Downgrade',
+  suspend: 'Suspend',
+  resume: 'Resume',
+  termination: 'Termination',
+  rewiring: 'Rewiring',
+  maintenance: 'Maintenance',
+  requestUpdate: 'Request-Update',
+  installationFailure: 'Installation-Failure',
+  meshExtender: 'Mesh-Extender-Standalone',
+  cancelOrder: 'Cancel-Order',
+});
+
 const AUTH = Object.freeze({
-  dev1: '01-Authentication/Auth Dev 1.bru',
-  dev2: '01-Authentication/Auth Dev 2.bru',
-  dev3: '01-Authentication/Auth Dev 3.bru',
-  devOnPrem: '01-Authentication/Auth Dev On Prem.bru',
-  sit: '01-Authentication/Auth SIT.bru',
+  dev1: `${ROOT.auth}/Auth Dev 1.bru`,
+  dev2: `${ROOT.auth}/Auth Dev 2.bru`,
+  dev3: `${ROOT.auth}/Auth Dev 3.bru`,
+  devOnPrem: `${ROOT.auth}/Auth Dev On Prem.bru`,
+  sit: `${ROOT.auth}/Auth SIT.bru`,
 });
 
-const ACTIVATION = Object.freeze({
-  orderRoot: '02-Activation Order',
-
-  wfmcpeSteps018: '02-Activation Order/Mobily/WFM CPE Installation - Notification/Phase 1',
-  wfmcpeStep09: '02-Activation Order/Mobily/WFM CPE Installation - Notification/Phase 2',
-
-  mobilyTmf622Root: '02-Activation Order/Mobily/TMF-622 Create Sales Order',
-  openAccessRoot: '02-Activation Order/OpenAccess',
+const SHARED = Object.freeze({
+  wfmCpePhase1: `${ROOT.shared}/WFM-CPE/Phase 1`,
+  wfmCpePhase2: `${ROOT.shared}/WFM-CPE/Phase 2`,
+  wfmMe: `${ROOT.shared}/WFM-ME`,
+  tmf641: `${ROOT.shared}/TMF641-Notifications`,
+  singleView: `${ROOT.shared}/SingleView-Integration`,
+  createServiceOa: `${ROOT.shared}/Create-Service-Order-OA`,
 });
+
+function join(...parts) {
+  return parts.filter(Boolean).join('/');
+}
+
+function mobilyJourneyDir(journey) {
+  return join(ROOT.mobily, journey);
+}
+
+function mobilyJourneyFile(journey, file) {
+  return join(mobilyJourneyDir(journey), file);
+}
+
+function oaProviderDir(provider) {
+  return join(ROOT.openAccess, provider);
+}
+
+function oaJourneyDir(provider, journey) {
+  return join(oaProviderDir(provider), journey);
+}
+
+function oaJourneyFile(provider, journey, file) {
+  return join(oaJourneyDir(provider, journey), file);
+}
+
+function oaActivationPath(provider, ...subpath) {
+  return join(oaJourneyDir(provider, JOURNEY.activation), ...subpath);
+}
+
+function sharedWorkflowFile(...subpath) {
+  return join(ROOT.shared, ...subpath);
+}
 
 function meDirName(meCount) {
   const n = Number(meCount) || 0;
@@ -31,23 +87,25 @@ function mobilyCreateOrderPath(customerType, paymentType, meCount) {
   const me = Number(meCount) || 0;
   const suffix = me > 0 ? `With-${me}-ME` : 'No-ME';
   const meFolder = meDirName(me);
-  const base = `${ACTIVATION.mobilyTmf622Root}`;
+  const base = join(mobilyJourneyDir(JOURNEY.activation), 'TMF-622 Create Sales Order');
   if (customerType === 'Royal-Customer') {
-    return `${base}/FTTH RCY/${paymentType}/${meFolder}/FTTH-Royal-${paymentType}-${suffix}.bru`;
+    return join(base, 'FTTH RCY', paymentType, meFolder, `FTTH-Royal-${paymentType}-${suffix}.bru`);
   }
-  return `${base}/FTTH Consumer/${meFolder}/FTTH-${paymentType}-${suffix}.bru`;
+  return join(base, 'FTTH Consumer', meFolder, `FTTH-${paymentType}-${suffix}.bru`);
 }
 
 function openAccessCreateOrderPath(provider, meCount) {
   const me = Number(meCount) || 0;
   const suffix = me > 0 ? `With-${me}-ME` : 'No-ME';
   const meFolder = meDirName(me);
-  const p = provider;
-  return `${ACTIVATION.openAccessRoot}/${p}/TMF-622 Create Sales Order/${meFolder}/FTTH-${p}-Postpaid-${suffix}.bru`;
+  return join(
+    oaActivationPath(provider, 'TMF-622 Create Sales Order', meFolder),
+    `FTTH-${provider}-Postpaid-${suffix}.bru`,
+  );
 }
 
 function wfmCpeStepFile(stepSlug) {
-  return `${ACTIVATION.wfmcpeSteps018}/${stepSlug}.bru`;
+  return join(SHARED.wfmCpePhase1, `${stepSlug}.bru`);
 }
 
 const WFM_CPE_SEQUENCE = Object.freeze([
@@ -65,12 +123,88 @@ function wfmCpeStepPaths() {
   return WFM_CPE_SEQUENCE.map(wfmCpeStepFile);
 }
 
-const WFM_STEP_09_CPE_COMPLETED = `${ACTIVATION.wfmcpeStep09}/Step-09-CPE-Completed.bru`;
-const WFM_STEP_09_CPE_UAT_COMPLETED = `${ACTIVATION.wfmcpeStep09}/Step-09-CPE-UAT-Completed.bru`;
+const WFM_STEP_09_CPE_COMPLETED = join(SHARED.wfmCpePhase2, 'Step-09-CPE-Completed.bru');
+const WFM_STEP_09_CPE_UAT_COMPLETED = join(SHARED.wfmCpePhase2, 'Step-09-CPE-UAT-Completed.bru');
+
+const WFM_ME_STEPS = Object.freeze([
+  join(SHARED.wfmMe, 'Step-01-ME-1000-OK.bru'),
+  join(SHARED.wfmMe, 'Step-02-ME-Ready.bru'),
+  join(SHARED.wfmMe, 'Step-03-ME-Acknowledged.bru'),
+  join(SHARED.wfmMe, 'Step-04-ME-Accepted.bru'),
+  join(SHARED.wfmMe, 'Step-05-ME-Trip-Started.bru'),
+  join(SHARED.wfmMe, 'Step-06-ME-Customer-Premises.bru'),
+  join(SHARED.wfmMe, 'Step-07-ME-In-Work.bru'),
+]);
+
+function wfmMeInstallationStep(meCount) {
+  return join(SHARED.wfmMe, `Step-08-ME-Installation-Completed-${meCount}-ME.bru`);
+}
+
+function wfmMeUatCompletedStep() {
+  return join(SHARED.wfmMe, 'Step-09-ME-UAT-Completed.bru');
+}
+
+const TMF641 = Object.freeze({
+  serviceOrderCompleted: join(SHARED.tmf641, 'Service-Order-Completed.bru'),
+  ceaseTermination: join(SHARED.tmf641, '641 Cease - Termination.bru'),
+});
+
+const SINGLEVIEW = Object.freeze({
+  provisioningCompleted: join(SHARED.singleView, 'Order-Completion/Provisioning-Completed.bru'),
+  uatCompleted: join(SHARED.singleView, 'Order-Completion/UAT-Completed.bru'),
+  preCompletion: join(SHARED.singleView, 'Order-Completion/Pre-Completion.bru'),
+  odbPatch: join(SHARED.singleView, 'Custom-Notifications/ODB-Patch-Notification.bru'),
+});
+
+function createServiceOaFile(provider) {
+  return join(SHARED.createServiceOa, `Create Service OA - ${provider}.bru`);
+}
+
+function mobilyFailureFile(failureCode) {
+  return mobilyJourneyFile(JOURNEY.installationFailure, `${failureCode}.bru`);
+}
+
+function oaFailureFile(provider, failureCode) {
+  return oaJourneyFile(provider, JOURNEY.installationFailure, `${failureCode}.bru`);
+}
+
+function mobilyMaintenanceCreateFile() {
+  return mobilyJourneyFile(JOURNEY.maintenance, 'Maintenance Order - Mobily.bru');
+}
+
+function oaMaintenanceCreateFile(provider) {
+  return oaJourneyFile(provider, JOURNEY.maintenance, `Maintenance Order - ${provider}.bru`);
+}
+
+function oaRequestFile(provider, journey, filename) {
+  return oaJourneyFile(provider, journey, filename);
+}
+
+/** @deprecated use ROOT / JOURNEY / SHARED — kept for transitional imports */
+const ACTIVATION = Object.freeze({
+  orderRoot: mobilyJourneyDir(JOURNEY.activation),
+  wfmcpeSteps018: SHARED.wfmCpePhase1,
+  wfmcpeStep09: SHARED.wfmCpePhase2,
+  mobilyTmf622Root: join(mobilyJourneyDir(JOURNEY.activation), 'TMF-622 Create Sales Order'),
+  openAccessRoot: ROOT.openAccess,
+});
 
 module.exports = {
+  ROOT,
+  JOURNEY,
   AUTH,
+  SHARED,
+  TMF641,
+  SINGLEVIEW,
   ACTIVATION,
+  join,
+  mobilyJourneyDir,
+  mobilyJourneyFile,
+  oaProviderDir,
+  oaJourneyDir,
+  oaJourneyFile,
+  oaActivationPath,
+  sharedWorkflowFile,
   meDirName,
   mobilyCreateOrderPath,
   openAccessCreateOrderPath,
@@ -79,6 +213,13 @@ module.exports = {
   wfmCpeStepPaths,
   WFM_STEP_09_CPE_COMPLETED,
   WFM_STEP_09_CPE_UAT_COMPLETED,
+  WFM_ME_STEPS,
+  wfmMeInstallationStep,
+  wfmMeUatCompletedStep,
+  createServiceOaFile,
+  mobilyFailureFile,
+  oaFailureFile,
+  mobilyMaintenanceCreateFile,
+  oaMaintenanceCreateFile,
+  oaRequestFile,
 };
-
-

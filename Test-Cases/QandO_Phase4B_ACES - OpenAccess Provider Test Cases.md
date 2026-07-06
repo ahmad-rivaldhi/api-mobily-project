@@ -1,4 +1,4 @@
-﻿# Phase 4B â€” ACES Open Access Provider â€” Test Plan
+# Phase 4B â€” ACES Open Access Provider â€” Test Plan
 
 > **Style Reference:** Valen Style (per `Test-Cases/QandO_AWS_Phase_4A_*.csv`)
 > **Area Path:** `New Stack Impl\Solution\CSG\CSG QandO`
@@ -11,7 +11,7 @@
 
 ## Coverage Analysis â€” What Must Be Covered
 
-Below is the analysis of all the test scenarios that must be covered for ACES based on the Bruno collection (`02-OpenAccess-Provider-Workflow/ACES/...`) and the `13-Shared-Workflows/Installation-Failure-Scenarios/OpenAccess/ACES - Installation Failure Notification/` folder.
+Below is the analysis of all the test scenarios that must be covered for ACES based on the Bruno collection (`OpenAccess/ACES/...`) and the `OpenAccess/ACES/Installation-Failure/` folder.
 
 ### A. Order Creation (TMF 622) â€” `infraProvider = ACES`
 1. FTTH ACES Postpaid â€” No ME (Regular)

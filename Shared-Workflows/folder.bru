@@ -1,0 +1,23 @@
+meta {
+  name: Shared-Workflows
+  seq: 10
+}
+
+docs {
+  # Shared Workflows (all providers / journeys)
+  
+  Reusable notification sequences referenced from multiple journeys:
+  
+  - **WFM-CPE/** — CPE technician work order Steps 01–09 (Mobily field-work)
+  - **WFM-ME/** — Mesh Extender work order Steps 01–09
+  - **TMF641-Notifications/** — NFO service order state changes
+  - **SingleView-Integration/** — Appointment, completion, cancellation, failure actions
+  - **Create-Service-Order-OA/** — OA suspend service-order notifications
+  - **Cancel-Order-OA/** — Generic TMF622 cancel order
+  - **Open-Service-Request-OA/** — Maintenance trouble-ticket notifications
+  - **Get-Order/** — Order detail lookup helper
+}
+
+auth {
+  mode: inherit
+}

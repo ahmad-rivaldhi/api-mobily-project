@@ -1,0 +1,23 @@
+meta {
+  name: Relocation
+  seq: 2
+}
+
+docs {
+  # Mobily — Relocation
+
+  | Step | Location | Action |
+  |------|----------|--------|
+  | 1 | `Request - Mobily.bru` | POST TMF622 relocation order |
+  | 2 | `Shared-Workflows/WFM-CPE/Phase 1` | WFM Steps 01–08 |
+  | 3 | `Shared-Workflows/WFM-ME/` | ME steps (if ME on order) |
+  | 4 | `Shared-Workflows/TMF641-Notifications/` | Service-Order-Completed |
+  | 5 | `Shared-Workflows/SingleView-Integration/Order-Completion/` | Provisioning → UAT → Pre-Completion |
+  | 6 | `Shared-Workflows/WFM-CPE/Phase 2` | Step-09-CPE-Completed |
+
+  Toolkit journey: `mobily-relocation`
+}
+
+auth {
+  mode: inherit
+}

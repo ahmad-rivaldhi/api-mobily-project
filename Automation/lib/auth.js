@@ -1,6 +1,6 @@
-﻿/**
+/**
  * Per-environment OAuth-style authentication. Looks up a `.bru` file under
- * `01-Authentication/` whose name matches the env (or its number suffix), runs
+ * `Authentication/` whose name matches the env (or its number suffix), runs
  * it, and stores the bearer token in `vars.authToken`.
  */
 
@@ -11,8 +11,10 @@ const { parseBruFile } = require('./env-bru');
 const { subVars } = require('./json-utils');
 const { httpRequest } = require('./http');
 
+const { ROOT } = require('../constants/paths');
+
 function findAuthFile(envName) {
-  const authDir = path.resolve(getRoot(), 'Authentication');
+  const authDir = path.resolve(getRoot(), ROOT.auth);
   const authFiles = fs.readdirSync(authDir).filter((f) => f.endsWith('.bru') && f !== 'folder.bru');
   let authFile = authFiles.find((f) => f.includes(envName));
   if (!authFile) {
@@ -22,7 +24,7 @@ function findAuthFile(envName) {
   if (!authFile) {
     throw new Error(`No auth file for env "${envName}". Available: ${authFiles.join(', ')}`);
   }
-  return `01-Authentication/${authFile}`;
+  return `${ROOT.auth}/${authFile}`;
 }
 
 async function doAuth(vars, envName) {

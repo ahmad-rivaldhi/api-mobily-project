@@ -10,8 +10,11 @@
 const { httpRequest } = require('./http');
 const { buildB2bUrl } = require('./url-builder');
 
-const PROVISIONING_COMPLETED_BRU =
-  '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru';
+const { SINGLEVIEW } = require('../constants/paths');
+
+const PROVISIONING_COMPLETED_BRU = SINGLEVIEW.provisioningCompleted;
+
+const UAT_COMPLETED_BRU = SINGLEVIEW.uatCompleted;
 
 function parseB2bMessageData(msg) {
   const raw = msg?.Message?.Data;
@@ -106,6 +109,69 @@ async function getLatestB2BProductOrderState(vars) {
   return null;
 }
 
+/**
+ * `true` when a B2B row is the SingleView CPE Installation action waiting
+ * for the UAT-Completed notification (`taskStatus: Pending UAT`).
+ */
+function isCpeInstallationPendingUatRequest(msg, svOrderId) {
+  const action = msg?.Action || '';
+  if (!action.includes('CPE Installation Action Request')) return false;
+  const d = parseB2bMessageData(msg);
+  if (!d || d.type !== 'CPE Installation') return false;
+  if (svOrderId && d.orderId && String(d.orderId) !== String(svOrderId)) return false;
+  const chars = d.characteristic || [];
+  const status = chars.find((c) => c.name === 'taskStatus')?.value;
+  return status === 'Pending UAT';
+}
+
+/**
+ * Poll B2B until SingleView raises the CPE Installation action that must
+ * exist before `UAT-Completed.bru` is sent. WFM Step-09 creates this
+ * asynchronously — sending SV UAT too early leaves the order at UAT Completed.
+ */
+async function doWaitForCpeInstallationPendingUat(
+  vars,
+  maxAttempts = 24,
+  intervalMs = 5000,
+) {
+  const { log, delay } = require('./runtime');
+  const svOrderId = vars.svActionId;
+  if (!svOrderId) {
+    throw new Error(
+      'svActionId is required before waiting for CPE Installation Pending UAT — run extractSvActionId first',
+    );
+  }
+
+  log('BRIDGE', `Waiting for CPE Installation Action (Pending UAT) for ${svOrderId}...`);
+  const url = buildB2bUrl(vars);
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await httpRequest('GET', url, { Authorization: `Bearer ${vars.authToken}` });
+      const rows = res.body?.data?.Rows || [];
+      for (const msg of rows) {
+        if (isCpeInstallationPendingUatRequest(msg, svOrderId)) {
+          log('BRIDGE', 'CPE Installation Action (Pending UAT) found in B2B');
+          return;
+        }
+      }
+    } catch (e) {
+      log('WARN', `B2B poll error: ${e.message}`);
+    }
+
+    if (attempt < maxAttempts) {
+      log(
+        'BRIDGE',
+        `Attempt ${attempt}/${maxAttempts} — Pending UAT action not in B2B yet (${intervalMs / 1000}s)...`,
+      );
+      await delay(intervalMs);
+    }
+  }
+  throw new Error(
+    'Timed out waiting for CPE Installation Action (Pending UAT) in B2B — WFM Step-09 may not have completed',
+  );
+}
+
 /** Toolkit-only: list B2B messages for this order in a UI-friendly shape. */
 async function doListB2b(vars) {
   const res = await httpRequest('GET', buildB2bUrl(vars), {
@@ -130,6 +196,9 @@ async function doListB2b(vars) {
 
 module.exports = {
   PROVISIONING_COMPLETED_BRU,
+  UAT_COMPLETED_BRU,
+  isCpeInstallationPendingUatRequest,
+  doWaitForCpeInstallationPendingUat,
   parseB2bMessageData,
   getProviderTokens,
   actionMatchesProviderKind,

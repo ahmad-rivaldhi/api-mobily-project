@@ -1,0 +1,26 @@
+meta {
+  name: Activation
+  seq: 1
+}
+
+docs {
+  # Mobily — New Activation
+
+  ## Workflow (manual Bruno or via FTTH-Mobily-Toolkit `mobily-activation`)
+
+  | Step | Location | Action |
+  |------|----------|--------|
+  | 1 | `TMF-622 Create Sales Order/` | POST create order (Consumer/RCY, ME variant) |
+  | 2 | `Shared-Workflows/WFM-CPE/Phase 1` | WFM Steps 01–08 |
+  | 3 | `Shared-Workflows/WFM-ME/` | ME Steps 01–08 (if ME ordered) |
+  | 4 | `Shared-Workflows/SingleView-Integration/Custom-Notifications/` | ODB patch (Consumer only) |
+  | 5 | `Shared-Workflows/TMF641-Notifications/` | Service-Order-Completed |
+  | 6 | `Shared-Workflows/SingleView-Integration/Order-Completion/` | Provisioning → UAT → Pre-Completion |
+  | 7 | `Shared-Workflows/WFM-CPE/Phase 2` | Step-09-CPE-Completed (+ ME Step-09 if applicable) |
+
+  Shared steps are reused across field-work journeys; only the TMF622 create file is Mobily-specific here.
+}
+
+auth {
+  mode: inherit
+}

@@ -40,7 +40,7 @@ docs {
   - `lib/notifications.js`   â€” `doNotification`, `doCreateOrder`, SV trigger
   - `lib/tasks.js`           â€” Telflow task list/complete
   
-  - `providers/network-category.js` â€” FTTH CONSUMER vs FTTH RCY routing
+  - `providers/network-category.js` â€” FTTH Consumer vs FTTH RCY routing
   - `providers/mobily.js`           â€” Mobily activation + field-work builders
   - `providers/openaccess.js`       â€” OA notifications, ID specs, OA builder
   
@@ -59,7 +59,7 @@ docs {
   The runner picks ODB-patch behaviour from `networkCategory` (not customer
   type as before):
   
-    FTTH CONSUMER â†’ ODB patch is required (Regular customers)
+    FTTH Consumer â†’ ODB patch is required (Regular customers)
     FTTH RCY      â†’ ODB patch is skipped  (Royal customers)
   
   See `providers/network-category.js`. The Mobily activation builder also

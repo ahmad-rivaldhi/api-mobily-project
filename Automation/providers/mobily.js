@@ -2,11 +2,6 @@
  * Mobily-infrastructure journey builders. The activation builder is the only
  * one that branches on `networkCategory` today (Phase 4B): RCY orders skip
  * the ODB patch, CONSUMER orders include it.
- *
- * The builder also hard-overrides `customerCategory` and `networkCategory`
- * on the create step's vars so the outgoing TMF622 payload always carries
- * the right Phase 4B characteristics â€” independent of whatever is set in
- * the env file.
  */
 
 const {
@@ -18,36 +13,25 @@ const {
   mobilyCreateOrderPath,
   wfmCpeStepPaths,
   WFM_STEP_09_CPE_COMPLETED,
+  WFM_ME_STEPS,
+  wfmMeInstallationStep,
+  wfmMeUatCompletedStep,
+  TMF641,
+  SINGLEVIEW,
 } = require('../constants/paths');
-
-const ODB_PATCH_NOTIFICATION_BRU =
-  '13-Shared-Workflows/SingleView-Integration/Custom-Notifications/ODB-Patch-Notification.bru';
+const { NOTIFY_STEP_DELAY_MS } = require('../constants/timing');
 
 const WFM_CPE_STEPS = wfmCpeStepPaths();
 
-const WFM_ME_BASE = [
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-01-ME-1000-OK.bru',
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-02-ME-Ready.bru',
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-03-ME-Acknowledged.bru',
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-04-ME-Accepted.bru',
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-05-ME-Trip-Started.bru',
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-06-ME-Customer-Premises.bru',
-  '13-Shared-Workflows/WFM-ME-Workflow/Step-07-ME-In-Work.bru',
-];
-
-function meInstallationStep(meCount) {
-  return `13-Shared-Workflows/WFM-ME-Workflow/Step-08-ME-Installation-Completed-${meCount}-ME.bru`;
-}
-
 function meCpeStep(stepNum, file) {
-  return { step: stepNum, type: 'notify', file, delay: 5000 };
+  return { step: stepNum, type: 'notify', file, delay: NOTIFY_STEP_DELAY_MS };
 }
 
 function buildWfmCpeAndMeSteps(stepNum, meCount) {
   const steps = WFM_CPE_STEPS.map((f) => meCpeStep(stepNum, f));
   if (meCount > 0) {
-    for (const f of WFM_ME_BASE) steps.push(meCpeStep(stepNum, f));
-    steps.push(meCpeStep(stepNum, meInstallationStep(meCount)));
+    for (const f of WFM_ME_STEPS) steps.push(meCpeStep(stepNum, f));
+    steps.push(meCpeStep(stepNum, wfmMeInstallationStep(meCount)));
   }
   return steps;
 }
@@ -56,16 +40,10 @@ function buildOdbPatchSteps(networkCategory) {
   if (!requiresOdbPatch(networkCategory)) return [];
   return [
     { step: 4, type: 'extractOdbPatchActionId' },
-    { step: 5, type: 'notify', file: ODB_PATCH_NOTIFICATION_BRU, delay: 5000 },
+    { step: 5, type: 'notify', file: SINGLEVIEW.odbPatch, delay: NOTIFY_STEP_DELAY_MS },
   ];
 }
 
-/**
- * Mobily new-activation flow. Step 4 + 5 (ODB patch) are conditional on the
- * resolved networkCategory:
- *   FTTH CONSUMER â†’ ODB patch present
- *   FTTH RCY      â†’ ODB patch skipped
- */
 function buildMobilyActivation(opts) {
   const meCount = opts.me || 0;
   const custType = opts.customerType || 'Regular-Customer';
@@ -97,8 +75,8 @@ function buildMobilyActivation(opts) {
     {
       step: 8,
       type: 'notify',
-      file: '13-Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
-      delay: 0,
+      file: TMF641.serviceOrderCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: 9, type: 'waitForState', state: 'In Progress|Provisioning Completed' },
@@ -107,31 +85,31 @@ function buildMobilyActivation(opts) {
     {
       step: 10,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
-      delay: 5000,
+      file: SINGLEVIEW.provisioningCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: 11, type: 'waitForState', state: 'In Progress|Pending UAT' },
 
-    { step: 12, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: 5000 },
+    { step: 12, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: NOTIFY_STEP_DELAY_MS },
     ...(meCount > 0
       ? [
           {
             step: 12,
             type: 'notify',
-            file: '13-Shared-Workflows/WFM-ME-Workflow/Step-09-ME-UAT-Completed.bru',
-            delay: 5000,
+            file: wfmMeUatCompletedStep(),
+            delay: NOTIFY_STEP_DELAY_MS,
           },
         ]
       : []),
 
-    { step: 13, type: 'waitForState', state: 'In Progress|UAT Completed' },
+    { step: 13, type: 'waitForCpeInstallationPendingUat' },
 
     {
       step: 14,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
-      delay: 5000,
+      file: SINGLEVIEW.uatCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: 15, type: 'waitForState', state: 'In Progress|Pre-Completion' },
@@ -139,20 +117,14 @@ function buildMobilyActivation(opts) {
     {
       step: 16,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
-      delay: 5000,
+      file: SINGLEVIEW.preCompletion,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
 
     { step: 17, type: 'waitForState', state: 'Completed' },
   ];
 }
 
-/**
- * Mobily field-work pattern (relocation, device-swap, rewiring): create â†’
- * workOrderIds â†’ ODB â†’ WFM â†’ service order â†’ TMF641 â†’ completion.
- *
- * ODB inclusion follows the same networkCategory rule as activation.
- */
 function buildMobilyFieldWork(createFile, opts) {
   const meCount = opts.me || 0;
   const networkCategory = resolveNetworkCategory(opts);
@@ -168,43 +140,47 @@ function buildMobilyFieldWork(createFile, opts) {
     {
       step: 8,
       type: 'notify',
-      file: '13-Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru',
-      delay: 0,
+      file: TMF641.serviceOrderCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
     { step: 9, type: 'waitForState', state: 'In Progress|Provisioning Completed' },
     { step: 9, type: 'extractSvActionId' },
     {
       step: 10,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Provisioning-Completed.bru',
-      delay: 5000,
+      file: SINGLEVIEW.provisioningCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
     { step: 11, type: 'waitForState', state: 'In Progress|Pending UAT' },
-    { step: 12, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: 5000 },
+    { step: 12, type: 'notify', file: WFM_STEP_09_CPE_COMPLETED, delay: NOTIFY_STEP_DELAY_MS },
     ...(meCount > 0
       ? [
           {
             step: 12,
             type: 'notify',
-            file: '13-Shared-Workflows/WFM-ME-Workflow/Step-09-ME-UAT-Completed.bru',
-            delay: 5000,
+            file: wfmMeUatCompletedStep(),
+            delay: NOTIFY_STEP_DELAY_MS,
           },
         ]
       : []),
-    { step: 13, type: 'waitForState', state: 'In Progress|UAT Completed' },
+
+    { step: 13, type: 'waitForCpeInstallationPendingUat' },
+
     {
       step: 14,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/UAT-Completed.bru',
-      delay: 5000,
+      file: SINGLEVIEW.uatCompleted,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
+
     { step: 15, type: 'waitForState', state: 'In Progress|Pre-Completion' },
     {
       step: 16,
       type: 'notify',
-      file: '13-Shared-Workflows/SingleView-Integration/Order-Completion/Pre-Completion.bru',
-      delay: 5000,
+      file: SINGLEVIEW.preCompletion,
+      delay: NOTIFY_STEP_DELAY_MS,
     },
+
     { step: 17, type: 'waitForState', state: 'Completed' },
   ];
 }
@@ -213,4 +189,3 @@ module.exports = {
   buildMobilyActivation,
   buildMobilyFieldWork,
 };
-

@@ -1,4 +1,4 @@
-﻿# Collection API organization for mobile project
+# Collection API organization for mobile project
 _Exported on 3/4/2026 at 03:18:54 GMT+7 from Cursor (2.2.36)_
 
 ---
@@ -66,7 +66,7 @@ FTTH - Mobily - Project/
 â”œâ”€â”€ environments/
 â”œâ”€â”€ Documentation/
 â”‚
-â”œâ”€â”€ 01-01-Authentication/
+â”œâ”€â”€ Authentication/
 â”‚   â”œâ”€â”€ Auth-Dev-1.bru
 â”‚   â”œâ”€â”€ Auth-Dev-2.bru
 â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
@@ -232,7 +232,7 @@ FTTH - Mobily - Project/
 â”œâ”€â”€ environments/
 â”œâ”€â”€ Documentation/
 â”‚
-â”œâ”€â”€ 01-01-Authentication/
+â”œâ”€â”€ Authentication/
 â”‚   â”œâ”€â”€ Auth-Dev-1.bru
 â”‚   â”œâ”€â”€ Auth-Dev-2.bru
 â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
@@ -388,7 +388,7 @@ FTTH - Mobily - Project/
 â”œâ”€â”€ environments/
 â”œâ”€â”€ Documentation/
 â”‚
-â”œâ”€â”€ 01-01-Authentication/
+â”œâ”€â”€ Authentication/
 â”‚   â”œâ”€â”€ Auth-Dev-1.bru
 â”‚   â”œâ”€â”€ Auth-Dev-2.bru
 â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
@@ -586,7 +586,7 @@ FTTH - Mobily - Project/
 â”œâ”€â”€ environments/
 â”œâ”€â”€ Documentation/
 â”‚
-â”œâ”€â”€ 01-01-Authentication/
+â”œâ”€â”€ Authentication/
 â”‚   â”œâ”€â”€ Auth-Dev-1.bru
 â”‚   â”œâ”€â”€ Auth-Dev-2.bru
 â”‚   â””â”€â”€ Auth-Dev-On-Prem.bru
@@ -940,7 +940,7 @@ This Bruno API collection contains a comprehensive, journey-centric set of APIs 
 ```
 FTTH - Mobily - Project/
 â”œâ”€â”€ environments/                     # Environment configs (AWS Dev & On-Prem Dev)
-â”œâ”€â”€ 01-Authentication/                   # Auth APIs (Dev 1, Dev 2, On-Prem)
+â”œâ”€â”€ Authentication/                   # Auth APIs (Dev 1, Dev 2, On-Prem)
 â”‚
 â”œâ”€â”€ 02-New-Activation/                # ðŸŸ¢ New FTTH Installation
 â”‚   â”œâ”€â”€ 01-Create-Order-TMF622/       # Product orders (Mobily/OpenAccess)
@@ -1141,7 +1141,7 @@ FTTH - Mobily - Project/
    - Choose `awsDev` or `devOnPrem` from environments dropdown
 
 2. **Authenticate**
-   - Run one of the Auth APIs in `01-Authentication/`
+   - Run one of the Auth APIs in `Authentication/`
    - Token is automatically captured via post-response script
 
 3. **Pick Your Journey**

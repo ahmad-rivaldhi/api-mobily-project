@@ -108,7 +108,7 @@ function Send-BruRequest($bruFile, $vars) {
 
 function Do-Auth($vars, $envName) {
     Write-Log "AUTH" "Authenticating..."
-    $authDir = Join-Path $ROOT "01-Authentication"
+    $authDir = Join-Path $ROOT "Authentication"
     $authFile = Get-ChildItem $authDir -Recurse -File -Filter "*.bru" |
       Where-Object { $_.Name -ne 'folder.bru' -and $_.Name -like "*$envName*" } |
       Select-Object -First 1
@@ -191,9 +191,9 @@ Do-Auth $vars $Env
 $meSuffix = if ($ME -gt 0) { "With-$ME-ME" } else { "No-ME" }
 $meFolder = if ($ME -le 0) { "without ME" } else { "with $ME ME" }
 if ($CustomerType -eq "Royal-Customer") {
-    $createFile = "02-Activation Order/Mobily/TMF-622 Create Sales Order/FTTH RCY/$PaymentType/$meFolder/FTTH-Royal-$PaymentType-$meSuffix.bru"
+    $createFile = "Mobily/Activation/TMF-622 Create Sales Order/FTTH RCY/$PaymentType/$meFolder/FTTH-Royal-$PaymentType-$meSuffix.bru"
 } else {
-    $createFile = "02-Activation Order/Mobily/TMF-622 Create Sales Order/FTTH Consumer/$meFolder/FTTH-$PaymentType-$meSuffix.bru"
+    $createFile = "Mobily/Activation/TMF-622 Create Sales Order/FTTH Consumer/$meFolder/FTTH-$PaymentType-$meSuffix.bru"
 }
 Do-CreateOrder $vars $createFile
 
@@ -207,7 +207,7 @@ if ($ME -gt 0) {
 }
 
 # Step 4: WFM CPE Steps 01-08 (Phase 1 only; Step 09 is in Phase 2)
-$cpeStepsDir = "02-Activation Order/Mobily/WFM CPE Installation - Notification/Phase 1"
+$cpeStepsDir = "Shared-Workflows/WFM-CPE/Phase 1"
 $cpeSteps = @("Step-01-CPE-1000-OK","Step-02-CPE-Ready","Step-03-CPE-Acknowledged","Step-04-CPE-Accepted",
               "Step-05-CPE-Trip-Started","Step-06-CPE-Customer-Premises","Step-07-CPE-In-Work","Step-08-CPE-Installation-Completed")
 $total = $cpeSteps.Count + 2 + $(if ($ME -gt 0) { 9 } else { 0 })
@@ -215,7 +215,7 @@ $n = 0
 foreach ($s in $cpeSteps) {
     $n++; Write-Log "PROGRESS" "[$n/$total]"
     Do-Notification $vars "$cpeStepsDir/$s.bru"
-    Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 15
 }
 
 if ($ME -gt 0) {
@@ -223,12 +223,12 @@ if ($ME -gt 0) {
                  "Step-05-ME-Trip-Started","Step-06-ME-Customer-Premises","Step-07-ME-In-Work")
     foreach ($s in $meSteps) {
         $n++; Write-Log "PROGRESS" "[$n/$total]"
-        Do-Notification $vars "13-Shared-Workflows/WFM-ME-Workflow/$s.bru"
-        Start-Sleep -Seconds 2
+        Do-Notification $vars "Shared-Workflows/WFM-ME/$s.bru"
+        Start-Sleep -Seconds 20
     }
     $n++; Write-Log "PROGRESS" "[$n/$total]"
-    Do-Notification $vars "13-Shared-Workflows/WFM-ME-Workflow/Step-08-ME-Installation-Completed-$ME-ME.bru"
-    Start-Sleep -Seconds 2
+    Do-Notification $vars "Shared-Workflows/WFM-ME/Step-08-ME-Installation-Completed-$ME-ME.bru"
+    Start-Sleep -Seconds 20
 }
 
 # Step 5: Wait for Create Service Order Response
@@ -240,7 +240,7 @@ Do-ExtractServiceOrderId $vars
 
 # Step 7: TMF641 Completed
 $n++; Write-Log "PROGRESS" "[$n/$total]"
-Do-Notification $vars "13-Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru"
+Do-Notification $vars "Shared-Workflows/TMF641-Notifications/Service-Order-Completed.bru"
 
 # Step 8: Wait for Pending UAT
 Write-Log "WAIT" "Waiting 45s for order to reach Pending UAT..."
@@ -248,10 +248,10 @@ Start-Sleep -Seconds 45
 
 # Step 9: WFM Step 09 Completed
 $n++; Write-Log "PROGRESS" "[$n/$total]"
-Do-Notification $vars "02-Activation Order/Mobily/WFM CPE Installation - Notification/Phase 2/Step-09-CPE-Completed.bru"
+Do-Notification $vars "Shared-Workflows/WFM-CPE/Phase 2/Step-09-CPE-Completed.bru"
 
 if ($ME -gt 0) {
-    Do-Notification $vars "13-Shared-Workflows/WFM-ME-Workflow/Step-09-ME-UAT-Completed.bru"
+    Do-Notification $vars "Shared-Workflows/WFM-ME/Step-09-ME-UAT-Completed.bru"
 }
 
 Write-Log "DONE" ("=" * 60)

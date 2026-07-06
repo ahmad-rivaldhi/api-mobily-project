@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Shared runtime: project root, logger, cancellation-aware delay.
  * Single source of truth so the rest of the codebase never imports `core`
  * directly for these primitives.
@@ -20,7 +20,7 @@ function defaultLog(tag, msg) {
  * web server) before invoking any journey logic.
  *
  * @param {string} projectRoot Absolute path to the repo root that contains
- *   `environments/`, `01-Authentication/`, etc.
+ *   `environments/`, `Authentication/`, etc.
  * @param {(tag: string, msg: string) => void} [logger] Optional injectable
  *   logger; defaults to `console.log` with timestamp + tag.
  */
