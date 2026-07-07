@@ -18,6 +18,7 @@ let ROOT    = path.resolve(__dirname, '..', '..');       // package / repo root
 let ENVROOT = path.join(ROOT, 'environments');            // default: backward-compatible
 let _log = defaultLog;
 let _cancelCheck = null;
+let _reauth = null;
 
 function defaultLog(tag, msg) {
   const ts = new Date().toISOString().slice(11, 19);
@@ -72,6 +73,25 @@ function isCancelled() {
 }
 
 /**
+ * Register an async re-authentication callback (typically `() => doAuth(vars,
+ * envName)`). `runBruRequest` invokes it once on a 401 so long-running
+ * journeys survive token expiry instead of failing silently.
+ */
+function setReauth(fn) {
+  _reauth = typeof fn === 'function' ? fn : null;
+}
+
+function hasReauth() {
+  return typeof _reauth === 'function';
+}
+
+async function reauthenticate() {
+  if (!_reauth) return false;
+  await _reauth();
+  return true;
+}
+
+/**
  * Sleep for `ms` milliseconds. Cooperatively cancellable: if a cancel-check
  * callback is registered (`setCancelCheck`) and returns truthy, the wait
  * aborts by throwing `Error('Journey cancelled')`.
@@ -94,6 +114,9 @@ module.exports = {
   getEnvRoot,
   setCancelCheck,
   isCancelled,
+  setReauth,
+  hasReauth,
+  reauthenticate,
   delay,
 };
 

@@ -5,12 +5,16 @@
  * than the historical Regular/Royal folder split, so the journey runner
  * picks ODB-patch behaviour from this constant.
  *
- *   FTTH Consumer  →  ODB patch is required  (Regular customers)
+ *   FTTH CONSUMER  →  ODB patch is required  (Regular customers)
  *   FTTH RCY       →  ODB patch is skipped   (Royal customers)
+ *
+ * The API is case-sensitive and only accepts the UPPERCASE spellings below;
+ * this constant is the single source of truth (engine, Bruno defaults, and
+ * the smoke test all derive from it). See AGENTS.md / .cursor rules.
  */
 
 const NETWORK_CATEGORY = Object.freeze({
-  CONSUMER: 'FTTH Consumer',
+  CONSUMER: 'FTTH CONSUMER',
   RCY: 'FTTH RCY',
 });
 

@@ -78,18 +78,21 @@ const STEP_HANDLERS = {
     logCandidateExternalIdsForNotify(step, vars);
 
     const nRes = await doNotification(vars, step.file);
+    const label = path.basename(step.file, '.bru');
     if (!nRes.ok) {
-      log(
-        'ERROR',
-        `Notify ${path.basename(step.file, '.bru')} FAILED: HTTP ${nRes.status} — ${JSON.stringify(nRes.body).slice(0, 300)}`,
-      );
+      const detail = `HTTP ${nRes.status} — ${JSON.stringify(nRes.body).slice(0, 300)}`;
+      // Notify failures abort the journey by default so we never report
+      // success while the order is actually stuck. Steps that are genuinely
+      // allowed to fail (e.g. idempotent re-sends) opt out with nonFatal.
+      if (!step.nonFatal) {
+        throw new Error(
+          `Notify ${label} failed: ${detail}. Aborting journey. ` +
+            'If this notification is allowed to fail, mark the step { nonFatal: true }.',
+        );
+      }
+      log('WARN', `Notify ${label} FAILED (nonFatal, continuing): ${detail}`);
     } else {
-      log('OK', `Notify ${path.basename(step.file, '.bru')} => HTTP ${nRes.status}`);
-    }
-    if (step.file && step.file.includes('Provisioning-Completed.bru') && !nRes.ok) {
-      throw new Error(
-        `SV Provisioning-Completed failed (${nRes.status}). Cannot continue. ${JSON.stringify(nRes.body).slice(0, 300)}`,
-      );
+      log('OK', `Notify ${label} => HTTP ${nRes.status}`);
     }
     const notifyDelay = notifyDelayForFile(step.file);
     log('WAIT', `Pausing ${notifyDelay / 1000}s after notification...`);

@@ -9,10 +9,15 @@ const { log, delay } = require('./runtime');
 const { httpRequest } = require('./http');
 const { buildB2bUrl, buildOrderDetailUrl } = require('./url-builder');
 const { deepFindCharacteristic } = require('./json-utils');
-const { isOdbPatchAlreadyCompleted } = require('./b2b');
+const { isOdbPatchAlreadyCompleted, parseB2bMessageData } = require('./b2b');
 const { findSvReferenceInOrderData } = require('./state');
+const { POLL } = require('../constants/timing');
 
-async function doExtractServiceOrderId(vars, maxAttempts = 8, intervalMs = 15000) {
+async function doExtractServiceOrderId(
+  vars,
+  maxAttempts = POLL.serviceOrderId.attempts,
+  intervalMs = POLL.serviceOrderId.intervalMs,
+) {
   log('BRIDGE', 'Polling for Create Service Order Response...');
   const url = buildB2bUrl(vars);
 
@@ -22,15 +27,11 @@ async function doExtractServiceOrderId(vars, maxAttempts = 8, intervalMs = 15000
       const rows = res.body?.data?.Rows || [];
       for (const msg of rows) {
         if (msg.Action === 'Create Service Order Response') {
-          try {
-            const d = JSON.parse(msg.Message.Data);
-            if (d.id) {
-              vars.serviceOrderId = d.id;
-              log('BRIDGE', `serviceOrderId: ${d.id}`);
-              return;
-            }
-          } catch {
-            /* skip malformed row */
+          const d = parseB2bMessageData(msg);
+          if (d && d.id) {
+            vars.serviceOrderId = d.id;
+            log('BRIDGE', `serviceOrderId: ${d.id}`);
+            return;
           }
         }
       }
@@ -46,7 +47,11 @@ async function doExtractServiceOrderId(vars, maxAttempts = 8, intervalMs = 15000
   throw new Error('Timed out waiting for Create Service Order Response');
 }
 
-async function doExtractSvActionId(vars, maxAttempts = 8, intervalMs = 15000) {
+async function doExtractSvActionId(
+  vars,
+  maxAttempts = POLL.svActionId.attempts,
+  intervalMs = POLL.svActionId.intervalMs,
+) {
   log('BRIDGE', 'Extracting svActionId (CustomerReference) from order detail...');
   const url = buildOrderDetailUrl(vars);
 
@@ -74,13 +79,20 @@ async function doExtractSvActionId(vars, maxAttempts = 8, intervalMs = 15000) {
       await delay(intervalMs);
     }
   }
-  log(
-    'WARN',
-    'Could not extract svActionId from order detail - you may need to set it manually via Toolkit',
+  // Fatal: continuing without svActionId means downstream SV notifications
+  // would fire with an empty/wrong CustomerReference and silently mis-target.
+  throw new Error(
+    `Could not extract svActionId (CustomerReference) from order detail after ${maxAttempts} attempts. ` +
+      'Set it manually via Toolkit or verify the order before resuming.',
   );
 }
 
-async function doExtractWorkOrderIds(vars, opts = {}, maxAttempts = 6, intervalMs = 10000) {
+async function doExtractWorkOrderIds(
+  vars,
+  opts = {},
+  maxAttempts = POLL.workOrderIds.attempts,
+  intervalMs = POLL.workOrderIds.intervalMs,
+) {
   log('BRIDGE', 'Extracting workOrderIds from order detail...');
   const url = buildOrderDetailUrl(vars);
 
@@ -120,7 +132,11 @@ async function doExtractWorkOrderIds(vars, opts = {}, maxAttempts = 6, intervalM
   throw new Error('Could not extract cpeWorkOrderId from order detail');
 }
 
-async function doExtractOdbPatchActionId(vars, maxAttempts = 8, intervalMs = 15000) {
+async function doExtractOdbPatchActionId(
+  vars,
+  maxAttempts = POLL.odbPatch.attempts,
+  intervalMs = POLL.odbPatch.intervalMs,
+) {
   log('BRIDGE', 'Polling for ODB Patching Action Response...');
   const url = buildB2bUrl(vars);
 
@@ -131,15 +147,11 @@ async function doExtractOdbPatchActionId(vars, maxAttempts = 8, intervalMs = 150
 
       for (const msg of rows) {
         if (msg.Action === 'ODB Patching Action Response') {
-          try {
-            const d = JSON.parse(msg.Message.Data);
-            if (d.id) {
-              vars.odbPatchActionId = d.id;
-              log('BRIDGE', `odbPatchActionId: ${d.id}`);
-              return;
-            }
-          } catch {
-            /* skip malformed row */
+          const d = parseB2bMessageData(msg);
+          if (d && d.id) {
+            vars.odbPatchActionId = d.id;
+            log('BRIDGE', `odbPatchActionId: ${d.id}`);
+            return;
           }
         }
         if (isOdbPatchAlreadyCompleted(msg)) {

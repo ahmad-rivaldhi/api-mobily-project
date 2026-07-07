@@ -13,7 +13,7 @@ const {
   TMF641,
   SINGLEVIEW,
 } = require('../constants/paths');
-const { NOTIFY_STEP_DELAY_MS } = require('../constants/timing');
+const { NOTIFY_STEP_DELAY_MS, SERVICE_ORDER_WAIT_MS } = require('../constants/timing');
 
 const WFM_CPE_STEPS = wfmCpeStepPaths();
 
@@ -37,7 +37,7 @@ function buildOAFieldWork(createFile, opts) {
     { step: 2, type: 'create', file: createFile },
     { step: 3, type: 'extractWorkOrderIds' },
     ...buildWfmCpeAndMe(4, meCount),
-    { step: 5, type: 'wait', ms: 45000, label: 'Waiting for Create Service Order Response' },
+    { step: 5, type: 'wait', ms: SERVICE_ORDER_WAIT_MS, label: 'Waiting for Create Service Order Response' },
     { step: 5, type: 'extractServiceOrderId' },
     {
       step: 6,
@@ -126,6 +126,7 @@ function buildMaintenanceOrder(createFile) {
 }
 
 module.exports = {
+  buildWfmCpeAndMe,
   buildOAFieldWork,
   buildSimpleOrder,
   buildSuspendOrder,

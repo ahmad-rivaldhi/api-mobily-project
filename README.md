@@ -75,14 +75,20 @@ FTTH - Mobily - Project/
 
 ### 1. `networkCategory` is now mandatory in all TMF 622 payloads
 
-The `Documentation/TMF 622 - Updated - 18 Apr.pdf` introduces a new mandatory
-characteristic on every Create Product Order request:
+The TMF 622 Phase 4B update (18 Apr; external spec doc, not bundled in this
+repo) introduces a new mandatory characteristic on every Create Product Order
+request:
 
 | Customer Type | `customerCategory` | `networkCategory` |
 |---------------|--------------------|-------------------|
-| Regular       | `Regular`          | `FTTH Consumer`   |
+| Regular       | `Regular`          | `FTTH CONSUMER`   |
 | Royal (RCY)   | `Royal`            | `FTTH RCY`        |
-| VIP           | `Vip`              | `FTTH Consumer`   |
+| VIP           | `Vip`              | `FTTH CONSUMER`   |
+
+> **Case-sensitive:** the API only accepts the UPPERCASE values `FTTH CONSUMER`
+> / `FTTH RCY`. The engine's single source of truth is
+> `Automation/providers/network-category.js`; folder defaults, the smoke test,
+> and these docs all derive from it.
 
 `networkCategory` is now the **primary differentiator** between Regular and
 RCY customers — replacing the historical practice of relying on separate folders.
@@ -95,9 +101,9 @@ Every TMF 622 `.bru` references the values via `{{customerCategory}}` and
 
 | Folder | `customerCategory` | `networkCategory` |
 |--------|---------------------|---------------------|
-| `Mobily/Activation/TMF-622 Create Sales Order/FTTH Consumer/` | `Regular` | `FTTH Consumer` |
+| `Mobily/Activation/TMF-622 Create Sales Order/FTTH Consumer/` | `Regular` | `FTTH CONSUMER` |
 | `Mobily/Activation/TMF-622 Create Sales Order/FTTH RCY/`      | `Royal`   | `FTTH RCY`          |
-| `OpenAccess/{Provider}/Activation/`                           | `Regular` | `FTTH Consumer` |
+| `OpenAccess/{Provider}/Activation/`                           | `Regular` | `FTTH CONSUMER` |
 
 Override at the request level (in another `vars:pre-request` block inside the
 `.bru`) only when you need to test an edge case (e.g. an OA Royal scenario).

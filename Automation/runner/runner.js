@@ -9,7 +9,7 @@
  */
 
 const path = require('path');
-const { log } = require('../lib/runtime');
+const { log, setReauth } = require('../lib/runtime');
 const { parseEnvFile } = require('../lib/env-bru');
 const { doAuth } = require('../lib/auth');
 const { JOURNEYS } = require('../journeys/registry');
@@ -73,6 +73,9 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
     log('AUTH', 'Skipping auth (resumeFrom > 1 and authToken present)');
   }
 
+  // Allow the HTTP layer to recover from token expiry mid-journey.
+  setReauth(() => doAuth(vars, envName));
+
   if (resumeFrom > 1) {
     log(
       'DEBUG',
@@ -109,7 +112,8 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
   }
 
   log('DONE', '='.repeat(60));
-  log('DONE', 'Journey completed! Order is now COMPLETED.');
+  log('DONE', 'All journey steps executed without a fatal error.');
+  log('DONE', 'Verify the final order state in the portal / Detect before treating it as COMPLETED.');
   log('DONE', `  orderId:          ${vars.orderId || 'N/A'}`);
   log('DONE', `  serviceOrderId:   ${vars.serviceOrderId || 'N/A'}`);
   log('DONE', `  svActionId:       ${vars.svActionId || 'N/A'}`);

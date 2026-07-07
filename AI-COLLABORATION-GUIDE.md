@@ -84,15 +84,16 @@ VERIFIKASI
 
 ---
 
-## 2. Skills / Rules yang Sebaiknya Di-install
+## 2. Skills / Rules (SUDAH terpasang)
 
-Project ini **belum punya** `AGENTS.md` atau `.cursor/rules/`. Ini penyebab
-utama kenapa tiap sesi agent harus re-discover domain knowledge (layout
-`Automation/`, quirk env, model journey/step). Prioritas dari paling berdampak:
+> Update: project ini **sudah punya** `AGENTS.md` (root), `.cursor/rules/ftth-mobily.mdc`
+> (always-applied), dan skill `.cursor/skills/test-telflow/`. Bagian di bawah
+> dipertahankan sebagai catatan rasional/konten yang seharusnya ada di file-file
+> itu — bukan lagi TODO.
 
 ### 2.1 (WAJIB) Project Rule — domain knowledge
 
-Buat `.cursor/rules/ftth-mobily.mdc` (atau `AGENTS.md` di root) berisi:
+Isi `.cursor/rules/ftth-mobily.mdc` (dan `AGENTS.md` di root):
 
 - **Arsitektur 2 workspace**: Bruno collection (`FTTH - Mobily - Project`) +
   toolkit Node (`FTTH-Mobily-Toolkit/server.js` yang `require` `Automation/core.js`).
@@ -166,10 +167,7 @@ core.init(process.cwd(),(t,m)=>console.log('['+t+']',m));
 
 | Prioritas | Aksi | Dampak |
 |-----------|------|--------|
-| 1 | Buat `.cursor/rules/ftth-mobily.mdc` (domain + quirks) | Hilangkan re-discovery tiap sesi |
+| 1 | `.cursor/rules/ftth-mobily.mdc` (domain + quirks) | SUDAH ada — hilangkan re-discovery |
 | 2 | Biasakan pola prompt di §1.2 (expected/actual + scope + DoD) | Hasil proper sekali jalan |
 | 3 | Aktifkan `systematic-debugging` + `verification-before-completion` | Fix terbukti, bukan asumsi |
-| 4 | Custom skill "Test journey/notif ke env" | Test one-shot konsisten |
-
-> Catatan: kalau mau, aku bisa langsung generate file `.cursor/rules/ftth-mobily.mdc`
-> dan skill `test-telflow` di §2.3 — tinggal bilang.
+| 4 | Custom skill "Test journey/notif ke env" | SUDAH ada (`test-telflow`) |

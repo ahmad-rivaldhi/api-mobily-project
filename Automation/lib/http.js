@@ -7,22 +7,47 @@
  * user can audit which value was actually sent on the wire.
  */
 
-const { log } = require('./runtime');
+const { log, hasReauth, reauthenticate } = require('./runtime');
 const { parseBruFile } = require('./env-bru');
 const { subVars, cleanJsonBody } = require('./json-utils');
 
-async function httpRequest(method, url, headers, body) {
+/**
+ * Per-request timeout so a hung Dev/SIT endpoint can't block a journey
+ * forever. Override with FTTH_HTTP_TIMEOUT_MS; set to 0 to disable.
+ */
+const DEFAULT_HTTP_TIMEOUT_MS = (() => {
+  const raw = Number(process.env.FTTH_HTTP_TIMEOUT_MS);
+  return Number.isFinite(raw) && raw >= 0 ? raw : 60000;
+})();
+
+async function httpRequest(method, url, headers, body, timeoutMs = DEFAULT_HTTP_TIMEOUT_MS) {
   const opts = { method, headers: { ...headers } };
   if (body) opts.body = body;
-  const res = await fetch(url, opts);
-  const text = await res.text();
-  let json = null;
+
+  const controller = timeoutMs > 0 ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+  if (controller) opts.signal = controller.signal;
+
   try {
-    json = JSON.parse(text);
-  } catch {
-    json = text;
+    const res = await fetch(url, opts);
+    const text = await res.text();
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = text;
+    }
+    return { status: res.status, ok: res.ok, body: json };
+  } catch (e) {
+    if (e && (e.name === 'AbortError' || e.code === 'ABORT_ERR')) {
+      throw new Error(
+        `HTTP request timed out after ${timeoutMs}ms: ${method} ${String(url).slice(0, 120)}`,
+      );
+    }
+    throw e;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
-  return { status: res.status, ok: res.ok, body: json };
 }
 
 const DEBUG_FILE_FRAGMENTS = ['Provisioning-Completed', 'UAT-Completed', 'Pre-Completion'];
@@ -131,7 +156,21 @@ async function runBruRequest(bruPath, vars) {
     log('HTTP', `Body: ${(body || '').slice(0, 400)}`);
   }
 
-  const httpRes = await httpRequest(parsed.method, url, headers, body);
+  let httpRes = await httpRequest(parsed.method, url, headers, body);
+
+  // Token expiry on long journeys: refresh once and retry so a stale bearer
+  // doesn't surface as a spurious failure.
+  if (httpRes.status === 401 && hasReauth()) {
+    log('AUTH', '401 Unauthorized — refreshing token and retrying once...');
+    try {
+      await reauthenticate();
+      if (vars.authToken) headers['Authorization'] = `Bearer ${vars.authToken}`;
+      httpRes = await httpRequest(parsed.method, url, headers, body);
+    } catch (e) {
+      log('WARN', `Re-auth after 401 failed: ${e.message}`);
+    }
+  }
+
   log('HTTP', `=> ${httpRes.status} ${httpRes.ok ? 'OK' : 'FAIL'}`);
   return httpRes;
 }

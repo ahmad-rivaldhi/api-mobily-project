@@ -15,7 +15,7 @@ core.init(path.resolve(__dirname, '..', '..'), (t, m) => {
 });
 
 const { JOURNEY_REGISTRY } = require('../journeys/registry');
-const { resolveNetworkCategory, NETWORK_CATEGORY } = require('../providers/network-category');
+const { resolveNetworkCategory } = require('../providers/network-category');
 const { executeStep } = require('../runner/step-executor');
 const { detectOrderPosition } = require('../runner/state-detector');
 const { buildOrderDetailUrl } = require('../lib/url-builder');
@@ -34,12 +34,6 @@ const CASES = [
   { name: 'dawiyat-relocation', opts: { me: 0 }, parseOnly: true },
   { name: 'stc-resume', opts: {}, parseOnly: true },
 ];
-
-/** Telflow API expects `FTTH CONSUMER` / `FTTH RCY` (see AGENTS.md). */
-function apiNetworkCategory(opts) {
-  const nc = resolveNetworkCategory(opts);
-  return nc === NETWORK_CATEGORY.RCY ? 'FTTH RCY' : 'FTTH CONSUMER';
-}
 
 async function orderSubState(vars) {
   const res = await core.httpRequest('GET', buildOrderDetailUrl(vars), {
@@ -81,7 +75,7 @@ async function runCreateSmoke(testCase) {
   console.log(`\n=== ${testCase.name} ===`);
   console.log(`CREATE ${createStep.file}`);
 
-  const apiNc = apiNetworkCategory(testCase.opts);
+  const apiNc = resolveNetworkCategory(testCase.opts);
   if (createStep.vars) createStep.vars.networkCategory = apiNc;
   else createStep.vars = { networkCategory: apiNc };
   const ctx = { opts: testCase.opts, notifyNum: 0, notifyCount: 0 };

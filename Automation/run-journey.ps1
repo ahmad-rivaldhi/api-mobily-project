@@ -1,6 +1,18 @@
 <#
 .SYNOPSIS
-    FTTH Mobily Journey Runner (PowerShell)
+    FTTH Mobily Journey Runner (PowerShell) — DEPRECATED
+
+.DESCRIPTION
+    DEPRECATED: this PowerShell runner is a legacy parallel implementation of
+    the Node engine and is no longer maintained. It does not include the
+    reliability fixes in the Node engine (fatal-notify handling, HTTP timeout,
+    token refresh, canonical networkCategory casing, resume ID stripping).
+
+    Use the Node engine instead:
+      node Automation/journey-runner.js --env "Dev 1" --journey mobily-activation
+    or drive it via the FTTH-Mobily-Toolkit web UI.
+
+    Kept only for reference; will be removed in a future cleanup.
 
 .EXAMPLE
     .\run-journey.ps1 -Env "Dev 1" -Journey "mobily-activation" -ME 0
@@ -16,6 +28,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+Write-Warning "run-journey.ps1 is DEPRECATED and unmaintained. Use 'node Automation/journey-runner.js' or the toolkit UI instead."
 Add-Type @"
 using System.Net;
 using System.Security.Cryptography.X509Certificates;

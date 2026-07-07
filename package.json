@@ -13,5 +13,14 @@
   ],
   "keywords": ["ftth", "mobily", "telflow", "automation"],
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test",
+    "smoke": "node Automation/scripts/smoke-test-reorg.js",
+    "lint": "npx --yes prettier@3 --check \"Automation/test/**/*.js\"",
+    "format": "npx --yes prettier@3 --write \"Automation/**/*.js\""
+  }
 }

@@ -146,51 +146,54 @@ function shouldSkipStep(step, resumeFrom) {
 }
 
 /**
- * Last journey step# that still needs each extract type. If `resumeFrom` is
- * past this, the user is beyond that phase (e.g. resuming at Pre-Completion
- * must NOT poll ODB) — so we don't re-run the extract.
+ * Resume extract ceilings: the last journey step# that still needs each
+ * extract type. If `resumeFrom` is past the ceiling, the user is beyond that
+ * phase (e.g. resuming at Pre-Completion must NOT poll ODB) so the extract is
+ * not re-run.
+ *
+ * Centralised as data (instead of scattered per-journey if/else) keyed by a
+ * "flow profile". Notes on the mobily-fieldwork numbers:
+ *   - workOrderIdCpe is used by WFM CPE steps (6) AND WFM Step-09 (12), so a
+ *     resume up to step 12 may still need it re-extracted.
  */
+const RESUME_EXTRACT_CEILINGS = Object.freeze({
+  // OA provider activation (provider-side, no WFM/UAT)
+  'oa-standard': {
+    extractOAProviderIds: 6,
+    extractServiceOrderId: 7,
+    extractSvActionId: 11,
+  },
+  // STC runs one step longer than the other OA providers
+  'oa-stc': {
+    extractOAProviderIds: 8,
+    extractServiceOrderId: 8,
+    extractSvActionId: 12,
+  },
+  'mobily-fieldwork': {
+    extractOdbPatchActionId: 5,
+    extractWorkOrderIds: 12,
+    extractServiceOrderId: 8,
+    extractSvActionId: 16,
+  },
+});
+
+const RESUME_PROFILE_BY_JOURNEY = Object.freeze({
+  'dawiyat-activation': 'oa-standard',
+  'itc-activation': 'oa-standard',
+  'aces-activation': 'oa-standard',
+  'stc-activation': 'oa-stc',
+  'mobily-activation': 'mobily-fieldwork',
+  'mobily-relocation': 'mobily-fieldwork',
+  'mobily-device-swap-cpe': 'mobily-fieldwork',
+  'mobily-device-swap-hag': 'mobily-fieldwork',
+  'mobily-rewiring': 'mobily-fieldwork',
+});
+
 function maxResumeStillNeedsExtract(journeyName, stepType) {
-  // OA Provider Activation flow (provider-side, no WFM/UAT):
-  //   step 3 = extractOAProviderIds (or 5 for STC stcInstallationId)
-  //   step 6 = extractServiceOrderId (or 7 for STC)
-  //   step 8 = extractSvActionId (or 9 for STC)
-  //   last SV step = 11 (or 12 for STC)
-  const oa = new Set([
-    'dawiyat-activation',
-    'stc-activation',
-    'itc-activation',
-    'aces-activation',
-  ]);
-  if (oa.has(journeyName)) {
-    if (journeyName === 'stc-activation') {
-      if (stepType === 'extractOAProviderIds') return 8;
-      if (stepType === 'extractServiceOrderId') return 8;
-      if (stepType === 'extractSvActionId') return 12;
-      return null;
-    }
-    if (stepType === 'extractOAProviderIds') return 6;
-    if (stepType === 'extractServiceOrderId') return 7;
-    if (stepType === 'extractSvActionId') return 11;
-    return null;
-  }
-  const mobilyFw = new Set([
-    'mobily-activation',
-    'mobily-relocation',
-    'mobily-device-swap-cpe',
-    'mobily-device-swap-hag',
-    'mobily-rewiring',
-  ]);
-  if (mobilyFw.has(journeyName)) {
-    if (stepType === 'extractOdbPatchActionId') return 5;
-    // workOrderIdCpe is used by WFM CPE steps (6) AND WFM Step-09 (12), so a
-    // resume anywhere up to step 12 may still need it re-extracted.
-    if (stepType === 'extractWorkOrderIds') return 12;
-    if (stepType === 'extractServiceOrderId') return 8;
-    if (stepType === 'extractSvActionId') return 16;
-    return null;
-  }
-  return null;
+  const profile = RESUME_PROFILE_BY_JOURNEY[journeyName];
+  if (!profile) return null;
+  const ceiling = RESUME_EXTRACT_CEILINGS[profile][stepType];
+  return ceiling == null ? null : ceiling;
 }
 
 /** Re-run a skipped extract step if the ID it produces isn't pre-seeded. */
