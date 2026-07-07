@@ -1,6 +1,6 @@
 {
   "name": "ftth-mobily-automation",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automation engine + Bruno collection for FTTH Mobily journey orchestration",
   "main": "Automation/core.js",
   "files": [
