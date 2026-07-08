@@ -22,6 +22,30 @@ function buildOrderDetailUrl(vars) {
   );
 }
 
+/**
+ * Full order-detail URL including the activity ("system") tab. Mirrors the
+ * enrich params the portal UI / Search use so `data.Activities` is populated
+ * (the slim `buildOrderDetailUrl` above omits `includeActivity`).
+ */
+function buildOrderDetailFullUrl(vars) {
+  const baseUrl = vars['demo-mob-dev'];
+  const q = [
+    'combineInventoryRelationship=Parent,Component',
+    'countAssociation=true',
+    'enrichBusinessInteractionRelationship=Container,Parent,Child,Bundle,BundleItem,Target',
+    'enrichElements=Specification,PartyRole,Offering,Place',
+    'includeActivity=true',
+    'includeBusinessInteractionRelationship=Container,Parent,Child,Bundle,BundleItem,Target',
+    'includeBusinessInteractionVersion=All',
+    'includeContract=true',
+    'includeCost=true',
+    'includeInventory=true',
+    'includeMargin=true',
+    'includePrice=true',
+  ].join('&');
+  return `${baseUrl}/portal/api/order/order/${encodeURIComponent(vars.orderId)}?${q}`;
+}
+
 function buildTaskListUrl(vars) {
   const baseUrl = vars['demo-mob-dev'];
   return `${baseUrl}/portal/api/v1/tasks?businessInteractionId=${encodeURIComponent(vars.orderId)}`;
@@ -35,6 +59,7 @@ function buildTaskCompleteUrl(vars, taskId) {
 module.exports = {
   buildB2bUrl,
   buildOrderDetailUrl,
+  buildOrderDetailFullUrl,
   buildTaskListUrl,
   buildTaskCompleteUrl,
 };

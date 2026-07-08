@@ -13,6 +13,8 @@ const { log, setReauth } = require('../lib/runtime');
 const { parseEnvFile } = require('../lib/env-bru');
 const { doAuth } = require('../lib/auth');
 const { JOURNEYS } = require('../journeys/registry');
+const { doFetchActivities } = require('../lib/activities');
+const { getExpectationForJourney, validateActivities } = require('../validation');
 const {
   parseResumeFrom,
   mergePreseedVars,
@@ -43,18 +45,26 @@ const { executeStep } = require('./step-executor');
  * @param {string} [opts.workOrderIdMe]
  * @param {string} [opts.odbPatchActionId]
  * @param {(info: { journeyName, envName, step, vars }) => void | Promise<void>} [onStep]
+ * @param {(result: { pass, checks }) => void | Promise<void>} [onValidation]
+ *        Called with the activity-validation result when the journey has an
+ *        expectation file. Older callers may omit it.
  */
-async function runJourney(journeyName, envName, opts = {}, onStep) {
+async function runJourney(journeyName, envName, opts = {}, onStep, onValidation) {
   const resumeFrom = parseResumeFrom(opts.resumeFrom != null ? opts.resumeFrom : 1);
 
   log('START', `Journey: ${journeyName}`);
-  log('START', `Env: ${envName} | ME: ${opts.me || 0} | Payment: ${opts.paymentType || 'Postpaid'}`);
+  log(
+    'START',
+    `Env: ${envName} | ME: ${opts.me || 0} | Payment: ${opts.paymentType || 'Postpaid'}`,
+  );
   if (resumeFrom > 1) log('START', `Resume from step: ${resumeFrom}`);
   log('START', '='.repeat(60));
 
   const journeyFn = JOURNEYS[journeyName];
   if (!journeyFn) {
-    throw new Error(`Unknown journey: "${journeyName}". Available: ${Object.keys(JOURNEYS).join(', ')}`);
+    throw new Error(
+      `Unknown journey: "${journeyName}". Available: ${Object.keys(JOURNEYS).join(', ')}`,
+    );
   }
 
   const vars = parseEnvFile(envName);
@@ -113,7 +123,10 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
 
   log('DONE', '='.repeat(60));
   log('DONE', 'All journey steps executed without a fatal error.');
-  log('DONE', 'Verify the final order state in the portal / Detect before treating it as COMPLETED.');
+  log(
+    'DONE',
+    'Verify the final order state in the portal / Detect before treating it as COMPLETED.',
+  );
   log('DONE', `  orderId:          ${vars.orderId || 'N/A'}`);
   log('DONE', `  serviceOrderId:   ${vars.serviceOrderId || 'N/A'}`);
   log('DONE', `  svActionId:       ${vars.svActionId || 'N/A'}`);
@@ -122,6 +135,25 @@ async function runJourney(journeyName, envName, opts = {}, onStep) {
   log('DONE', `  odbPatchActionId: ${vars.odbPatchActionId || 'N/A'}`);
   log('DONE', `  networkCategory:  ${vars.networkCategory || 'N/A'}`);
   log('DONE', `  customerCategory: ${vars.customerCategory || 'N/A'}`);
+
+  // Opt-in activity validation (report only — never fails the completed run).
+  const expectation = getExpectationForJourney(journeyName);
+  if (expectation) {
+    try {
+      const activities = await doFetchActivities(vars);
+      const result = validateActivities(activities, expectation);
+      const failed = result.checks.filter((c) => c.status !== 'pass').length;
+      log(
+        'VALIDATE',
+        result.pass
+          ? `Activities OK (${result.checks.length} checks passed)`
+          : `Activities FAILED (${failed}/${result.checks.length} checks failed)`,
+      );
+      if (typeof onValidation === 'function') await onValidation(result);
+    } catch (e) {
+      log('VALIDATE', `Validation skipped: ${e.message}`);
+    }
+  }
 }
 
 module.exports = {

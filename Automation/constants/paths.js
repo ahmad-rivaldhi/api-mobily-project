@@ -156,6 +156,14 @@ const SINGLEVIEW = Object.freeze({
   odbPatch: join(SHARED.singleView, 'Custom-Notifications/ODB-Patch-Notification.bru'),
 });
 
+/**
+ * Activity-validation expectation files (JS modules, not Bruno requests).
+ * Directory is relative to the `Automation/` root; see `validation/index.js`.
+ */
+const VALIDATION = Object.freeze({
+  expectationsDir: 'validation/expectations',
+});
+
 function createServiceOaFile(provider) {
   return join(SHARED.createServiceOa, `Create Service OA - ${provider}.bru`);
 }
@@ -196,6 +204,7 @@ module.exports = {
   SHARED,
   TMF641,
   SINGLEVIEW,
+  VALIDATION,
   ACTIVATION,
   join,
   mobilyJourneyDir,

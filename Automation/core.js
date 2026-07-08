@@ -38,8 +38,10 @@
 const { init, log, delay, setCancelCheck } = require('./lib/runtime');
 const { parseBruFile, parseEnvFile, listEnvironments } = require('./lib/env-bru');
 const { subVars, cleanJsonBody, deepFindCharacteristic } = require('./lib/json-utils');
-const { buildB2bUrl, buildOrderDetailUrl } = require('./lib/url-builder');
+const { buildB2bUrl, buildOrderDetailUrl, buildOrderDetailFullUrl } = require('./lib/url-builder');
 const { httpRequest, runBruRequest } = require('./lib/http');
+const { doFetchActivities } = require('./lib/activities');
+const { getExpectationForJourney, validateActivities } = require('./validation');
 const { doAuth } = require('./lib/auth');
 const { doListB2b } = require('./lib/b2b');
 const {
@@ -55,17 +57,10 @@ const {
   doExtractWorkOrderIds,
   doExtractOdbPatchActionId,
 } = require('./lib/extractors');
-const {
-  doNotification,
-  doCreateOrder,
-  doTriggerSvNotification,
-} = require('./lib/notifications');
+const { doNotification, doCreateOrder, doTriggerSvNotification } = require('./lib/notifications');
 const { doListTasks, doCompleteTask } = require('./lib/tasks');
 
-const {
-  buildMobilyActivation,
-  buildMobilyFieldWork,
-} = require('./providers/mobily');
+const { buildMobilyActivation, buildMobilyFieldWork } = require('./providers/mobily');
 const {
   doExtractOpenAccessProviderIds,
   buildOpenAccessActivation,
@@ -110,10 +105,16 @@ module.exports = {
   // URL builders
   buildB2bUrl,
   buildOrderDetailUrl,
+  buildOrderDetailFullUrl,
 
   // HTTP
   httpRequest,
   runBruRequest,
+
+  // activity validation
+  doFetchActivities,
+  getExpectationForJourney,
+  validateActivities,
 
   // domain actions
   doAuth,
