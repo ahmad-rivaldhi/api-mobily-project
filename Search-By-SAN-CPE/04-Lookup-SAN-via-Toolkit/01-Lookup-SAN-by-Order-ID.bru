@@ -5,57 +5,49 @@ meta {
 }
 
 get {
-  url: http://localhost:3456/api/search/by-order?env={{toolkitEnv}}&orderId={{orderId}}
+  url: http://localhost:3456/api/search/by-order?env=Dev%201&orderId=ORD000000000001
   body: none
   auth: none
 }
 
 params:query {
-  env: {{toolkitEnv}}
-  orderId: {{orderId}}
+  env: Dev 1
+  orderId: ORD000000000001
 }
 
 docs {
   One-click SAN lookup lewat toolkit (sama seperti UI Search SAN → Lookup SAN).
 
-  Prasyarat:
-    1. Toolkit running: npm run dev (port 3456)
-    2. Pilih environment di Bruno (nama harus sama dengan env toolkit, mis. Dev 2)
-    3. Set orderId
+  Cara ganti Order ID:
+    - Edit nilai `orderId` di tab Params (literal — bukan {{orderId}})
+    - Env di Params akan diganti otomatis dari environment Bruno yang aktif
 
-  toolkitEnv diisi otomatis dari environment Bruno yang aktif (bru.getEnvName).
-  URL toolkit di-hardcode ke http://localhost:3456.
-
-  Response contoh:
-    {
-      "orderId": "ORD000000027977",
-      "san": "23532557",
-      "specId": "MOB-FTTH-…",
-      "specName": "…",
-      "cpeSerialNumber": "…",
-      "cpeMacAddress": "…",
-      "ftthSAI": "…",
-      "odbId": "…",
-      "inventoryId": "…",
-      "subState": "In Progress| …",
-      "creationDate": "…",
-      "customerReference": "…"
-    }
-
-  Tidak perlu authToken Bruno — toolkit yang auth ke Telflow.
+  Prasyarat: toolkit npm run dev di port 3456.
 }
 
 script:pre-request {
   const envName = bru.getEnvName();
   if (!envName) {
-    throw new Error('Pilih environment di Bruno dulu (nama harus sama dengan env toolkit, mis. Dev 2)');
+    throw new Error('Pilih environment di Bruno dulu (nama harus sama dengan env toolkit)');
   }
-  bru.setVar('toolkitEnv', envName);
 
-  const orderId = bru.getVar('orderId') || bru.getEnvVar('orderId') || '';
-  if (!String(orderId).trim()) {
-    throw new Error('Set orderId dulu (collection / environment var)');
+  let orderId = '';
+  try {
+    const raw = bru.interpolate(req.getUrl());
+    orderId = new URL(raw).searchParams.get('orderId') || '';
+  } catch (e) {}
+
+  orderId = String(orderId || '').trim();
+  if (!orderId) {
+    throw new Error('Isi orderId di tab Params (nilai literal, jangan {{orderId}})');
   }
+
+  req.setUrl(
+    'http://localhost:3456/api/search/by-order?env=' +
+      encodeURIComponent(envName) +
+      '&orderId=' +
+      encodeURIComponent(orderId),
+  );
 }
 
 script:post-response {

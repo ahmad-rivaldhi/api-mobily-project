@@ -5,29 +5,25 @@ meta {
 }
 
 get {
-  url: http://localhost:3456/api/search/by-san-scan?env={{toolkitEnv}}&san={{customerSAN}}&maxScan=250
+  url: http://localhost:3456/api/search/by-san-scan?env=Dev%201&san=000000000000&maxScan=250
   body: none
   auth: none
 }
 
 params:query {
-  env: {{toolkitEnv}}
-  san: {{customerSAN}}
+  env: Dev 1
+  san: 000000000000
   maxScan: 250
 }
 
 docs {
   One-click SAN → orders via toolkit scan (same as UI Search SAN → By SAN).
 
-  Portal has no characteristic filter — toolkit walks recent ORD details and
-  returns ALL matches in the window (pick the right order yourself).
+  Cara ganti SAN:
+    - Edit nilai `san` (dan opsional `maxScan`) di tab Params — literal, bukan {{customerSAN}}
+    - Env di Params diganti otomatis dari environment Bruno yang aktif
 
-  Prasyarat:
-    1. Toolkit running: npm run dev (port 3456)
-    2. Pilih environment di Bruno (= nama env toolkit)
-    3. Set customerSAN
-
-  Response: { san, scanned, matchCount, matches: [{ orderId, san, state, … }] }
+  Prasyarat: toolkit npm run dev di port 3456.
 }
 
 script:pre-request {
@@ -35,17 +31,36 @@ script:pre-request {
   if (!envName) {
     throw new Error('Pilih environment di Bruno dulu (nama harus sama dengan env toolkit)');
   }
-  bru.setVar('toolkitEnv', envName);
 
-  const san = bru.getVar('customerSAN') || bru.getEnvVar('customerSAN') || '';
-  if (!String(san).trim()) {
-    throw new Error('Set customerSAN dulu (collection / environment var)');
+  let san = '';
+  let maxScan = '250';
+  try {
+    const raw = bru.interpolate(req.getUrl());
+    const u = new URL(raw);
+    san = u.searchParams.get('san') || '';
+    maxScan = u.searchParams.get('maxScan') || '250';
+  } catch (e) {}
+
+  san = String(san || '').trim();
+  maxScan = String(maxScan || '250').trim() || '250';
+  if (!san) {
+    throw new Error('Isi san di tab Params (nilai literal, jangan {{customerSAN}})');
   }
+
+  req.setUrl(
+    'http://localhost:3456/api/search/by-san-scan?env=' +
+      encodeURIComponent(envName) +
+      '&san=' +
+      encodeURIComponent(san) +
+      '&maxScan=' +
+      encodeURIComponent(maxScan),
+  );
 }
 
 script:post-response {
   const body = res.getBody();
   if (!body || typeof body !== 'object') return;
+  if (body.san) bru.setVar('customerSAN', String(body.san));
   const matches = Array.isArray(body.matches) ? body.matches : [];
   if (matches.length === 1 && matches[0].orderId) {
     bru.setVar('orderId', String(matches[0].orderId));

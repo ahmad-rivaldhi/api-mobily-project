@@ -9,12 +9,11 @@ docs {
   Prasyarat: toolkit jalan di http://localhost:3456
     npm run dev   # di repo FTTH-Mobily-Toolkit
 
+  ### Edit input di Bruno
+  Params memakai nilai literal (bukan `{{orderId}}` / `{{customerSAN}}`)
+  supaya bisa diedit di tab Params. Env diganti otomatis dari
+  environment Bruno yang aktif saat Send.
+
   ### 01 - Lookup SAN by Order ID
-    GET /api/search/by-order?env=<Bruno env>&orderId={{orderId}}
-
   ### 02 - Find Orders by SAN (scan)
-    GET /api/search/by-san-scan?env=<Bruno env>&san={{customerSAN}}&maxScan=250
-    → returns ALL matches in the scan window (pick manually if >1)
-
-  toolkitEnv diisi otomatis dari environment Bruno yang aktif.
 }
