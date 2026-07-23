@@ -1,0 +1,51 @@
+meta {
+  name: ACES-IF-T1-V1-CST005-Fiber-Cut
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "ACES_ORDER_UPDATE",
+        "externalId": "{{acesInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Pending",
+        "providerMilestone": "Pending",
+        "providerComments": "FIBER CUT",
+        "orderTransactionNo": "",
+        "serviceAccNum": "{{acesServiceAccNum}}",
+        "reasonCode": "CST005",
+        "reasonText": "FIBER CUT"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

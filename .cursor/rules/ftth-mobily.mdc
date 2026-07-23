@@ -10,8 +10,9 @@ toolkit (`FTTH-Mobily-Toolkit/server.js`) drives it. Full guide: `AGENTS.md`.
 
 ## Non-negotiable rules (each was a real bug)
 
-- **`networkCategory` is case-sensitive**: only `FTTH CONSUMER` / `FTTH RCY`
-  are valid. Source of truth: `Automation/providers/network-category.js`.
+- **`networkCategory` is case-sensitive**: default `FTTH Consumer` / `FTTH RCY`.
+ Source of truth: `Automation/providers/network-category.js`. Override via UI
+ if an env's option list differs.
 - **SV notifications are async via B2B**: `UAT-Completed` must wait for the
   B2B `CPE Installation Action (Pending UAT)` first
   (`doWaitForCpeInstallationPendingUat` in `lib/b2b.js`), else the order sticks

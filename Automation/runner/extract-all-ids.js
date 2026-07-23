@@ -25,8 +25,17 @@ const {
   extractInventoryId,
 } = require('../lib/state');
 const { OA_PROVIDER_ID_SPECS } = require('../providers/openaccess');
+const { stripStalePerOrderIds } = require('./resume');
 
 async function doExtractAllIds(vars, opts = {}) {
+  // Env files carry per-order IDs (workOrderId*, serviceOrderId, and OA
+  // installation/SQ IDs) as defaults from whatever order was last worked on.
+  // Echoing those would misreport a fresh order (e.g. a Mobily order would
+  // appear to have STC/ITC IDs). Drop them first so `out` reflects ONLY what
+  // this order actually exposes; the detail/B2B passes below re-extract the
+  // real values.
+  stripStalePerOrderIds(vars);
+
   const out = {
     orderId: vars.orderId || null,
     serviceOrderId: vars.serviceOrderId || null,
@@ -55,12 +64,13 @@ async function doExtractAllIds(vars, opts = {}) {
         vars.workOrderIdCpe = cpeWoId;
         out.workOrderIdCpe = cpeWoId;
       }
-      if ((opts.me || 0) > 0) {
-        const meWoId = deepFindCharacteristic(data, 'meshWorkOrderId');
-        if (meWoId) {
-          vars.workOrderIdMe = meWoId;
-          out.workOrderIdMe = meWoId;
-        }
+      // Always attempt the mesh work order — the snapshot has no reliable ME
+      // count, and echoing a stale env value is worse than reporting the real
+      // one (or null when the order genuinely has no ME).
+      const meWoId = deepFindCharacteristic(data, 'meshWorkOrderId');
+      if (meWoId) {
+        vars.workOrderIdMe = meWoId;
+        out.workOrderIdMe = meWoId;
       }
       const ref = findSvReferenceInOrderData(data);
       if (ref) {

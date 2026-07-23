@@ -1,0 +1,51 @@
+meta {
+  name: STC-IF-T1-V1-B11-OLO-Fiber-Cut
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "STC_ORDER_UPDATE",
+        "externalId": "{{stcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Failure",
+        "providerMilestone": "Failure",
+        "providerComments": "B11-OLO - FIBER CUT B/W TB & FDT",
+        "orderTransactionNo": "",
+        "serviceAccNum": "{{stcInstallationId}}",
+        "reasonCode": "B11-OLO",
+        "reasonText": "B11-OLO - FIBER CUT B/W TB & FDT"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -10,14 +10,31 @@
  * To enable, fill `activities` using the schema shown in the commented example.
  * Matching is case-insensitive substring against each activity's name/type.
  *
- * Example (verify names first, then uncomment / adapt):
+ * `source`: 'activities' (default — order-detail Activities[]) or 'b2b' (the
+ * portal "System" tab, i.e. B2B messages). For B2B, each item exposes the
+ * parsed `Message.Data` payload as `Data`, and matching is by the message
+ * `Action`.
  *
+ * Example — validate the ODB Patching Action Request payload from the System
+ * tab (verify against a real order via the Validation page → Source "B2B"):
+ *
+ *   source: 'b2b',
  *   activities: [
- *     { name: 'CPE Installation', requiredStatus: 'Completed' },
- *     { name: 'UAT',              requiredStatus: 'Completed',
- *       requiredFields: { CompletionDate: 'nonempty' } },
+ *     {
+ *       name: 'ODB Patching Action Request',   // matches the B2B Action
+ *       requiredStatus: 'Delivered',
+ *       assert: [
+ *         { path: 'Data.type', equals: 'ODB Patching' },
+ *         { path: 'Data.orderId', type: 'nonempty' },
+ *         { path: 'Data.characteristic[name=odbId].value', matches: '^JED-' },
+ *         { path: 'Data.characteristic[name=serviceAddress].value', type: 'nonempty' },
+ *         { path: 'Data.characteristic[name=appointmentId].value', type: 'nonempty' },
+ *         { path: 'Data.characteristic[name=appointmentStartDate].value',
+ *           matches: '^\\d{4}-\\d{2}-\\d{2}T' },
+ *       ],
+ *     },
  *   ],
- *   ordered: true,
+ *   ordered: false,
  */
 
 module.exports = {

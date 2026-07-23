@@ -1,0 +1,54 @@
+meta {
+  name: Step-05-ITC-Serial-Number
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "",
+        "externalId": "{{itcInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "Installation Completed",
+        "comments": "testCmment",
+        "providerStatus": "Installation Completed",
+        "providerMilestone": "Installation Completed",
+        "providerComments": "providerComment-InstlComplt",
+        "serviceAccNum" : "",
+        "devices": [
+          {
+            "integrationId": "{{cpeIntegrationId}}",
+            "newSerialNumber": "{{cpeSerialNumber}}"
+          }
+        ]
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -2,17 +2,24 @@
  * Pure activity-tab validator. No I/O — takes a raw `Activities` array and a
  * per-journey expectation, returns a structured pass/fail report.
  *
- * Expectation shape (see docs/specs/2026-07-07-activity-validation-design.md):
+ * Expectation shape (see docs/specs/2026-07-07-activity-validation-design.md
+ * and docs/specs/2026-07-08-activity-json-assertions-design.md):
  *   {
  *     ordered: boolean,
  *     activities: [
- *       { name, exact?, requiredStatus?, requiredFields?: { field: type } }
+ *       {
+ *         name, exact?, requiredStatus?,
+ *         requiredFields?: { field: type },   // shallow shape (legacy)
+ *         assert?: [ { path, ...operators } ] // deep per-field JSON assertions
+ *       }
  *     ]
  *   }
- *   field type ∈ 'string' | 'number' | 'boolean' | 'nonempty' | 'present'
+ *   field type ∈ 'string' | 'number' | 'boolean' | 'array' | 'object' | 'nonempty' | 'present'
  *
  * Result: { pass, checks: [{ name, status: 'pass'|'fail', expected, actual, message? }] }
  */
+
+const { assertRule, pathLabel } = require('./assert-field');
 
 function pick(obj, keys) {
   for (const k of keys) {
@@ -24,7 +31,9 @@ function pick(obj, keys) {
 /** Map varied Telflow field casings to a stable shape. */
 function normalizeActivity(a) {
   if (!a || typeof a !== 'object') return { name: '', type: '', status: '', raw: a };
-  const name = pick(a, ['Name', 'name', 'ActivityName', 'activityName']) ?? '';
+  // `Action` is included so B2B "System-tab" messages match by their action
+  // string (e.g. "ODB Patching Action Request").
+  const name = pick(a, ['Name', 'name', 'ActivityName', 'activityName', 'Action', 'action']) ?? '';
   const type = pick(a, ['Type', 'type', 'ActivityType', 'activityType']) ?? '';
   const status =
     pick(a, [
@@ -133,6 +142,30 @@ function validateActivities(activities, expectation) {
           actual: val === undefined ? null : val,
           message: ok ? undefined : `expected ${type}`,
         });
+      }
+    }
+
+    // Deep per-field JSON assertions against the raw activity object.
+    if (Array.isArray(exp.assert)) {
+      for (const rule of exp.assert) {
+        const fault = assertRule(acts[idx].raw, rule);
+        const lbl = pathLabel(rule.path);
+        if (fault) {
+          checks.push({
+            name: `assert: ${label}.${lbl} [${fault.op}]`,
+            status: 'fail',
+            expected: fault.expected,
+            actual: fault.actual === undefined ? null : fault.actual,
+            message: fault.message,
+          });
+        } else {
+          checks.push({
+            name: `assert: ${label}.${lbl}`,
+            status: 'pass',
+            expected: undefined,
+            actual: undefined,
+          });
+        }
       }
     }
   }

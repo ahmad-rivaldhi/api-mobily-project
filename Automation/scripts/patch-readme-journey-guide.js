@@ -34,7 +34,7 @@ Each \`folder.bru\` under \`Mobily/{Journey}/\` or \`OpenAccess/{Provider}/{Jour
 
 Mobily field-work journeys compose: **create order → WFM-CPE (shared) → TMF641 → SingleView → WFM Step-09**.
 
-OA activation uses provider ONT notifications under \`Activation/OA ONT Installation - Notification/\` (no shared WFM CPE, no SV UAT step).
+OA activation uses provider ONT notifications under \`Activation/ONT-Installation/\` (no shared WFM CPE, no SV UAT step).
 
 ---
 

@@ -14,6 +14,7 @@ const path = require('path');
 const { log } = require('./runtime');
 const { runBruRequest } = require('./http');
 const { PROVISIONING_COMPLETED_BRU } = require('./b2b');
+const { applyTmf622ExternalId } = require('./external-id');
 const { SINGLEVIEW } = require('../constants/paths');
 
 async function doNotification(vars, bruFile) {
@@ -36,6 +37,7 @@ async function doNotification(vars, bruFile) {
 }
 
 async function doCreateOrder(vars, bruFile) {
+  applyTmf622ExternalId(vars, bruFile);
   vars.eventTime = new Date().toISOString();
   vars.eventDate = new Date().toISOString();
   const label = path.basename(bruFile, '.bru');

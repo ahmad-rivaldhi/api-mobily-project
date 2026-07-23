@@ -22,7 +22,7 @@ test('Regular (CONSUMER) activation includes ODB patch steps', () => {
   const steps = buildMobilyActivation({ me: 0, customerType: 'Regular-Customer' });
   assert.ok(steps.some((s) => s.type === 'extractOdbPatchActionId'));
   const create = steps.find((s) => s.type === 'create');
-  assert.equal(create.vars.networkCategory, 'FTTH CONSUMER');
+  assert.equal(create.vars.networkCategory, 'FTTH Consumer');
 });
 
 test('Royal (RCY) activation skips ODB patch steps', () => {

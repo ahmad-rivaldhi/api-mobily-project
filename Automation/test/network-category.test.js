@@ -12,15 +12,16 @@ const {
   isRoyalNetworkCategory,
 } = require('../providers/network-category');
 
-test('canonical constants are UPPERCASE (API is case-sensitive)', () => {
-  assert.equal(NETWORK_CATEGORY.CONSUMER, 'FTTH CONSUMER');
+test('canonical constants match Telflow option list (case-sensitive)', () => {
+  assert.equal(NETWORK_CATEGORY.CONSUMER, 'FTTH Consumer');
   assert.equal(NETWORK_CATEGORY.RCY, 'FTTH RCY');
 });
 
 test('normalizeNetworkCategory accepts assorted spellings', () => {
-  assert.equal(normalizeNetworkCategory('FTTH Consumer'), 'FTTH CONSUMER');
-  assert.equal(normalizeNetworkCategory('consumer'), 'FTTH CONSUMER');
-  assert.equal(normalizeNetworkCategory('Regular'), 'FTTH CONSUMER');
+  assert.equal(normalizeNetworkCategory('FTTH Consumer'), 'FTTH Consumer');
+  assert.equal(normalizeNetworkCategory('FTTH CONSUMER'), 'FTTH Consumer');
+  assert.equal(normalizeNetworkCategory('consumer'), 'FTTH Consumer');
+  assert.equal(normalizeNetworkCategory('Regular'), 'FTTH Consumer');
   assert.equal(normalizeNetworkCategory('FTTH RCY'), 'FTTH RCY');
   assert.equal(normalizeNetworkCategory('royal'), 'FTTH RCY');
   assert.equal(normalizeNetworkCategory('rcy'), 'FTTH RCY');
@@ -31,8 +32,19 @@ test('normalizeNetworkCategory accepts assorted spellings', () => {
 test('resolveNetworkCategory honours explicit override then customerType', () => {
   assert.equal(resolveNetworkCategory({ networkCategory: 'FTTH RCY' }), 'FTTH RCY');
   assert.equal(resolveNetworkCategory({ customerType: 'Royal-Customer' }), 'FTTH RCY');
-  assert.equal(resolveNetworkCategory({ customerType: 'Regular-Customer' }), 'FTTH CONSUMER');
-  assert.equal(resolveNetworkCategory({}), 'FTTH CONSUMER');
+  assert.equal(resolveNetworkCategory({ customerType: 'Regular-Customer' }), 'FTTH Consumer');
+  assert.equal(resolveNetworkCategory({}), 'FTTH Consumer');
+});
+
+test('resolveNetworkCategory passes an explicit override through verbatim', () => {
+  // Env-specific spellings must survive so a UI override can satisfy option
+  // lists that differ from the canonical value.
+  assert.equal(resolveNetworkCategory({ networkCategory: 'FTTH CONSUMER' }), 'FTTH CONSUMER');
+  assert.equal(resolveNetworkCategory({ networkCategory: '  FTTH Consumer  ' }), 'FTTH Consumer');
+  assert.equal(
+    customerCategoryFor(resolveNetworkCategory({ networkCategory: 'FTTH Rcy' })),
+    'Royal',
+  );
 });
 
 test('ODB patch routing: RCY skips, CONSUMER requires', () => {

@@ -41,9 +41,9 @@ const { subVars, cleanJsonBody, deepFindCharacteristic } = require('./lib/json-u
 const { buildB2bUrl, buildOrderDetailUrl, buildOrderDetailFullUrl } = require('./lib/url-builder');
 const { httpRequest, runBruRequest } = require('./lib/http');
 const { doFetchActivities } = require('./lib/activities');
-const { getExpectationForJourney, validateActivities } = require('./validation');
+const { getExpectationForJourney, validateActivities, compareJsonShape } = require('./validation');
 const { doAuth } = require('./lib/auth');
-const { doListB2b } = require('./lib/b2b');
+const { doListB2b, doFetchB2bActivities } = require('./lib/b2b');
 const {
   extractSubState,
   extractInventoryId,
@@ -84,6 +84,14 @@ const {
 const { detectOrderPosition } = require('./runner/state-detector');
 const { doExtractAllIds } = require('./runner/extract-all-ids');
 const { runJourney } = require('./runner/runner');
+const {
+  listShortcuts,
+  getShortcut,
+  buildShortcutSteps,
+  resolvePayloadFields,
+  FAILURE_CODES_BY_PROVIDER,
+} = require('./shortcuts/registry');
+const { runShortcut } = require('./shortcuts/runner');
 
 module.exports = {
   // runtime / generic utilities
@@ -113,8 +121,10 @@ module.exports = {
 
   // activity validation
   doFetchActivities,
+  doFetchB2bActivities,
   getExpectationForJourney,
   validateActivities,
+  compareJsonShape,
 
   // domain actions
   doAuth,
@@ -154,6 +164,14 @@ module.exports = {
   getJourneyStepLabels,
   listJourneys,
   listJourneyTree,
+
+  // activation shortcuts
+  listShortcuts,
+  getShortcut,
+  buildShortcutSteps,
+  resolvePayloadFields,
+  runShortcut,
+  FAILURE_CODES_BY_PROVIDER,
 
   // execution
   detectOrderPosition,

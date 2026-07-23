@@ -82,5 +82,12 @@ docs {
     04 - Get Inventory Detail
     05 - Get Inventory Relationships
     06 - List Customer Orders by inventoryId
+
+  ### 04-Lookup-SAN-via-Toolkit — one-click (sama seperti UI Search SAN)
+    01 - Lookup SAN by Order ID
+      GET http://localhost:3456/api/search/by-order?env=<Bruno env aktif>&orderId={{orderId}}
+    02 - Find Orders by SAN (scan)
+      GET http://localhost:3456/api/search/by-san-scan?env=…&san={{customerSAN}}&maxScan=250
+      → list semua match; user pilih order yang dimaksud
 }
 

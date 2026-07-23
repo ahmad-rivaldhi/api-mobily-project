@@ -71,7 +71,8 @@ function isOdbPatchAlreadyCompleted(msg) {
   if (!action.includes('ODB Patch') && !action.includes('Action Notification')) return false;
   try {
     const d = JSON.parse(msg.Message?.Data || '{}');
-    const rt = d.resolutionText || d.event?.action?.resolutionText || d.action?.resolutionText || '';
+    const rt =
+      d.resolutionText || d.event?.action?.resolutionText || d.action?.resolutionText || '';
     if (rt === 'ODB Patching Completed') return true;
   } catch {
     /* ignore malformed payloads */
@@ -129,11 +130,7 @@ function isCpeInstallationPendingUatRequest(msg, svOrderId) {
  * exist before `UAT-Completed.bru` is sent. WFM Step-09 creates this
  * asynchronously — sending SV UAT too early leaves the order at UAT Completed.
  */
-async function doWaitForCpeInstallationPendingUat(
-  vars,
-  maxAttempts = 24,
-  intervalMs = 5000,
-) {
+async function doWaitForCpeInstallationPendingUat(vars, maxAttempts = 24, intervalMs = 5000) {
   const { log, delay } = require('./runtime');
   const svOrderId = vars.svActionId;
   if (!svOrderId) {
@@ -172,6 +169,34 @@ async function doWaitForCpeInstallationPendingUat(
   );
 }
 
+/**
+ * Fetch B2B messages for the order as validation-ready objects — this is the
+ * "System" tab in the portal. Each message keeps its top-level fields and
+ * exposes the parsed `Message.Data` payload as `Data` so expectations can
+ * assert on e.g. `Data.characteristic[name=odbId].value`.
+ */
+async function doFetchB2bActivities(vars) {
+  if (!vars || !vars.orderId) throw new Error('doFetchB2bActivities: orderId is required');
+  const res = await httpRequest('GET', buildB2bUrl(vars), {
+    Authorization: `Bearer ${vars.authToken}`,
+  });
+  const rows = res.body?.data?.Rows || [];
+  return rows.map((msg) => ({
+    id: msg.ID ?? msg.Id ?? msg.id ?? null,
+    Action: msg.Action ?? '',
+    Status: msg.Status ?? msg.status ?? '',
+    Type: msg.Type ?? '',
+    CorrelationID: msg.CorrelationID ?? msg.CorrelationId ?? null,
+    SubmittedDate: msg.SubmittedDate ?? null,
+    DeliveredDate: msg.DeliveredDate ?? null,
+    orderId: msg.BusinessInteraction?.ID ?? null,
+    from: msg.From?.PartyRole?.Party?.OrganisationName ?? null,
+    to: msg.To?.PartyRole?.Party?.OrganisationName ?? null,
+    Data: parseB2bMessageData(msg) ?? msg.Message?.Data ?? null,
+    _raw: msg,
+  }));
+}
+
 /** Toolkit-only: list B2B messages for this order in a UI-friendly shape. */
 async function doListB2b(vars) {
   const res = await httpRequest('GET', buildB2bUrl(vars), {
@@ -206,5 +231,5 @@ module.exports = {
   isOdbPatchAlreadyCompleted,
   getLatestB2BProductOrderState,
   doListB2b,
+  doFetchB2bActivities,
 };
-

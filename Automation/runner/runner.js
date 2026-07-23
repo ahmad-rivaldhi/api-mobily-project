@@ -14,6 +14,7 @@ const { parseEnvFile } = require('../lib/env-bru');
 const { doAuth } = require('../lib/auth');
 const { JOURNEYS } = require('../journeys/registry');
 const { doFetchActivities } = require('../lib/activities');
+const { doFetchB2bActivities } = require('../lib/b2b');
 const { getExpectationForJourney, validateActivities } = require('../validation');
 const {
   parseResumeFrom,
@@ -140,8 +141,10 @@ async function runJourney(journeyName, envName, opts = {}, onStep, onValidation)
   const expectation = getExpectationForJourney(journeyName);
   if (expectation) {
     try {
-      const activities = await doFetchActivities(vars);
-      const result = validateActivities(activities, expectation);
+      const source = expectation.source === 'b2b' ? 'b2b' : 'activities';
+      const items =
+        source === 'b2b' ? await doFetchB2bActivities(vars) : await doFetchActivities(vars);
+      const result = validateActivities(items, expectation);
       const failed = result.checks.filter((c) => c.status !== 'pass').length;
       log(
         'VALIDATE',

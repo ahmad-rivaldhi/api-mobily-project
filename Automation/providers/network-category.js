@@ -1,20 +1,21 @@
 /**
  * Network category routing (Phase 4B).
  *
- * Telflow now distinguishes Mobily customers by `networkCategory` rather
- * than the historical Regular/Royal folder split, so the journey runner
- * picks ODB-patch behaviour from this constant.
+ * Telflow distinguishes Mobily customers by `networkCategory` rather than
+ * the historical Regular/Royal folder split, so the journey runner picks
+ * ODB-patch behaviour from this constant.
  *
- *   FTTH CONSUMER  →  ODB patch is required  (Regular customers)
+ *   FTTH Consumer  →  ODB patch is required  (Regular customers)
  *   FTTH RCY       →  ODB patch is skipped   (Royal customers)
  *
- * The API is case-sensitive and only accepts the UPPERCASE spellings below;
- * this constant is the single source of truth (engine, Bruno defaults, and
- * the smoke test all derive from it). See AGENTS.md / .cursor rules.
+ * Spelling is case-sensitive and env-dependent. Current Telflow option lists
+ * (collection.bru / Dev 3) accept **title case** `FTTH Consumer`. An explicit
+ * UI/env override is passed through verbatim for envs that differ.
+ * See AGENTS.md / .cursor rules.
  */
 
 const NETWORK_CATEGORY = Object.freeze({
-  CONSUMER: 'FTTH CONSUMER',
+  CONSUMER: 'FTTH Consumer',
   RCY: 'FTTH RCY',
 });
 
@@ -30,36 +31,41 @@ const CUSTOMER_CATEGORY = Object.freeze({
  */
 function normalizeNetworkCategory(value) {
   if (!value) return null;
-  const v = String(value).toUpperCase().replace(/[\s-]+/g, ' ').trim();
+  const v = String(value)
+    .toUpperCase()
+    .replace(/[\s-]+/g, ' ')
+    .trim();
   if (v === 'FTTH RCY' || v === 'RCY' || v === 'ROYAL' || v === 'FTTHRCY') {
     return NETWORK_CATEGORY.RCY;
   }
-  if (
-    v === 'FTTH CONSUMER' ||
-    v === 'CONSUMER' ||
-    v === 'REGULAR' ||
-    v === 'FTTHCONSUMER'
-  ) {
+  if (v === 'FTTH CONSUMER' || v === 'CONSUMER' || v === 'REGULAR' || v === 'FTTHCONSUMER') {
     return NETWORK_CATEGORY.CONSUMER;
   }
   return null;
 }
 
 /**
- * Resolve the effective networkCategory from the journey opts. Honours an
- * explicit `opts.networkCategory` when present, else maps from
- * `opts.customerType` (the dropdown the UI exposes today).
+ * Resolve the effective networkCategory sent to the API from the journey opts.
+ *
+ * An explicit `opts.networkCategory` is passed through VERBATIM (only trimmed)
+ * so environments whose option list differs from the canonical spelling can
+ * be driven from the UI override. When no explicit value is given we fall
+ * back to the canonical value derived from `opts.customerType`.
  */
 function resolveNetworkCategory(opts = {}) {
-  const explicit = normalizeNetworkCategory(opts.networkCategory);
+  const explicit = opts.networkCategory != null ? String(opts.networkCategory).trim() : '';
   if (explicit) return explicit;
   if (opts.customerType === 'Royal-Customer') return NETWORK_CATEGORY.RCY;
   return NETWORK_CATEGORY.CONSUMER;
 }
 
-/** Mobily customerCategory characteristic value paired with this network category. */
+/**
+ * Mobily customerCategory characteristic value paired with this network
+ * category. Uses the tolerant `isRoyalNetworkCategory` check so a custom-cased
+ * override (e.g. `FTTH Rcy`) still maps correctly.
+ */
 function customerCategoryFor(networkCategory) {
-  return networkCategory === NETWORK_CATEGORY.RCY
+  return isRoyalNetworkCategory(networkCategory)
     ? CUSTOMER_CATEGORY.ROYAL
     : CUSTOMER_CATEGORY.REGULAR;
 }

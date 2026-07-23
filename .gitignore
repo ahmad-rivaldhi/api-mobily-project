@@ -4,3 +4,32 @@ environments/
 # Keep the template as reference
 !environments/.gitkeep
 !environments/env.example.bru
+
+# Local / PROD auth dumps (never push secrets)
+Authentication/Auth PROD.bru
+**/Auth PROD.bru
+
+# Design specs, brainstorm notes, collaboration dumps (keep README + AGENTS only)
+docs/
+**/docs/specs/
+AI-COLLABORATION-GUIDE.md
+Test-Cases/
+analysis-*.md
+cursor_*.md
+
+# Swagger / OpenAPI text dumps
+swagger*.txt
+**/swagger*.txt
+
+# Images / design assets
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.pdf
+
+# Superpowers / local agent brainstorm artifacts
+.superpowers/
+**/.superpowers/

@@ -24,21 +24,21 @@ const JOURNEY = Object.freeze({
   maintenance: 'Maintenance',
   requestUpdate: 'Request-Update',
   installationFailure: 'Installation-Failure',
-  meshExtender: 'Mesh-Extender-Standalone',
+  meshExtender: 'ME-Standalone',
   cancelOrder: 'Cancel-Order',
 });
 
 const AUTH = Object.freeze({
-  dev1: `${ROOT.auth}/Auth Dev 1.bru`,
-  dev2: `${ROOT.auth}/Auth Dev 2.bru`,
-  dev3: `${ROOT.auth}/Auth Dev 3.bru`,
-  devOnPrem: `${ROOT.auth}/Auth Dev On Prem.bru`,
-  sit: `${ROOT.auth}/Auth SIT.bru`,
+  dev1: `${ROOT.auth}/Auth-Dev-1.bru`,
+  dev2: `${ROOT.auth}/Auth-Dev-2.bru`,
+  dev3: `${ROOT.auth}/Auth-Dev-3.bru`,
+  devOnPrem: `${ROOT.auth}/Auth-Dev-On-Prem.bru`,
+  sit: `${ROOT.auth}/Auth-SIT.bru`,
 });
 
 const SHARED = Object.freeze({
-  wfmCpePhase1: `${ROOT.shared}/WFM-CPE/Phase 1`,
-  wfmCpePhase2: `${ROOT.shared}/WFM-CPE/Phase 2`,
+  wfmCpePhase1: `${ROOT.shared}/WFM-CPE/Phase-1`,
+  wfmCpePhase2: `${ROOT.shared}/WFM-CPE/Phase-2`,
   wfmMe: `${ROOT.shared}/WFM-ME`,
   tmf641: `${ROOT.shared}/TMF641-Notifications`,
   singleView: `${ROOT.shared}/SingleView-Integration`,
@@ -77,30 +77,36 @@ function sharedWorkflowFile(...subpath) {
   return join(ROOT.shared, ...subpath);
 }
 
+/** @deprecated ME is encoded in the filename; kept for transitional callers. */
 function meDirName(meCount) {
   const n = Number(meCount) || 0;
   if (n <= 0) return 'without ME';
   return `with ${n} ME`;
 }
 
-function mobilyCreateOrderPath(customerType, paymentType, meCount) {
+function meFileSuffix(meCount) {
   const me = Number(meCount) || 0;
-  const suffix = me > 0 ? `With-${me}-ME` : 'No-ME';
-  const meFolder = meDirName(me);
-  const base = join(mobilyJourneyDir(JOURNEY.activation), 'TMF-622 Create Sales Order');
+  return me > 0 ? `-${me}-ME` : '';
+}
+
+/**
+ * Mobily TMF622 create path. `paymentType` is ignored (prepaid/postpaid no
+ * longer split the collection); kept in the signature for caller compat.
+ */
+function mobilyCreateOrderPath(customerType, _paymentType, meCount) {
+  const base = join(mobilyJourneyDir(JOURNEY.activation), '622-Create-Sales-Order');
+  const suffix = meFileSuffix(meCount);
   if (customerType === 'Royal-Customer') {
-    return join(base, 'FTTH RCY', paymentType, meFolder, `FTTH-Royal-${paymentType}-${suffix}.bru`);
+    return join(base, 'FTTH-RCY', `MOB-FTTH-RCY${suffix}.bru`);
   }
-  return join(base, 'FTTH Consumer', meFolder, `FTTH-${paymentType}-${suffix}.bru`);
+  return join(base, 'FTTH-Consumer', `MOB-FTTH-Consumer${suffix}.bru`);
 }
 
 function openAccessCreateOrderPath(provider, meCount) {
-  const me = Number(meCount) || 0;
-  const suffix = me > 0 ? `With-${me}-ME` : 'No-ME';
-  const meFolder = meDirName(me);
+  const suffix = meFileSuffix(meCount);
   return join(
-    oaActivationPath(provider, 'TMF-622 Create Sales Order', meFolder),
-    `FTTH-${provider}-Postpaid-${suffix}.bru`,
+    oaActivationPath(provider, '622-Create-Sales-Order'),
+    `${provider}-FTTH${suffix}.bru`,
   );
 }
 
@@ -145,15 +151,15 @@ function wfmMeUatCompletedStep() {
 }
 
 const TMF641 = Object.freeze({
-  serviceOrderCompleted: join(SHARED.tmf641, 'Service-Order-Completed.bru'),
-  ceaseTermination: join(SHARED.tmf641, '641 Cease - Termination.bru'),
+  serviceOrderCompleted: join(SHARED.tmf641, 'TMF641-Service-Order-Completed.bru'),
+  ceaseTermination: join(SHARED.tmf641, 'TMF641-Cease-Termination.bru'),
 });
 
 const SINGLEVIEW = Object.freeze({
-  provisioningCompleted: join(SHARED.singleView, 'Order-Completion/Provisioning-Completed.bru'),
-  uatCompleted: join(SHARED.singleView, 'Order-Completion/UAT-Completed.bru'),
-  preCompletion: join(SHARED.singleView, 'Order-Completion/Pre-Completion.bru'),
-  odbPatch: join(SHARED.singleView, 'Custom-Notifications/ODB-Patch-Notification.bru'),
+  provisioningCompleted: join(SHARED.singleView, 'Order-Completion/SV-Provisioning-Completed.bru'),
+  uatCompleted: join(SHARED.singleView, 'Order-Completion/SV-UAT-Completed.bru'),
+  preCompletion: join(SHARED.singleView, 'Order-Completion/SV-Pre-Completion.bru'),
+  odbPatch: join(SHARED.singleView, 'Custom-Notifications/SV-ODB-Patch-Notification.bru'),
 });
 
 /**
@@ -165,7 +171,7 @@ const VALIDATION = Object.freeze({
 });
 
 function createServiceOaFile(provider) {
-  return join(SHARED.createServiceOa, `Create Service OA - ${provider}.bru`);
+  return join(SHARED.createServiceOa, `Create-Service-OA-${provider}.bru`);
 }
 
 function mobilyFailureFile(failureCode) {
@@ -177,11 +183,11 @@ function oaFailureFile(provider, failureCode) {
 }
 
 function mobilyMaintenanceCreateFile() {
-  return mobilyJourneyFile(JOURNEY.maintenance, 'Maintenance Order - Mobily.bru');
+  return mobilyJourneyFile(JOURNEY.maintenance, 'MOB-Maintenance-Order.bru');
 }
 
 function oaMaintenanceCreateFile(provider) {
-  return oaJourneyFile(provider, JOURNEY.maintenance, `Maintenance Order - ${provider}.bru`);
+  return oaJourneyFile(provider, JOURNEY.maintenance, `${provider}-Maintenance-Order.bru`);
 }
 
 function oaRequestFile(provider, journey, filename) {
@@ -193,7 +199,7 @@ const ACTIVATION = Object.freeze({
   orderRoot: mobilyJourneyDir(JOURNEY.activation),
   wfmcpeSteps018: SHARED.wfmCpePhase1,
   wfmcpeStep09: SHARED.wfmCpePhase2,
-  mobilyTmf622Root: join(mobilyJourneyDir(JOURNEY.activation), 'TMF-622 Create Sales Order'),
+  mobilyTmf622Root: join(mobilyJourneyDir(JOURNEY.activation), '622-Create-Sales-Order'),
   openAccessRoot: ROOT.openAccess,
 });
 

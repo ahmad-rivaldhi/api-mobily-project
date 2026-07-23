@@ -1,0 +1,51 @@
+meta {
+  name: MOB-IF-T1-2010-NS-No-Signal
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/workForceManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "workOrderStateChangeNotification",
+    "event": {
+      "workOrder": {
+        "id": "{{workOrderIdCpe}}",
+        "externalId": "{{orderId}}",
+        "state": "COMPLETED",
+        "partition": "VIRTUALVENDOR_Failure",
+        "region": "VIC_Failure",
+        "vendorName": "ventorMob_Failure",
+        "engineerId": "mob-engg-1_Failure",
+        "engineerName": "enggAndy_Failure",
+        "engineerPhone": "+100-56-0019910",
+        "odbPort": "343",
+        "reasonCode": "2010",
+        "reasonText": "NS-NO SIGNAL",
+        "comments": "NS-NO SIGNAL",
+        "timestamp": "{{eventDate}}"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

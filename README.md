@@ -1,197 +1,85 @@
-# FTTH - Mobily - Project
+# FTTH Mobily Project
 
-**Provider × Journey + Shared API Collection for FTTH (Fiber To The Home) — Mobily Implementation**
+Bruno API collection and automation engine for FTTH order flows (Mobily + OpenAccess: STC, ITC, ACES, DOWIYAT).
 
----
+Layout: **Provider × Journey**, with shared WFM / TMF641 / SingleView under `Shared-Workflows/`.
 
-## 📋 **Table of Contents**
-
-1. [Overview](#overview)
-2. [Project Structure](#project-structure)
-3. [Environments](#environments)
-4. [Journey Guide](#journey-guide)
-5. [Getting Started](#getting-started)
-
----
-
-## 🎯 **Overview**
-
-This Bruno API collection covers FTTH order flows for Mobily and OpenAccess providers (STC, ITC, ACES, DOWIYAT).
-
-**Key design:** Provider-specific TMF622 and OA notifications live under `Mobily/{Journey}/` or `OpenAccess/{Provider}/{Journey}/`. Cross-journey steps (WFM CPE/ME, TMF641, SingleView) live under `Shared-Workflows/` — one set, reused by the automation engine and toolkit.
-
-**Total APIs:** ~400+ `.bru` files across providers and journeys.
-
----
-
-## 📁 **Project Structure**
+## Structure
 
 ```
-FTTH - Mobily - Project/
-├── environments/
-├── Authentication/
-├── Mobily/                      # Mobily × journey
-├── OpenAccess/                  # STC | ITC | ACES | DOWIYAT × journey
-├── Shared-Workflows/            # WFM-CPE, WFM-ME, TMF641, SingleView
+├── Authentication/          # OAuth per env
+├── Mobily/{Journey}/
+├── OpenAccess/{Provider}/{Journey}/
+├── Shared-Workflows/        # WFM-CPE, WFM-ME, TMF641, SingleView, Create-Service-OA
 ├── Search-By-SAN-CPE/
-├── Automation/
-└── Documentation/
-
-**Where to put new requests**
-
-| Request type | Folder |
-|--------------|--------|
-| Mobily TMF622 per journey | `Mobily/{Journey}/` |
-| OA TMF622 / OA notifications | `OpenAccess/{Provider}/{Journey}/` |
-| WFM, TMF641, SingleView | `Shared-Workflows/` |
+├── Automation/              # engine (paths.js is source of truth)
+└── environments/            # secrets — not committed
 ```
 
----
+| Put here | Path |
+|----------|------|
+| Mobily create / journey request | `Mobily/{Journey}/` |
+| OA create / ONT / failure | `OpenAccess/{Provider}/{Journey}/` |
+| WFM, TMF641, SingleView | `Shared-Workflows/` |
 
-## 🌍 **Environments**
+### Naming (short)
 
-### **awsDev** (AWS Development)
-- **Base URL:** `https://mobily-dev.live.demo-in.telflow.com`
-- **Purpose:** AWS-hosted development environment
+- Folders: kebab (`Device-Swap`, `ONT-Installation`, `622-Create-Sales-Order`)
+- Create order: `MOB-FTTH-Consumer[-N-ME].bru` / `{PROVIDER}-FTTH[-N-ME].bru` (no prepaid/postpaid split)
+- OA ONT steps: `Step-NN-{PROVIDER}-{Action}.bru`
+- Installation failure: `{SCOPE}-IF-T{n}[-V{n}][-{Code}]-{Reason}.bru`
+- Paths for the runner live in `Automation/constants/paths.js`
 
-### **devOnPrem** (On-Premise Development)
-- **Base URL:** `https://mobily-onprem.dev.telflow.com`
-- **Purpose:** On-premise development environment
+### Activation paths
 
-### **Environment Variables:**
-- `authToken` - Dynamic authentication token
-- `orderId`, `externalId` - Order identifiers
-- `workOrderIdCpe`, `workOrderIdMe` - Work order IDs
-- `customerId`, `customerSAN`, `customerCAN` - Customer details
-- `ftthSAI`, `feasibilityId`, `odbId` - FTTH specific IDs
-- `meshExtender1/2/3` - Mesh extender integration IDs
-- `dawiyatInstallationId`, `itcInstallationId`, `stcInstallationId`, `acesInstallationId` - Provider IDs
-- `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber` - ACES-specific IDs
-- `customerCategory`, `networkCategory` - **TMF 622 Phase 4B** characteristic defaults (overridden per-folder)
+| Flow | Create | Notify |
+|------|--------|--------|
+| Mobily | `Mobily/Activation/622-Create-Sales-Order/` | Shared WFM-CPE → TMF641 → SingleView |
+| OA | `OpenAccess/{P}/Activation/622-Create-Sales-Order/` | `Activation/ONT-Installation/` (no Mobily WFM CPE, no SV UAT) |
 
----
+`networkCategory` is case-sensitive (`FTTH Consumer` / `FTTH RCY`). Source: `Automation/providers/network-category.js`.
 
-## 🆕 **What's New (Phase 4B - 18 Apr update)**
+## Journeys
 
-### 1. `networkCategory` is now mandatory in all TMF 622 payloads
+| Journey | Mobily | OpenAccess | Example IDs |
+|---------|--------|------------|-------------|
+| Activation | yes | STC, ITC, ACES, DOWIYAT | `mobily-activation`, `aces-activation` |
+| Failure | yes | yes (all OA) | `mobily-failure`, `aces-failure` |
+| Relocation / Device-Swap / Rewiring | yes | yes | `aces-relocation` |
+| Suspend / Resume / Termination | yes* | yes | `aces-suspend` |
+| Maintenance / Upgrade / Downgrade | yes | yes (ACES+peers) | `aces-maintenance` |
+| ME-Standalone | yes | yes | manual / Bruno |
 
-The TMF 622 Phase 4B update (18 Apr; external spec doc, not bundled in this
-repo) introduces a new mandatory characteristic on every Create Product Order
-request:
+\*Mobily has Suspend/Termination; Resume is OA-focused in the registry.
 
-| Customer Type | `customerCategory` | `networkCategory` |
-|---------------|--------------------|-------------------|
-| Regular       | `Regular`          | `FTTH CONSUMER`   |
-| Royal (RCY)   | `Royal`            | `FTTH RCY`        |
-| VIP           | `Vip`              | `FTTH CONSUMER`   |
+ACES installation-failure payloads use `providerStatus` / `providerMilestone` = `Pending`.
 
-> **Case-sensitive:** the API only accepts the UPPERCASE values `FTTH CONSUMER`
-> / `FTTH RCY`. The engine's single source of truth is
-> `Automation/providers/network-category.js`; folder defaults, the smoke test,
-> and these docs all derive from it.
+## Environments
 
-`networkCategory` is now the **primary differentiator** between Regular and
-RCY customers — replacing the historical practice of relying on separate folders.
+Local `environments/*.bru` only (never commit). Typical vars: `authToken`, `orderId`, work-order IDs, OA installation IDs (`stcInstallationId`, `itcInstallationId`, `acesInstallationId`, `dawiyatInstallationId`), ACES device fields.
 
-#### How this is wired in the collection (single source of truth)
-
-Every TMF 622 `.bru` references the values via `{{customerCategory}}` and
-`{{networkCategory}}`. The actual values are sourced from folder-level
-`vars:pre-request` blocks:
-
-| Folder | `customerCategory` | `networkCategory` |
-|--------|---------------------|---------------------|
-| `Mobily/Activation/TMF-622 Create Sales Order/FTTH Consumer/` | `Regular` | `FTTH CONSUMER` |
-| `Mobily/Activation/TMF-622 Create Sales Order/FTTH RCY/`      | `Royal`   | `FTTH RCY`          |
-| `OpenAccess/{Provider}/Activation/`                           | `Regular` | `FTTH CONSUMER` |
-
-Override at the request level (in another `vars:pre-request` block inside the
-`.bru`) only when you need to test an edge case (e.g. an OA Royal scenario).
-
-### 2. New Open Access Provider — **ACES**
-
-ACES is a new infrastructure provider added in phase 4B. Notification flows
-are mapped under `OpenAccess/ACES/`.
-
-| Sub-folder | Purpose |
-|------------|---------|
-| OA ONT Installation - Notification     | Accepted → In Progress → Serial Number → Completed |
-| Cancellation-Service-Installation   | Received → Accepted → In Progress → Cancelled |
-| Modification-Service-Installation   | Completed |
-| DeviceSwap-Service-Installation     | Accepted → In Progress → Serial Number → Completed |
-| Relocation-Service-Installation     | Accepted → In Progress → Completed |
-| Rewiring-Service-Installation       | Accepted → In Progress → Completed |
-| Suspend-Service-Installation        | Completed |
-| Resume-Service-Installation         | Completed |
-| Termination-Service-Installation    | Completed |
-| TroubleTicket-Notification          | Resolved / Rejected |
-
-Source samples: `aces/*.json` (collection root).
-
-> **Installation Failure for ACES = TBD.** A placeholder folder is prepared at
-> `Mobily/Installation-Failure/` and `OpenAccess/{Provider}/Installation-Failure/`
-> with a starter `(T0)` request based on the provisional sample. Final
-> failure scenarios will be populated once the OA team confirms the contract.
-
----
-
-### 3. New OpenAccess Activation Automation (provider-side flow)
-
-The journey runner (`Automation/journey-runner.js`) now drives **all four**
-OA providers (STC, ITC, ACES, **DOWIYAT**) through the **provider-side**
-activation flow — the providers' own Service-Installation notification API
-replaces the Mobily WFM-CPE workflow:
-
-| Journey ID         | Provider | Flow |
-|--------------------|----------|------|
-| `stc-activation`     | STC      | Create Order → **STC SQ Notifs (Ordered → Completed → Closed)** → STC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
-| `itc-activation`     | ITC      | Create Order → ITC Activation Notifs (6 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
-| `aces-activation` 🆕 | ACES     | Create Order → ACES Activation Notifs (4 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
-| `dawiyat-activation` | DOWIYAT  | Create Order → DOWIYAT OA ONT notifications (7 steps) → TMF641 Completed → SV Provisioning-Completed → SV Pre-Completion → Completed |
-
-> ⚠️ **Difference from Mobily activation:** OA flows do **NOT** run **Mobily** WFM CPE steps (`Shared-Workflows/WFM-CPE`) and do **NOT** include the SV `UAT-Completed` step. Provider simulations live under **`OpenAccess/<PROVIDER>/Activation/OA ONT Installation - Notification/`**.
-
-**Run examples:**
+## Quick test
 
 ```bash
-node Automation/journey-runner.js --env "Dev 3" --journey aces-activation
-node Automation/journey-runner.js --env "Dev 3" --journey stc-activation --me 1
-node Automation/journey-runner.js --env "Dev 3" --journey itc-activation
+node -e "
+process.env.NODE_TLS_REJECT_UNAUTHORIZED='0';
+const core=require('./Automation/core.js');
+core.init(process.cwd(),(t,m)=>console.log('['+t+']',m));
+(async()=>{
+  const v=core.parseEnvFile('Dev 2');
+  await core.doAuth(v,'Dev 2');
+})().catch(console.error);
+"
+
+node --test Automation/test/*.test.js
 ```
 
-**Required env vars per provider:**
+CLI journey example:
 
-| Provider | Required vars in `environments/<env>.bru` |
-|----------|--------------------------------------------|
-| STC      | `stcInstallationId`, `stcSqId` |
-| ITC      | `itcInstallationId` |
-| ACES     | `acesInstallationId`, `acesServiceAccNum`, `acesCpeIntegrationId`, `acesCpeSerialNumber` |
-| DOWIYAT  | `dawiyatInstallationId` |
+```bash
+node Automation/journey-runner.js --env "Dev 2" --journey aces-activation --me 0
+```
 
----
+## Toolkit
 
-## Journey Guide
-
-Each `folder.bru` under `Mobily/{Journey}/` or `OpenAccess/{Provider}/{Journey}/` documents the step sequence. Shared steps always come from `Shared-Workflows/`.
-
-| Journey | Mobily path | OpenAccess path | Toolkit examples |
-|---------|-------------|-----------------|------------------|
-| Activation | `Mobily/Activation/` | `OpenAccess/{P}/Activation/` | `mobily-activation`, `stc-activation` |
-| Relocation | `Mobily/Relocation/` | `OpenAccess/{P}/Relocation/` | `mobily-relocation`, `dawiyat-relocation` |
-| Device Swap | `Mobily/Device-Swap/` | `OpenAccess/{P}/Device-Swap/` | `mobily-device-swap-cpe` |
-| Upgrade / Downgrade | `Mobily/Upgrade|Downgrade/` | `OpenAccess/{P}/Upgrade|Downgrade/` | `mobily-upgrade`, `oa-downgrade` |
-| Suspend / Resume | `Mobily/Suspend/` | `OpenAccess/{P}/Suspend|Resume/` | `dawiyat-suspend`, `stc-resume` |
-| Termination | `Mobily/Termination/` | `OpenAccess/{P}/Termination/` | `mobily-termination` |
-| Rewiring | `Mobily/Rewiring/` | `OpenAccess/{P}/Rewiring/` | `mobily-rewiring` |
-| Maintenance | `Mobily/Maintenance/` | `OpenAccess/{P}/Maintenance/` | `stc-maintenance` |
-| Installation Failure | `Mobily/Installation-Failure/` | `OpenAccess/{P}/Installation-Failure/` | `mobily-failure`, `stc-failure` |
-| Request Update | `Mobily/Request-Update/` | `OpenAccess/{P}/Request-Update/` | manual |
-| Mesh Extender | `Mobily/Mesh-Extender-Standalone/` | `OpenAccess/{P}/Mesh-Extender-Standalone/` | manual |
-
-Mobily field-work journeys compose: **create order → WFM-CPE (shared) → TMF641 → SingleView → WFM Step-09**.
-
-OA activation uses provider ONT notifications under `Activation/OA ONT Installation - Notification/` (no shared WFM CPE, no SV UAT step).
-
----
-
-### 
+UI lives in the sibling **FTTH-Mobily-Toolkit** repo. It loads this engine via the npm package or a local sibling `Automation/` path in dev.

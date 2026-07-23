@@ -49,8 +49,9 @@ Step descriptor: `{ step, type, file?, delay?, state?, vars? }`.
 
 ## Environment-specific quirks (MAHAL kalau lupa — semua ini pernah jadi bug)
 
-1. **`networkCategory` case-sensitive** → hanya `FTTH CONSUMER` / `FTTH RCY`
-   yang diterima API. Sumber kebenaran: `providers/network-category.js`.
+1. **`networkCategory` case-sensitive** → default `FTTH Consumer` / `FTTH RCY`
+   (title-case Consumer). Env option lists differ; use UI override verbatim
+   if an env rejects the default. Sumber: `providers/network-category.js`.
 2. **Notifikasi SV bersifat async lewat B2B.** SV `UAT-Completed` HARUS nunggu
    B2B `CPE Installation Action (Pending UAT)` muncul dulu
    (`doWaitForCpeInstallationPendingUat`), kalau tidak order nyangkut di

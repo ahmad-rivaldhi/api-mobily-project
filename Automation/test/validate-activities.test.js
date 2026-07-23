@@ -109,3 +109,78 @@ test('exact matching requires a full name/type equality', () => {
   const exact = validateActivities(ACTIVITIES, { activities: [{ name: 'UA', exact: true }] });
   assert.equal(exact.pass, false); // no activity named exactly "UA"
 });
+
+test('validates a B2B "System-tab" message by Action + parsed Data payload', () => {
+  // Shape produced by doFetchB2bActivities (Message.Data already parsed to Data).
+  const b2bItems = [
+    {
+      Action: 'ODB Patching Action Request',
+      Status: 'Delivered',
+      Type: 'REST',
+      orderId: 'ORD000000149168',
+      Data: {
+        type: 'ODB Patching',
+        orderId: '190944',
+        characteristic: [
+          { name: 'odbId', value: 'JED-FYSL-SAFA-02-2637' },
+          { name: 'serviceAddress', value: 'Apartment Number 2776626' },
+          { name: 'appointmentId', value: '12133' },
+          { name: 'appointmentStartDate', value: '2026-07-16T16:00:00.000Z' },
+        ],
+      },
+    },
+  ];
+
+  const good = validateActivities(b2bItems, {
+    source: 'b2b',
+    activities: [
+      {
+        name: 'ODB Patching Action Request',
+        requiredStatus: 'Delivered',
+        assert: [
+          { path: 'Data.type', equals: 'ODB Patching' },
+          { path: 'Data.characteristic[name=odbId].value', matches: '^JED-' },
+          {
+            path: 'Data.characteristic[name=appointmentStartDate].value',
+            matches: '^\\d{4}-\\d{2}-',
+          },
+        ],
+      },
+    ],
+  });
+  assert.equal(good.pass, true, JSON.stringify(good.checks));
+
+  const bad = validateActivities(b2bItems, {
+    activities: [
+      {
+        name: 'ODB Patching Action Request',
+        assert: [{ path: 'Data.characteristic[name=odbId].value', matches: '^XXX-' }],
+      },
+    ],
+  });
+  assert.equal(bad.pass, false);
+});
+
+test('per-process assert[] rules feed into the overall result', () => {
+  const ok = validateActivities(ACTIVITIES, {
+    activities: [
+      {
+        name: 'CPE Installation',
+        assert: [
+          { path: 'Status', equals: 'Completed' },
+          { path: 'CompletionDate', type: 'nonempty' },
+        ],
+      },
+    ],
+  });
+  assert.equal(ok.pass, true, JSON.stringify(ok.checks));
+  assert.ok(ok.checks.some((c) => c.name.startsWith('assert: CPE Installation.Status')));
+
+  const bad = validateActivities(ACTIVITIES, {
+    activities: [{ name: 'CPE Installation', assert: [{ path: 'Status', equals: 'Failed' }] }],
+  });
+  assert.equal(bad.pass, false);
+  const failed = bad.checks.find((c) => c.name.startsWith('assert:') && c.status === 'fail');
+  assert.equal(failed.expected, 'Failed');
+  assert.equal(failed.actual, 'Completed');
+});

@@ -1,0 +1,51 @@
+meta {
+  name: DOWIYAT-IF-T4-No-HAG-Available
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{demo-mob-dev}}/serviceInstallationManagement/v1/notification/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "eventId": "Event-{{orderId}}",
+    "eventTime": "{{eventDate}}",
+    "eventType": "serviceOrderStateChangeNotification",
+    "event": {
+      "serviceOrder": {
+        "funcId": "DOWIYAT_ORDER_UPDATE",
+        "externalId": "{{dawiyatInstallationId}}",
+        "lineItemIdentifier": "",
+        "lineItemStatus": "",
+        "description": "",
+        "orderStatus": "",
+        "comments": "",
+        "providerStatus": "Failure",
+        "providerMilestone": "Failure",
+        "providerComments": "NO HAG AVAILABLE",
+        "orderTransactionNo": "",
+        "serviceAccNum": "{{dawiyatInstallationId}}",
+        "reasonCode": null,
+        "reasonText": "NO HAG AVAILABLE"
+      }
+    }
+  }
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

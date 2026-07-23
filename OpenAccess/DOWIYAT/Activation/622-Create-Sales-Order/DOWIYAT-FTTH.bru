@@ -1,0 +1,261 @@
+meta {
+  name: DOWIYAT-FTTH
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{demo-mob-dev}}/tmf-api/productOrderingManagement/v4/productOrder/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "@type": "ProductOrder",
+    "creator": "80099310",
+    "category": "B2C FTTH",
+    "externalId": "{{externalId}}",
+    "orderDate": "{{eventTime}}",
+    "priority": "1",
+    "productOrderItem": [
+      {
+        "id": "parent-ftth",
+        "@type": "productOrderItem",
+        "action": "add",
+        "ftthSubAction": "Activate",
+        "orderCharacteristic": [
+          {
+            "name": "appointmentDetails",
+            "value": [
+              {
+                "name": "appointmentId",
+                "value": "APT-DWY-003",
+                "valueType": "String"
+              },
+              {
+                "name": "slotId",
+                "value": "DWY-SLOT-01",
+                "valueType": "String"
+              },
+              {
+                "name": "appointmentStartDate",
+                "value": "{{eventTime}}",
+                "valueType": "String"
+              },
+              {
+                "name": "appointmentEndDate",
+                "value": "{{eventTime}}",
+                "valueType": "String"
+              }
+            ],
+            "valueType": "array"
+          },
+          {
+            "name": "customerDetails",
+            "value": [
+              {
+                "name": "san",
+                "value": "SAN-DWY-10003",
+                "valueType": "String"
+              },
+              {
+                "name": "providerSAN",
+                "value": "DWY-SAN-10003",
+                "valueType": "String"
+              },
+              {
+                "name": "can",
+                "value": "CAN-DWY-10003",
+                "valueType": "String"
+              },
+              {
+                "name": "customerName",
+                "value": "Test",
+                "valueType": "String"
+              },
+              {
+                "name": "surname",
+                "value": "Customer",
+                "valueType": "String"
+              },
+              {
+                "name": "customerId",
+                "value": "CUST-DWY-10003",
+                "valueType": "String"
+              },
+              {
+                "name": "segment",
+                "value": "Consumer",
+                "valueType": "String"
+              },
+              {
+                "name": "customerType",
+                "value": "Consumer",
+                "valueType": "String"
+              },
+              {
+                "name": "vip",
+                "value": "false",
+                "valueType": "boolean"
+              },
+              {
+                "name": "contacts",
+                "value": {
+                  "primaryMobile": "+966533333333",
+                  "secondaryMobile": "+966544444444",
+                  "email": "dawiyat@test.com"
+                },
+                "valueType": "object"
+              },
+              {
+                "name": "address",
+                "value": {
+                  "buildingName": "Dawiyat Building",
+                  "streetName": "Olaya Street",
+                  "zipCode": "11564"
+                },
+                "valueType": "object"
+              }
+            ],
+            "valueType": "array"
+          }
+        ],
+        "product": {
+          "@type": "Product",
+          "productSpecification": {
+            "id": "MOB-FTTH-SPECIFICATION-01-00",
+            "name": "FTTH",
+            "version": "1.0"
+          },
+          "characteristic": [
+            {
+              "name": "ftthsai",
+              "value": "FTTH-DWY-SAI-0003",
+              "valueType": "string"
+            },
+            {
+              "name": "ftthPaymentType",
+              "value": "Prepaid",
+              "valueType": "string"
+            },
+            {
+              "name": "infraProvider",
+              "value": "DOWIYAT",
+              "valueType": "string"
+            },
+            {
+              "name": "customerCategory",
+              "value": "{{customerCategory}}",
+              "valueType": "string"
+            },
+            {
+              "name": "networkCategory",
+              "value": "{{networkCategory}}",
+              "valueType": "string"
+            },
+            {
+              "name": "serviceType",
+              "value": "Fiber 300 Prepaid",
+              "valueType": "string"
+            },
+            {
+              "name": "feasibilityId",
+              "value": "FEAS-DWY-0003",
+              "valueType": "string"
+            },
+            {
+              "name": "odbDetails",
+              "value": [
+                {
+                  "name": "odbId",
+                  "value": "ODB-DWY-003",
+                  "valueType": "String"
+                },
+                {
+                  "name": "region",
+                  "value": "Central",
+                  "valueType": "String"
+                },
+                {
+                  "name": "geoCoordinates",
+                  "value": {
+                    "latitude": "24.713552",
+                    "longitude": "46.675296"
+                  },
+                  "valueType": "object"
+                }
+              ],
+              "valueType": "array"
+            },
+            {
+              "name": "cpeDetails",
+              "value": [
+                {
+                  "name": "cpeName",
+                  "value": "DWY-ONT",
+                  "valueType": "String"
+                },
+                {
+                  "name": "bandwidth",
+                  "value": "300",
+                  "valueType": "String"
+                },
+                {
+                  "name": "qosProfile",
+                  "value": "FiberAdvanced",
+                  "valueType": "String"
+                },
+                {
+                  "name": "integrationId",
+                  "value": "ONT-DWY-0003",
+                  "valueType": "String"
+                },
+                {
+                  "name": "cpeType",
+                  "value": "ONT",
+                  "valueType": "String"
+                }
+              ],
+              "valueType": "array"
+            }
+          ]
+        },
+        "productOffering": {
+          "id": "MOB-FTTH-OFFERING-01-00",
+          "name": "Fiber"
+        }
+      }
+    ],
+    "relatedParty": [
+      {
+        "@type": "relatedParty",
+        "@referredType": "Consumer",
+        "id": "CUST-DWY-10003",
+        "name": "Test Customer",
+        "role": "CommerciallyResponsible"
+      }
+    ]
+  }
+  
+}
+
+script:pre-request {
+  bru.setVar('eventTime', new Date().toISOString());
+  bru.setVar('eventDate', new Date().toISOString());
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    console.log('orderId:', res.body.id);
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -41,10 +41,21 @@ function logCandidateExternalIdsForNotify(step, vars) {
   };
 
   if (file.includes('/STC/Service Qualification - Notification/')) push('stcSqId');
-  if (file.includes('/STC/OA ONT Installation - Notification/')) push('stcInstallationId');
-  if (file.includes('/ITC/OA ONT Installation - Notification/')) push('itcInstallationId');
-  if (file.includes('/ACES/OA ONT Installation - Notification/')) push('acesInstallationId');
-  if (file.includes('/DOWIYAT/OA ONT Installation - Notification/')) push('dawiyatInstallationId');
+  if (file.includes('/STC/ONT-Installation/') || file.includes('/STC/OA ONT Installation - Notification/')) {
+    push('stcInstallationId');
+  }
+  if (file.includes('/ITC/ONT-Installation/') || file.includes('/ITC/OA ONT Installation - Notification/')) {
+    push('itcInstallationId');
+  }
+  if (file.includes('/ACES/ONT-Installation/') || file.includes('/ACES/OA ONT Installation - Notification/')) {
+    push('acesInstallationId');
+  }
+  if (
+    file.includes('/DOWIYAT/ONT-Installation/') ||
+    file.includes('/DOWIYAT/OA ONT Installation - Notification/')
+  ) {
+    push('dawiyatInstallationId');
+  }
   if (file.includes('/Order-Completion/') || file.includes('/Custom-Notifications/')) push('svActionId');
   if (file.includes('/TMF641-Notifications/')) push('serviceOrderId');
   if (file.includes('/WFM-CPE/')) push('workOrderIdCpe');

@@ -12,6 +12,7 @@ const path = require('path');
 
 const { VALIDATION } = require('../constants/paths');
 const { validateActivities, normalizeActivity } = require('./validate-activities');
+const { compareJsonShape } = require('./compare-json');
 
 // __dirname = Automation/validation; expectationsDir is relative to Automation/.
 const EXPECTATIONS_DIR = path.join(__dirname, '..', VALIDATION.expectationsDir);
@@ -41,5 +42,6 @@ module.exports = {
   getExpectationForJourney,
   validateActivities,
   normalizeActivity,
+  compareJsonShape,
   EXPECTATIONS_DIR,
 };

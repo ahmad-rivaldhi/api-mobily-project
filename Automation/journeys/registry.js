@@ -47,6 +47,7 @@ const {
   DOWIYAT_FAILURE_CODES,
   STC_FAILURE_CODES,
   ITC_FAILURE_CODES,
+  ACES_FAILURE_CODES,
 } = require('./labels');
 
 const ME_OPTION = { key: 'me', label: 'ME Count', choices: ['0', '1', '2', '3'], default: '0' };
@@ -69,7 +70,13 @@ const JOURNEY_REGISTRY = {
         ],
         default: 'Regular-Customer',
       },
-      { key: 'paymentType', label: 'Payment', choices: ['Postpaid', 'Prepaid'], default: 'Postpaid' },
+      {
+        key: 'networkCategory',
+        label: 'Network Category (override)',
+        type: 'text',
+        default: '',
+        placeholder: 'e.g. FTTH Consumer',
+      },
     ],
     build: (opts) => buildMobilyActivation(opts),
     stepLabels: (opts) => getMobilyActivationLabels(opts),
@@ -99,7 +106,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'relocation',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork(mobilyJourneyFile(JOURNEY.relocation, 'Request - Mobily.bru'), opts),
+      buildMobilyFieldWork(mobilyJourneyFile(JOURNEY.relocation, 'MOB-Relocation-Request.bru'), opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -110,7 +117,10 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork(mobilyJourneyFile(JOURNEY.deviceSwap, 'Request - CPE - Mobily.bru'), opts),
+      buildMobilyFieldWork(
+        mobilyJourneyFile(JOURNEY.deviceSwap, 'MOB-Device-Swap-CPE-Request.bru'),
+        opts,
+      ),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -121,7 +131,10 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork(mobilyJourneyFile(JOURNEY.deviceSwap, 'Request - HAG - Mobily.bru'), opts),
+      buildMobilyFieldWork(
+        mobilyJourneyFile(JOURNEY.deviceSwap, 'MOB-Device-Swap-HAG-Request.bru'),
+        opts,
+      ),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -132,7 +145,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'rewiring',
     options: [ME_OPTION],
     build: (opts) =>
-      buildMobilyFieldWork(mobilyJourneyFile(JOURNEY.rewiring, 'Request - Mobily.bru'), opts),
+      buildMobilyFieldWork(mobilyJourneyFile(JOURNEY.rewiring, 'MOB-Rewiring-Request.bru'), opts),
     stepLabels: MOBILY_FIELDWORK_LABELS,
     stateMap: MOBILY_FIELDWORK_STATE_MAP,
   },
@@ -143,7 +156,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'upgrade',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(mobilyJourneyFile(JOURNEY.upgrade, 'Request - Mobily.bru'), opts),
+      buildSimpleOrder(mobilyJourneyFile(JOURNEY.upgrade, 'MOB-Upgrade-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -154,7 +167,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'downgrade',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(mobilyJourneyFile(JOURNEY.downgrade, 'Request - Mobily.bru'), opts),
+      buildSimpleOrder(mobilyJourneyFile(JOURNEY.downgrade, 'MOB-Downgrade-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -164,7 +177,8 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'mobily',
     journeyType: 'suspend',
     options: [],
-    build: (opts) => buildSimpleOrder(mobilyJourneyFile(JOURNEY.suspend, 'Request - Mobily.bru'), opts),
+    build: (opts) =>
+      buildSimpleOrder(mobilyJourneyFile(JOURNEY.suspend, 'MOB-Suspend-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -175,7 +189,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(mobilyJourneyFile(JOURNEY.termination, 'Request - Mobily.bru'), {
+      buildSimpleOrder(mobilyJourneyFile(JOURNEY.termination, 'MOB-Termination-Request.bru'), {
         ...opts,
         _tmf641File: TMF641.ceaseTermination,
       }),
@@ -228,7 +242,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'relocation',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork(oaJourneyFile('DOWIYAT', JOURNEY.relocation, 'Request - DOWIYAT.bru'), opts),
+      buildOAFieldWork(oaJourneyFile('DOWIYAT', JOURNEY.relocation, 'DOWIYAT-Relocation-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -239,7 +253,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork(oaJourneyFile('DOWIYAT', JOURNEY.deviceSwap, 'Request - DOWIYAT.bru'), opts),
+      buildOAFieldWork(oaJourneyFile('DOWIYAT', JOURNEY.deviceSwap, 'DOWIYAT-Device-Swap-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -250,7 +264,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'rewiring',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork(oaJourneyFile('DOWIYAT', JOURNEY.rewiring, 'Request - DOWIYAT.bru'), opts),
+      buildOAFieldWork(oaJourneyFile('DOWIYAT', JOURNEY.rewiring, 'DOWIYAT-Rewiring-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -262,7 +276,7 @@ const JOURNEY_REGISTRY = {
     options: [],
     build: (opts) =>
       buildSuspendOrder(
-        oaJourneyFile('DOWIYAT', JOURNEY.suspend, 'Request - DOWIYAT.bru'),
+        oaJourneyFile('DOWIYAT', JOURNEY.suspend, 'DOWIYAT-Suspend-Request.bru'),
         createServiceOaFile('DOWIYAT'),
         opts,
       ),
@@ -275,7 +289,8 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
-    build: (opts) => buildSimpleOrder(oaJourneyFile('DOWIYAT', JOURNEY.resume, 'Request - DOWIYAT.bru'), opts),
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('DOWIYAT', JOURNEY.resume, 'DOWIYAT-Resume-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -286,7 +301,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(oaJourneyFile('DOWIYAT', JOURNEY.termination, 'Request - DOWIYAT.bru'), {
+      buildSimpleOrder(oaJourneyFile('DOWIYAT', JOURNEY.termination, 'DOWIYAT-Termination-Request.bru'), {
         ...opts,
         _tmf641File: TMF641.ceaseTermination,
       }),
@@ -338,7 +353,8 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'relocation',
     options: [ME_OPTION],
-    build: (opts) => buildOAFieldWork(oaJourneyFile('STC', JOURNEY.relocation, 'Request - STC.bru'), opts),
+    build: (opts) =>
+      buildOAFieldWork(oaJourneyFile('STC', JOURNEY.relocation, 'STC-Relocation-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -349,7 +365,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork(oaJourneyFile('STC', JOURNEY.deviceSwap, 'Request - STC.bru'), opts),
+      buildOAFieldWork(oaJourneyFile('STC', JOURNEY.deviceSwap, 'STC-Device-Swap-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -361,7 +377,7 @@ const JOURNEY_REGISTRY = {
     options: [],
     build: (opts) =>
       buildSuspendOrder(
-        oaJourneyFile('STC', JOURNEY.suspend, 'Request - STC.bru'),
+        oaJourneyFile('STC', JOURNEY.suspend, 'STC-Suspend-Request.bru'),
         createServiceOaFile('STC'),
         opts,
       ),
@@ -374,7 +390,8 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
-    build: (opts) => buildSimpleOrder(oaJourneyFile('STC', JOURNEY.resume, 'Request - STC.bru'), opts),
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('STC', JOURNEY.resume, 'STC-Resume-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -385,7 +402,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(oaJourneyFile('STC', JOURNEY.termination, 'Request - STC.bru'), {
+      buildSimpleOrder(oaJourneyFile('STC', JOURNEY.termination, 'STC-Termination-Request.bru'), {
         ...opts,
         _tmf641File: TMF641.ceaseTermination,
       }),
@@ -437,7 +454,8 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'relocation',
     options: [ME_OPTION],
-    build: (opts) => buildOAFieldWork(oaJourneyFile('ITC', JOURNEY.relocation, 'Request - ITC.bru'), opts),
+    build: (opts) =>
+      buildOAFieldWork(oaJourneyFile('ITC', JOURNEY.relocation, 'ITC-Relocation-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -448,7 +466,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'device-swap',
     options: [ME_OPTION],
     build: (opts) =>
-      buildOAFieldWork(oaJourneyFile('ITC', JOURNEY.deviceSwap, 'Request - ITC.bru'), opts),
+      buildOAFieldWork(oaJourneyFile('ITC', JOURNEY.deviceSwap, 'ITC-Device-Swap-Request.bru'), opts),
     stepLabels: OA_FIELDWORK_LABELS,
     stateMap: OA_FIELDWORK_STATE_MAP,
   },
@@ -460,7 +478,7 @@ const JOURNEY_REGISTRY = {
     options: [],
     build: (opts) =>
       buildSuspendOrder(
-        oaJourneyFile('ITC', JOURNEY.suspend, 'Request - ITC.bru'),
+        oaJourneyFile('ITC', JOURNEY.suspend, 'ITC-Suspend-Request.bru'),
         createServiceOaFile('ITC'),
         opts,
       ),
@@ -473,7 +491,8 @@ const JOURNEY_REGISTRY = {
     providerCategory: 'openaccess',
     journeyType: 'resume',
     options: [],
-    build: (opts) => buildSimpleOrder(oaJourneyFile('ITC', JOURNEY.resume, 'Request - ITC.bru'), opts),
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('ITC', JOURNEY.resume, 'ITC-Resume-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -484,7 +503,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'termination',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(oaJourneyFile('ITC', JOURNEY.termination, 'Request - ITC.bru'), {
+      buildSimpleOrder(oaJourneyFile('ITC', JOURNEY.termination, 'ITC-Termination-Request.bru'), {
         ...opts,
         _tmf641File: TMF641.ceaseTermination,
       }),
@@ -513,8 +532,130 @@ const JOURNEY_REGISTRY = {
     stepLabels: OA_PROVIDER_ACTIVATION_LABELS,
     stateMap: OA_PROVIDER_ACTIVATION_STATE_MAP,
   },
+  'aces-failure': {
+    label: 'Installation Failure',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'failure',
+    options: [
+      {
+        key: 'failureCode',
+        label: 'Failure Code',
+        choices: ACES_FAILURE_CODES,
+        default: ACES_FAILURE_CODES[0].value,
+      },
+    ],
+    build: (opts) => buildFailureJourney(oaFailureFile('ACES', opts.failureCode)),
+    stepLabels: FAILURE_LABELS,
+    stateMap: {},
+  },
+  'aces-relocation': {
+    label: 'Relocation',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'relocation',
+    options: [ME_OPTION],
+    build: (opts) =>
+      buildOAFieldWork(oaJourneyFile('ACES', JOURNEY.relocation, 'ACES-Relocation-Request.bru'), opts),
+    stepLabels: OA_FIELDWORK_LABELS,
+    stateMap: OA_FIELDWORK_STATE_MAP,
+  },
+  'aces-device-swap': {
+    label: 'Device Swap (ONT)',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'device-swap',
+    options: [ME_OPTION],
+    build: (opts) =>
+      buildOAFieldWork(oaJourneyFile('ACES', JOURNEY.deviceSwap, 'ACES-Device-Swap-Request.bru'), opts),
+    stepLabels: OA_FIELDWORK_LABELS,
+    stateMap: OA_FIELDWORK_STATE_MAP,
+  },
+  'aces-rewiring': {
+    label: 'Rewiring',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'rewiring',
+    options: [ME_OPTION],
+    build: (opts) =>
+      buildOAFieldWork(oaJourneyFile('ACES', JOURNEY.rewiring, 'ACES-Rewiring-Request.bru'), opts),
+    stepLabels: OA_FIELDWORK_LABELS,
+    stateMap: OA_FIELDWORK_STATE_MAP,
+  },
+  'aces-suspend': {
+    label: 'Suspend',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'suspend',
+    options: [],
+    build: (opts) =>
+      buildSuspendOrder(
+        oaJourneyFile('ACES', JOURNEY.suspend, 'ACES-Suspend-Request.bru'),
+        createServiceOaFile('ACES'),
+        opts,
+      ),
+    stepLabels: SUSPEND_OA_LABELS,
+    stateMap: { Completed: 5 },
+  },
+  'aces-resume': {
+    label: 'Resume',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'resume',
+    options: [],
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('ACES', JOURNEY.resume, 'ACES-Resume-Request.bru'), opts),
+    stepLabels: SIMPLE_ORDER_LABELS,
+    stateMap: { Completed: 3 },
+  },
+  'aces-termination': {
+    label: 'Termination',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'termination',
+    options: [],
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('ACES', JOURNEY.termination, 'ACES-Termination-Request.bru'), {
+        ...opts,
+        _tmf641File: TMF641.ceaseTermination,
+      }),
+    stepLabels: SIMPLE_TMF641_LABELS,
+    stateMap: { Completed: 5 },
+  },
+  'aces-maintenance': {
+    label: 'Maintenance',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'maintenance',
+    options: [],
+    build: () => buildMaintenanceOrder(oaMaintenanceCreateFile('ACES')),
+    stepLabels: MAINTENANCE_LABELS,
+    stateMap: {},
+  },
+  'aces-downgrade': {
+    label: 'Downgrade',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'downgrade',
+    options: [],
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('ACES', JOURNEY.downgrade, 'ACES-Downgrade-Request.bru'), opts),
+    stepLabels: SIMPLE_ORDER_LABELS,
+    stateMap: { Completed: 3 },
+  },
+  'aces-upgrade': {
+    label: 'Upgrade',
+    provider: 'ACES',
+    providerCategory: 'openaccess',
+    journeyType: 'upgrade',
+    options: [],
+    build: (opts) =>
+      buildSimpleOrder(oaJourneyFile('ACES', JOURNEY.upgrade, 'ACES-Upgrade-Request.bru'), opts),
+    stepLabels: SIMPLE_ORDER_LABELS,
+    stateMap: { Completed: 3 },
+  },
 
-  // ===== OA Downgrade (shared across OA providers) =========================
+  // ===== OA Downgrade (legacy shared entry — prefers ACES request file) =====
   'oa-downgrade': {
     label: 'Downgrade (OA)',
     provider: 'OpenAccess',
@@ -522,7 +663,7 @@ const JOURNEY_REGISTRY = {
     journeyType: 'downgrade',
     options: [],
     build: (opts) =>
-      buildSimpleOrder(oaJourneyFile('ACES', JOURNEY.downgrade, 'Request - ACES.bru'), opts),
+      buildSimpleOrder(oaJourneyFile('ACES', JOURNEY.downgrade, 'ACES-Downgrade-Request.bru'), opts),
     stepLabels: SIMPLE_ORDER_LABELS,
     stateMap: { Completed: 3 },
   },
@@ -591,7 +732,3 @@ module.exports = {
   listJourneys,
   listJourneyTree,
 };
-
-
-
-

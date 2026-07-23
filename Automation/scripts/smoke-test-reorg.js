@@ -171,7 +171,7 @@ async function runResumeParseSmoke(name, orderId) {
   }
 
   // Shared WFM path sanity (post-reorg)
-  const wfm = core.parseBruFile('Shared-Workflows/WFM-CPE/Phase 1/Step-01-CPE-1000-OK.bru');
+  const wfm = core.parseBruFile('Shared-Workflows/WFM-CPE/Phase-1/Step-01-CPE-1000-OK.bru');
   console.log(`\nOK  shared-wfm-cpe-path (${wfm.method})`);
 
   console.log('\n=== SUMMARY ===');

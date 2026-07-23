@@ -166,37 +166,44 @@ const SUSPEND_OA_LABELS = [
 // Failure code option lists (per provider)
 // ---------------------------------------------------------------------------
 const MOBILY_FAILURE_CODES = [
-  { value: '(No Tr) Code 2102- Customer Refused to sign PN', label: '(No Tr) 2102 - Customer Refused' },
-  { value: '(T1) Code 2017 - Device Swap Failure', label: '(T1) 2017 - Device Swap Failure' },
-  { value: '(T1) Code 2017 - Wrong ODB ID', label: '(T1) 2017 - Wrong ODB ID' },
-  { value: '(T2) Code 2023 - Speed Problem', label: '(T2) 2023 - Speed Problem' },
-  { value: '(T3) Code 2060 - Wrong Contact Number', label: '(T3) 2060 - Wrong Contact' },
-  { value: '(T3) Code 2064 - Wrong Info - Wrong Package', label: '(T3) 2064 - Wrong Package' },
-  { value: '(T4) Code 2040 - Customer Not Reachable', label: '(T4) 2040 - Not Reachable' },
-  { value: 'Device Swap Failure', label: 'Device Swap Failure' },
+  { value: 'MOB-IF-T1-2010-NS-No-Signal', label: 'T1 · 2010 · NS-NO SIGNAL' },
+  { value: 'MOB-IF-T2-2020-CPE-STB-Swap-Failure', label: 'T2 · 2020 · CPE/STB SWAP FAILURE' },
+  { value: 'MOB-IF-T3-2060-Wrong-Contact-No', label: 'T3 · 2060 · WRONG CONTACT NO.' },
+  { value: 'MOB-IF-T4-2040-Customer-Not-Reachable', label: 'T4 · 2040 · CUSTOMER NOT REACHABLE' },
 ];
 
 const DOWIYAT_FAILURE_CODES = [
-  { value: '(T1) DOWIYAT - Fiber cut', label: '(T1) Fiber cut' },
-  { value: '(T2) DOWIYAT - Customer cancelation', label: '(T2) Customer cancelation' },
-  { value: '(T3) DOWIYAT - Wrong customer contact', label: '(T3) Wrong contact' },
-  { value: '(T4) DOWIYAT - No HAG', label: '(T4) No HAG' },
-  { value: '(T5) DOWIYAT - Unknown', label: '(T5) Unknown' },
+  { value: 'DOWIYAT-IF-T1-V1-Fiber-Cut', label: 'T1 V1 · FIBER CUT' },
+  { value: 'DOWIYAT-IF-T1-V2-Commercial-Area', label: 'T1 V2 · COMMERCIAL AREA' },
+  { value: 'DOWIYAT-IF-T1-V3-Duplicate-Order', label: 'T1 V3 · DUPLICATE ORDER' },
+  { value: 'DOWIYAT-IF-T2-Internal-Wiring', label: 'T2 · INTERNAL WIRING' },
+  { value: 'DOWIYAT-IF-T3-Wrong-Customer-Contact', label: 'T3 · WRONG CUSTOMER CONTACT' },
+  { value: 'DOWIYAT-IF-T4-No-HAG-Available', label: 'T4 · NO HAG AVAILABLE' },
+  { value: 'DOWIYAT-IF-T5-Others', label: 'T5 · OTHERS' },
 ];
 
 const STC_FAILURE_CODES = [
-  { value: '(T1) STC - B09-OLO - Loss Signal', label: '(T1) B09 - Loss Signal' },
-  { value: '(T2) STC - B13-OLO - Need Owner Permission', label: '(T2) B13 - Owner Permission' },
-  { value: '(T3) STC - B23-OLO - Wrong Contact Number', label: '(T3) B23 - Wrong Contact' },
-  { value: '(T4) STC - B167 - OLO - No HAG Available', label: '(T4) B167 - No HAG' },
-  { value: '(T5) STC - No Details', label: '(T5) No Details' },
+  { value: 'STC-IF-T1-V1-B11-OLO-Fiber-Cut', label: 'T1 V1 · B11-OLO · FIBER CUT' },
+  { value: 'STC-IF-T1-V2-B15-OLO-Wrong-Plate-ID', label: 'T1 V2 · B15-OLO · WRONG PLATE ID' },
+  { value: 'STC-IF-T2-B24-OLO-Internal-Wiring', label: 'T2 · B24-OLO · INTERNAL WIRING' },
+  { value: 'STC-IF-T3-B23-OLO-Wrong-Contact-Number', label: 'T3 · B23-OLO · WRONG CONTACT NUMBER' },
+  { value: 'STC-IF-T4-B167-OLO-No-HAG-Available', label: 'T4 · B167-OLO · NO HAG AVAILABLE' },
+  { value: 'STC-IF-T5-No-Details', label: 'T5 · NO DETAILS' },
 ];
 
 const ITC_FAILURE_CODES = [
-  { value: '(T1) ITC - No Details - Wrong ODB', label: '(T1) Wrong ODB' },
-  { value: '(T2) ITC - No Details - Internal wiring', label: '(T2) Internal wiring' },
-  { value: '(T3) ITC - No Details - Wrong customer contact', label: '(T3) Wrong contact' },
-  { value: '(T4) ITC - No Details - No HAG Available', label: '(T4) No HAG' },
+  { value: 'ITC-IF-T1-V1-Fiber-Cut', label: 'T1 V1 · FIBER CUT' },
+  { value: 'ITC-IF-T1-V2-Wrong-ODB', label: 'T1 V2 · WRONG ODB' },
+  { value: 'ITC-IF-T2-Internal-Wiring', label: 'T2 · INTERNAL WIRING' },
+  { value: 'ITC-IF-T3-Wrong-Customer-Contact', label: 'T3 · WRONG CUSTOMER CONTACT' },
+  { value: 'ITC-IF-T4-No-HAG-Available', label: 'T4 · NO HAG AVAILABLE' },
+];
+
+const ACES_FAILURE_CODES = [
+  { value: 'ACES-IF-T1-V1-CST005-Fiber-Cut', label: 'T1 V1 · CST005 · FIBER CUT' },
+  { value: 'ACES-IF-T1-V2-CST001-Commercial-Area', label: 'T1 V2 · CST001 · COMMERCIAL AREA' },
+  { value: 'ACES-IF-T2-CST002-Customer-Cancelation', label: 'T2 · CST002 · CUSTOMER CANCELATION' },
+  { value: 'ACES-IF-T4-CST007-No-HAG-Available', label: 'T4 · CST007 · NO HAG AVAILABLE' },
 ];
 
 module.exports = {
@@ -219,4 +226,5 @@ module.exports = {
   DOWIYAT_FAILURE_CODES,
   STC_FAILURE_CODES,
   ITC_FAILURE_CODES,
+  ACES_FAILURE_CODES,
 };
