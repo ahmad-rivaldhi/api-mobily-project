@@ -4,16 +4,19 @@ meta {
 }
 
 docs {
-  # One-click SAN lookup / scan (via FTTH Mobily Toolkit)
+  # One-click Search SAN (via FTTH Mobily Toolkit)
 
-  Prasyarat: toolkit jalan di http://localhost:3456
-    npm run dev   # di repo FTTH-Mobily-Toolkit
-
-  ### Edit input di Bruno
-  Params memakai nilai literal (bukan `{{orderId}}` / `{{customerSAN}}`)
-  supaya bisa diedit di tab Params. Env diganti otomatis dari
-  environment Bruno yang aktif saat Send.
+  Mirror UI toolkit → Inspect → Search SAN.
+  Toolkit URL: http://localhost:3456 (hardcode)
+  toolkitEnv: otomatis dari environment Bruno yang dipilih
 
   ### 01 - Lookup SAN by Order ID
-  ### 02 - Find Orders by SAN (scan)
+  Vars → Pre Request: orderId
+  → GET /api/search/by-order
+
+  ### 02 - Find Orders by SAN (maxRows)
+  Vars → Pre Request: customerSAN, maxRows
+  → GET /api/search/by-san-scan?maxRows=…
+  maxRows = berapa order terbaru dari portal search (CreationDate DESC).
+  Contoh: 100 ≈ 5 halaman UI (page 20); 200 ≈ 10 halaman.
 }

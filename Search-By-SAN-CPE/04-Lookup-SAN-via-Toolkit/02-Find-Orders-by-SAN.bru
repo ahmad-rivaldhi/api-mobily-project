@@ -1,29 +1,43 @@
 meta {
-  name: 02 - Find Orders by SAN (scan)
+  name: 02 - Find Orders by SAN (maxRows)
   type: http
   seq: 2
 }
 
 get {
-  url: http://localhost:3456/api/search/by-san-scan?env=Dev%201&san=000000000000&maxScan=250
+  url: http://localhost:3456/api/search/by-san-scan?env={{toolkitEnv}}&san={{customerSAN}}&maxRows={{maxRows}}
   body: none
   auth: none
 }
 
 params:query {
-  env: Dev 1
-  san: 000000000000
-  maxScan: 250
+  env: {{toolkitEnv}}
+  san: {{customerSAN}}
+  maxRows: {{maxRows}}
+}
+
+vars:pre-request {
+  customerSAN: 801000066007
+  maxRows: 100
 }
 
 docs {
-  One-click SAN → orders via toolkit scan (same as UI Search SAN → By SAN).
+  One-click SAN → orders (sama UI Search SAN → By SAN).
 
-  Cara ganti SAN:
-    - Edit nilai `san` (dan opsional `maxScan`) di tab Params — literal, bukan {{customerSAN}}
-    - Env di Params diganti otomatis dari environment Bruno yang aktif
+  Flow toolkit:
+    1. Portal /order/order/search (CreationDate DESC), maxRows = N order terbaru
+    2. GET detail tiap order → extract characteristic san
+    3. Return semua match (user pilih)
 
-  Prasyarat: toolkit npm run dev di port 3456.
+  Edit Vars → Pre Request:
+    - customerSAN
+    - maxRows   (default 100; ~5 halaman UI jika page size 20; 200 ≈ 10 halaman)
+
+  Auto:
+    - toolkitEnv = environment Bruno aktif
+    - URL toolkit = http://localhost:3456
+
+  Prasyarat: npm run dev di toolkit.
 }
 
 script:pre-request {
@@ -31,30 +45,26 @@ script:pre-request {
   if (!envName) {
     throw new Error('Pilih environment di Bruno dulu (nama harus sama dengan env toolkit)');
   }
+  bru.setVar('toolkitEnv', envName);
 
-  let san = '';
-  let maxScan = '250';
-  try {
-    const raw = bru.interpolate(req.getUrl());
-    const u = new URL(raw);
-    san = u.searchParams.get('san') || '';
-    maxScan = u.searchParams.get('maxScan') || '250';
-  } catch (e) {}
-
-  san = String(san || '').trim();
-  maxScan = String(maxScan || '250').trim() || '250';
+  const san = String(
+    bru.getRequestVar('customerSAN') ||
+    bru.getVar('customerSAN') ||
+    bru.getEnvVar('customerSAN') ||
+    '',
+  ).trim();
   if (!san) {
-    throw new Error('Isi san di tab Params (nilai literal, jangan {{customerSAN}})');
+    throw new Error('Isi customerSAN di tab Vars → Pre Request');
   }
 
-  req.setUrl(
-    'http://localhost:3456/api/search/by-san-scan?env=' +
-      encodeURIComponent(envName) +
-      '&san=' +
-      encodeURIComponent(san) +
-      '&maxScan=' +
-      encodeURIComponent(maxScan),
-  );
+  const maxRows = String(
+    bru.getRequestVar('maxRows') ||
+    bru.getRequestVar('maxScan') ||
+    '100',
+  ).trim();
+  if (!maxRows || Number(maxRows) < 1) {
+    throw new Error('Isi maxRows di tab Vars → Pre Request (angka >= 1)');
+  }
 }
 
 script:post-response {

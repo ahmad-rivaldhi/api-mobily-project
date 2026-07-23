@@ -5,24 +5,31 @@ meta {
 }
 
 get {
-  url: http://localhost:3456/api/search/by-order?env=Dev%201&orderId=ORD000000000001
+  url: http://localhost:3456/api/search/by-order?env={{toolkitEnv}}&orderId={{orderId}}
   body: none
   auth: none
 }
 
 params:query {
-  env: Dev 1
-  orderId: ORD000000000001
+  env: {{toolkitEnv}}
+  orderId: {{orderId}}
+}
+
+vars:pre-request {
+  orderId: ORD000000156056
 }
 
 docs {
-  One-click SAN lookup lewat toolkit (sama seperti UI Search SAN → Lookup SAN).
+  One-click Order ID → SAN (sama UI Search SAN → By Order ID).
 
-  Cara ganti Order ID:
-    - Edit nilai `orderId` di tab Params (literal — bukan {{orderId}})
-    - Env di Params akan diganti otomatis dari environment Bruno yang aktif
+  Edit Vars → Pre Request:
+    - orderId
 
-  Prasyarat: toolkit npm run dev di port 3456.
+  Auto:
+    - toolkitEnv = environment Bruno aktif
+    - URL toolkit = http://localhost:3456
+
+  Prasyarat: npm run dev di toolkit.
 }
 
 script:pre-request {
@@ -30,24 +37,17 @@ script:pre-request {
   if (!envName) {
     throw new Error('Pilih environment di Bruno dulu (nama harus sama dengan env toolkit)');
   }
+  bru.setVar('toolkitEnv', envName);
 
-  let orderId = '';
-  try {
-    const raw = bru.interpolate(req.getUrl());
-    orderId = new URL(raw).searchParams.get('orderId') || '';
-  } catch (e) {}
-
-  orderId = String(orderId || '').trim();
+  const orderId = String(
+    bru.getRequestVar('orderId') ||
+    bru.getVar('orderId') ||
+    bru.getEnvVar('orderId') ||
+    '',
+  ).trim();
   if (!orderId) {
-    throw new Error('Isi orderId di tab Params (nilai literal, jangan {{orderId}})');
+    throw new Error('Isi orderId di tab Vars → Pre Request');
   }
-
-  req.setUrl(
-    'http://localhost:3456/api/search/by-order?env=' +
-      encodeURIComponent(envName) +
-      '&orderId=' +
-      encodeURIComponent(orderId),
-  );
 }
 
 script:post-response {
